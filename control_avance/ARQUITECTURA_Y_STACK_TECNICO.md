@@ -10,7 +10,9 @@
 
 * **Nuxt 4 (Vue 3 + TypeScript estricto), modo SPA (`ssr: false`)** `[núcleo]`
   * Se compila como aplicación estática y es servida directamente por el mismo backend Python: una sola pieza desplegable a bordo en un único puerto.
-  * **Idioma y Limpieza Visual:** Estrictamente 100% en inglés claro y cero jerga técnica en pantalla (`@nuxtjs/i18n` configurado con `defaultLocale: 'en'` centralizado en `app/locales/en.json`, conforme a [`REGLAS_DISENO_UI_UX.md`](./REGLAS_DISENO_UI_UX.md)).
+  * **Idioma y Limpieza Visual:** Estrictamente 100% en inglés claro y cero jerga técnica en pantalla.
+  * **Estándar de Internacionalización (i18n en Nuxt 4):** Catálogo configurado en `@nuxtjs/i18n` v9 mediante archivo TypeScript nativo con la macro oficial `defineI18nLocale` en `frontend/i18n/locales/en.ts` (convención `restructureDir: "i18n"`). **Prohibido el uso de catálogos `.json` planos** en tiempo de desarrollo/build para evitar colisiones con el compilador/transformador de Vite 6 (`EnvironmentPluginContainer.transform`).
+  * **Exposición en Red Local (LAN / Cabina):** Bloque `devServer: { host: '0.0.0.0', port: 3000 }` para acceso multi-dispositivo de los tripulantes/testers sin restricciones de loopback.
 * **Tailwind CSS 4 + Paleta Oficial de 6 Colores en Variables CSS (`frontend/app/assets/css/tokens.css`)** `[núcleo]`
   * Fidelidad visual exacta al diseño en Figma (`#001524`, `#15616D`, `#FFECD1`, `#2AEF4B`, `#000C5C`, `#D5110B`) y alto contraste (`15.6:1` AAA); la conmutación al **Modo Alerta Crítica** se activa cambiando `data-cabin-mode="critical"` en `<html>`.
 * **Reka UI (Componentes accesibles sin estilo preimpuesto) + `<HudWindow>`** `[núcleo]`
@@ -37,6 +39,12 @@
 
 * **Python 3.13 + FastAPI + Pydantic v2 + Uvicorn** `[núcleo]`
   * API REST tipada con generación automática de especificación OpenAPI; arquitectura modular con un archivo router por módulo (`backend/app/routers/<modulo>.py`).
+  * **Matriz Oficial de Puertos en Desarrollo Local:**
+    * **`Puerto 8000`:** Reservado para la Torre de Control interna (`miWork/server.py`).
+    * **`Puerto 8080`:** Servidor FastAPI + SSE (`backend/app/main.py`) para evitar colisiones de enlace (`[Errno 48] Address already in use`).
+    * **`Puerto 3000`:** Frontend Nuxt 4 en modo desarrollo (`frontend/`).
+  * **Política de CORS para Red Local:** `CORSMiddleware` configurado con expresión regular (`allow_origin_regex = r"^https?://(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$"`) para permitir conexiones seguras desde cualquier cliente LAN/Wi-Fi en cabina.
+  * **Empaquetado Estándar (`pyproject.toml` con `setuptools`):** Declaración explícita de `[build-system]` (`setuptools.build_meta`) y `[tool.setuptools.packages.find]` (`include = ["app*", "db*"]`) para resolver la detección de paquetes en estructuras planas (*flat-layout*) al instalar en modo editable (`pip install -e .`).
 * **`sqlite3` (Librería estándar) con consultas SQL parametrizadas** `[núcleo]`
   * `backend/db/schema.sql` actúa como única fuente de verdad del modelo de datos, evitando que un ORM duplique o desincronice el esquema.
 * **`argon2-cffi` + `PyJWT`** `[núcleo]`

@@ -413,6 +413,22 @@ export function useAuscultationRecorder() {
 
 ---
 
+### 4.6 Reglas de Redirección y Rutas en Nuxt SPA (Prevención de Pantalla Blanca)
+
+En Nuxt 4 configurado en modo SPA puro (`ssr: false`):
+1. **Redirecciones Declarativas Obligatorias:** En páginas puente o de redirección inicial (como `app/pages/index.vue`), debe utilizarse exclusivamente la macro declarativa de compilación de Nuxt:
+   ```vue
+   <script setup lang="ts">
+   definePageMeta({
+     redirect: '/login',
+   })
+   </script>
+   ```
+2. **Prohibición de `await navigateTo()` en Nivel Superior:** Prohibido invocar `await navigateTo('/...')` en la raíz del `<script setup>` de componentes vacíos. En modo SPA, esto suspende indefinidamente el árbol de renderizado de Vue Suspense antes de montar la aplicación, provocando una pantalla en blanco (`<div id="__nuxt"></div>` vacío).
+3. **Internacionalización Nativa en TypeScript:** Toda localización en `@nuxtjs/i18n` debe declararse en archivos TypeScript mediante `defineI18nLocale` (`frontend/i18n/locales/en.ts`). Prohibido usar archivos `.json` planos para catálogos que deban ser transformados dinámicamente por Vite en tiempo de desarrollo.
+
+---
+
 ## 5. Construcción del Backend (`Python 3.13 + FastAPI`) y Base de Datos (`SQLite 3 STRICT`)
 
 ### 5.1 Esquema Único `backend/db/schema.sql` (`WAL` + `STRICT` + `Append-Only` + `FTS5` + `JSON1`)

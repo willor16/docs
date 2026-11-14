@@ -33,7 +33,7 @@ Al redactar código, especificaciones, estilos CSS, componentes Vue o textos de 
 
 1. **Idioma 100% Inglés Puro (Incluye el Código) y Cero Jerga Tecnológica en Pantalla:**
    * Ni una sola palabra en español u otro idioma dentro de la aplicación entregable, **incluyendo el código fuente** (identificadores, variables, rutas, endpoints, tablas, comentarios y textos).
-   * Todo texto visible dentro de la aplicación debe estar en **inglés claro y humano** (`Sign In`, `Sleep Score`, `Right Eye Elevated`, `Save Lung Recording`). Si se usa `@nuxtjs/i18n`, se fija `defaultLocale: 'en'` en `app/locales/en.json` sin mezclar español.
+   * Todo texto visible dentro de la aplicación debe estar en **inglés claro y humano** (`Sign In`, `Sleep Score`, `Right Eye Elevated`, `Save Lung Recording`). Si se usa `@nuxtjs/i18n`, se fija `defaultLocale: 'en'` mediante archivos TypeScript con la macro nativa `defineI18nLocale` en `frontend/i18n/locales/en.ts` (prohibido usar catálogos `.json` planos que colisionen con los transformadores de Vite 6).
    * **Prohibido mostrar jerga técnica interna en la UI:** Nunca escribir en pantalla palabras como `SQLite`, `JSON`, `FHIR`, `HL7`, `Kiwix`, `ZIM`, `FTS5`, `WAL`, `Offline`, `Break-Glass`, `DTN`, `OSDR`, `DONKI`, `ONNX`, `Ollama`, `Nuxt` o `Python`.
 2. **Palabras y Entidades Prohibidas:**
    * **Prohibido usar "NASA" de ninguna forma en el producto/interfaz:** Esto incluye el nombre, logos y menciones de ningún tipo dentro de la aplicación o el código visible.
@@ -57,6 +57,10 @@ Al redactar código, especificaciones, estilos CSS, componentes Vue o textos de 
    * **Nivel 2 Autenticado (tras PIN de 4 dígitos):** Dock inferior trapezoidal **simétrico de 7 módulos** con **`Profile` elevado exactamente al centro**: `1 Vision · 2 Sleep · 3 Auscultation · [4 PROFILE] · 5 Capture · 6 Guide · 7 Comms`.
    * **`Notifications (N)` nunca va en el dock inferior:** vive **únicamente en el header superior** (`/notifications`).
    * Máximo 2 o 3 contenedores `<HudWindow>` por pantalla (`28 px` margen exterior, `18 px` gap), sin footers informativos redundantes.
+7. **Patrones Técnicos de Arranque, Puertos y Redirección en Nuxt/FastAPI:**
+   * **Redirección de Rutas:** Usar siempre `definePageMeta({ redirect: '/login' })` para navegación declarativa en SPA. Prohibido usar `await navigateTo()` en nivel superior de `<script setup>` en páginas puente sin vista.
+   * **Matriz de Puertos y CORS:** No asumir el puerto `8000` para FastAPI si `miWork/` está presente; apuntar por defecto a `8080`. Configurar siempre `devServer: { host: '0.0.0.0', port: 3000 }` en Nuxt y `CORSMiddleware` con `allow_origin_regex` en FastAPI para admitir clientes LAN (`192.168.*.*`, `10.*.*.*`).
+   * **Empaquetado Backend:** Todo cambio en `pyproject.toml` debe incluir `[build-system]` con `setuptools.build_meta` y `[tool.setuptools.packages.find]` (`include = ["app*", "db*"]`).
 
 ---
 

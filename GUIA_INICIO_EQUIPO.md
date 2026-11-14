@@ -77,3 +77,36 @@ docs/
 4. **Testers (Steve, Sandra, Foco):**
    * **Flujo:** `GIT → Clonar → Pruebas E2E en modo avión contra backend real`.
    * Verifican el flujo completo: `Sign In con PIN → Capture → Alerta → Notifications (Header) → Medical Guide → Mission Control (Comms)`.
+
+---
+
+## 5. Puesta en Marcha Local y Acceso en Red (LAN / Cabina)
+
+### 5.1 Matriz Oficial de Puertos en Desarrollo
+Para evitar colisiones de enlace en la máquina de desarrollo (`[Errno 48] Address already in use`):
+* **`Puerto 8000`:** Torre de Control Interna (`miWork/server.py`).
+* **`Puerto 8080`:** Backend FastAPI + Telemetría SSE (`wakax-nasa-challenge-2026/backend`).
+* **`Puerto 3000`:** Frontend Nuxt 4 (`wakax-nasa-challenge-2026/frontend`).
+
+### 5.2 Arranque del Backend (`backend/`)
+```bash
+cd wakax-nasa-challenge-2026/backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -e ".[dev]"  # Requiere pyproject.toml con build-system de setuptools y paquetes app + db
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
+```
+
+### 5.3 Arranque del Frontend (`frontend/`)
+```bash
+cd wakax-nasa-challenge-2026/frontend
+npm install
+npm run dev
+```
+*(Nuxt 4 está preconfigurado con `devServer: { host: '0.0.0.0', port: 3000 }` e internacionalización nativa en TypeScript `i18n/locales/en.ts`)*.
+
+### 5.4 Protocolo de Pruebas Multi-dispositivo para Testers
+1. Obtener la IP local de la máquina anfitriona (`ifconfig | grep "inet "` o desde la consola de Nuxt en `Network:`).
+2. Conectar el teléfono o tableta a la misma red Wi-Fi y navegar a `http://<IP_ANFITRION>:3000`.
+3. Validar el flujo de cabina completo en modo avión simulado (cero peticiones externas y visualización adaptada al HUD de alta fidelidad).
