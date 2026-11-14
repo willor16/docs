@@ -108,12 +108,12 @@ Todo registro, análisis y visualización de salud se estructura a través de la
 ## 6. Regla Estricta de Idioma (100% Inglés)
 
 * **Exclusividad de Idioma:** La aplicación, su interfaz de usuario, catálogos de datos, textos clínicos, protocolos de la Wiki, alertas y entregables deben estar **estrictamente en inglés**.
-* **Cero mezcla de idiomas:** No debe integrarse ningún otro idioma en el software entregable; **ni una sola palabra en español u otro idioma** dentro de la aplicación.
+* **Cero mezcla de idiomas:** No debe integrarse ningún otro idioma en el software entregable; **ni una sola palabra en español u otro idioma** dentro de la aplicación, esto incluye el codigo.
 
 ---
 
 ## 7. Palabras y Referencias Prohibidas
 
 * **Restricción de Marca y Geopolítica:**
-  1. El producto/interfaz **no debe usar de forma indebida el nombre o marca "NASA"** como si fuera un producto oficial de la agencia ni violar las guías de identidad del reto.
+  1. El producto/interfaz **no debe usar de ninguna forma el nombre o marca "NASA" esto incluye el nombre logos y menciones de ningun tipo**
   2. **Prohibición absoluta respecto a China:** El proyecto no debe contener mención alguna, datos, agencias, modelos ni referencias relacionadas directa o indirectamente con **China** (cumplimiento estricto de las políticas de elegibilidad del evento).
