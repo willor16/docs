@@ -1,6 +1,6 @@
 # Bitácora de Avance y Resumen Maestro del Proyecto — SpaceScan
 
-> **ESTADO ACTUAL:** Especificación de requerimientos, reglas inquebrantables, estándar global de diseño UI/UX (`Scan Space · ARES VII`), stack técnico y división de trabajo en paralelo (Fase 0 y Fase 1) cerrados y consolidados en `docs/`.  
+> **ESTADO ACTUAL:** Fase 0 cerrada y arranque de Fase 1 (Semana 1: `D1-01`, `D1-02` y contratos base `D3-01`/`D1-06`) implementado en `wakax-nasa-challenge-2026/` (`chore/foundation-and-schema`).  
 > **NOMBRE DEL SISTEMA:** **SpaceScan (`Scan Space · ARES VII`)**  
 > **DISEÑO OFICIAL (FIGMA):** [SpaceScan — Figma Design (`node-id=7382-2`)](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1)
 
@@ -48,9 +48,22 @@ De acuerdo con la revisión de `MyWork comentarios.md`, quedan registrados en [`
 
 ---
 
-## 4. Registro Cronológico de Decisiones (Bitácora)
+## 4. Control de Avance de Implementación (`wakax-nasa-challenge-2026/`)
+
+| Fase / Bloque | Alcance Implementado | Estado | Verificación Registrada |
+| :--- | :--- | :---: | :--- |
+| **Base Repo (`LICENSE`, `.gitignore`)** | Licencia `MIT` (`e6caef9`) y `.gitignore` (`2dfbcc6`), manteniendo `README.md` vacío por directriz del equipo. | **Completado** | Auditoría normativa sin menciones a `NASA` / `China`. |
+| **Fase 0 — `backend/db/schema.sql`** | `17` tablas `STRICT`, modo `WAL`, `foreign_keys = ON`, triggers *append-only* en `measurements` y tabla virtual `wiki_articles_fts` (`FTS5`) con triggers de sincronización (`2dfbcc6`). | **Completado** | Ejecución idempotente en `sqlite3` 3.54.0; `UPDATE`/`DELETE` bloqueados en `measurements`; búsqueda `FTS5` verificada. |
+| **Fase 1 (`D1-01` + Contratos Día 1)** | `backend/app/` (`FastAPI`, `APScheduler`, `/api/v1/health`, `/api/v1/mission`, `SSE /api/v1/stream/telemetry`), `contracts.py` (`evaluate_alerts`, `is_within_quiet_hours`, `update_streaks`), `seed.py` y snapshot `mission_baseline.json` (`fdd5536`, `cf93d91`). | **Base lista** | `seed.py` idempotente (`4` tripulantes, `18` métricas, `136` mediciones, `4` artículos, `1` alerta); `TestClient` `200 OK` en `/health` y `/mission`. *(Pendiente instalar `pytest` y `ruff` en `.venv`).* |
+| **Fase 1 (`D1-02` — Shell Nuxt 4)** | `tokens.css` (6 colores + `data-cabin-mode="critical"`), tema ECharts `'spacescan-hud'`, `16` SVGs locales `spacescan`, `HudWindow`, `TopTelemetryBar`, `PublicHierarchyBar`, `BottomCockpitDock` (Slot 4 `Profile`), `i18n` (`en`) y esqueletos de las `16` rutas Figma (`fdd5536`, `cf93d91`). | **Base lista** | `eslint .` (`0` errores) y `vitest run` (`3/3` pasando en `compliance.test.ts`). *(Pendiente `npm run generate` y fuentes `.woff2` locales).* |
+| **Siguientes Módulos (Fase 1)** | `D1-03` (Login PIN `Argon2id` + `JWT`), `D2-01` (`POST /api/v1/measurements`), `D2-02` (`/capture/physical`, `/capture/vision`), `D3-01` (endpoints alertas + *Quiet Hours*), `D3-03` (`/capture/psych-sleep`, `/profile/psychological`). | **Pendiente** | En cola para ejecución paralela. |
+
+---
+
+## 5. Registro Cronológico de Decisiones (Bitácora)
 
 | Fecha | Hito / Decisión | Descripción Técnica | Responsable |
 | :--- | :--- | :--- | :--- |
 | **2026-11-14** | **Consolidación de Especificación, Reglas, Stack y División de Trabajo** | Integración prioritaria de los documentos validados (`reglas inquebrantables.md`, `Especifcacion.md`, `requerimientos tecnicos.md`, `divicion del trabajo.md` y `MyWork comentarios.md`). | Equipo / IA |
 | **2026-11-14** | **Renombrado a `docs/` e Integración del Estándar de Diseño UI/UX** | Actualización de rutas del repositorio documental a `docs/` (`willor16/docs`) e incorporación de [`REGLAS_DISENO_UI_UX.md`](./REGLAS_DISENO_UI_UX.md) con las 5 Leyes de Diseño, Paleta Oficial de 6 Colores (`tokens.css`), mapeo de las 16 pantallas Figma y plantillas de construcción. | Equipo / IA |
+| **2026-11-14** | **Cierre de Fase 0 y Arranque de Fase 1 (`D1-01`, `D1-02`)** | Incorporación de `LICENSE` (MIT), `.gitignore`, esquema `backend/db/schema.sql`, backend base `FastAPI` + `seed.py` + contratos `evaluate_alerts`/`update_streaks` y shell Nuxt 4 SPA en `chore/foundation-and-schema` (`e6caef9`..`cf93d91`), validado con `eslint`, `vitest` (`3/3`) y `TestClient`. | Equipo / IA |
