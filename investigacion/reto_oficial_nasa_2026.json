@@ -1,0 +1,208 @@
+{
+  "reto_oficial": {
+    "titulo": "Create Health Monitoring Software for Astronauts on Space Missions",
+    "titulo_es": "Crear Software de Monitoreo de Salud para Astronautas en Misiones Espaciales",
+    "url": "https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/?tab=details",
+    "dificultad": "Intermediate",
+    "areas_tematicas": ["Human Exploration", "Software", "Space Exploration"],
+    "los_5_peligros_espaciales_nasa": [
+      {
+        "peligro": "Space Radiation (Radiación Espacial)",
+        "impacto": "Exposición a rayos cósmicos y tormentas solares; daño celular y riesgos oncológicos."
+      },
+      {
+        "peligro": "Isolation and Confinement (Aislamiento y Confinamiento)",
+        "impacto": "Grupos reducidos en espacios pequeños durante meses/años; fatiga mental, estrés y trastornos del sueño."
+      },
+      {
+        "peligro": "Distance from Earth (Distancia de la Tierra)",
+        "impacto": "Retrasos de comunicación de hasta 20+ minutos; imposibilidad de telemedicina terrestre en tiempo real."
+      },
+      {
+        "peligro": "Altered Gravity Fields (Campos de Gravedad Alterados)",
+        "impacto": "Microgravedad; atrofia muscular, pérdida acelerada de densidad ósea y descondicionamiento cardiovascular."
+      },
+      {
+        "peligro": "Hostile Closed Environments (Entornos Cerrados y Hostiles)",
+        "impacto": "Ambientes herméticos con acumulación de CO2, control térmico/humedad y monitoreo de microbios."
+      }
+    ],
+    "objetivos_principales": [
+      "Recolección integral de indicadores biomédicos y psicológicos.",
+      "Autoevaluación intuitiva para que el astronauta interprete sus datos sin apoyo terrestre constante.",
+      "Guía y recomendaciones accionables (protocolos de ejercicio, descanso, alertas tempranas).",
+      "Operatividad autónoma y fuera de línea (offline-first)."
+    ],
+    "consideraciones_diseno": [
+      "Ambientes de uso: tránsito en nave, estación orbital, rovers y hábitats en Luna o Marte.",
+      "Entradas de datos y recordatorios de rutina: recopilar datos vía teclado, ratón, cámara o sensores, e integrar recordatorios de mediciones periódicas como parte de la rutina del astronauta.",
+      "Salud mental y conductual: seguimiento del estrés, fatiga y estado anímico.",
+      "Engagement: gamificación e interfaces claras que faciliten la rutina diaria del astronauta."
+    ]
+  },
+  "guia_juzgamiento_y_entrega": {
+    "url_guia": "https://www.spaceappschallenge.org/resources/judging-awards-guide/",
+    "requisitos_elegibilidad": [
+      "Responder directamente a uno de los desafíos oficiales.",
+      "Todos los integrantes deben estar registrados antes del cierre de entregas.",
+      "Tamaño del equipo: 1 a 6 personas (Evento Local) o 2 a 6 personas (Evento Universal).",
+      "Uso explícito y citado de datos abiertos de la NASA o agencias espaciales asociadas."
+    ],
+    "formatos_demo_obligatorios": {
+      "regla": "Debe elegirse estrictamente UNO de los dos formatos siguientes",
+      "opcion_a_slides": {
+        "formato": "Presentación de Diapositivas (Slide Deck)",
+        "limite_maximo": "Máximo 7 diapositivas (incluyendo portada y créditos)",
+        "idioma": "Inglés obligatorio"
+      },
+      "opcion_b_video": {
+        "formato": "Video Demostrativo (Video Presentation)",
+        "limite_maximo": "Máximo 30 segundos",
+        "idioma": "Cualquier idioma con subtítulos en inglés obligatorios"
+      },
+      "alojamiento_externo": "La plataforma no aloja archivos; los enlaces deben ser 100% públicos en YouTube, Google Drive, OneDrive o GitHub."
+    }
+  },
+  "fuente_premios": "https://www.spaceappschallenge.org/awards/",
+  "evento": "NASA International Space Apps Challenge",
+  "descripcion_general": "Estructura oficial de las 10 categorías de premios globales, criterios de evaluación y fases del proceso de selección.",
+  "premios_globales": [
+    {
+      "id": 1,
+      "categoria_en": "Best Use of Science",
+      "categoria_es": "Mejor Uso de la Ciencia",
+      "descripcion_oficial": "The project that makes the best and most valid use of science and/or the scientific method.",
+      "descripcion_es": "Al proyecto que haga el mejor y más válido uso de la ciencia y/o del método científico.",
+      "enfoque_clave": "Rigor científico, precisión física/médica/biológica, validación de hipótesis.",
+      "consejo_jurado": "Asegurar que los modelos teóricos, fórmulas y leyes físicas o fisiológicas aplicadas sean correctos y verificables."
+    },
+    {
+      "id": 2,
+      "categoria_en": "Best Use of Data",
+      "categoria_es": "Mejor Uso de Datos",
+      "descripcion_oficial": "The project that best makes space data accessible or leverages it for a unique application.",
+      "descripcion_es": "Al proyecto que mejor facilite el acceso a los datos espaciales o los aproveche para una aplicación única.",
+      "enfoque_clave": "Aprovechamiento de datos abiertos de NASA/agencias asociadas, procesamiento y visualización efectiva.",
+      "consejo_jurado": "Demostrar cómo datos espaciales complejos y crudos se transforman en información útil y comprensible."
+    },
+    {
+      "id": 3,
+      "categoria_en": "Best Use of Technology",
+      "categoria_es": "Mejor Uso de la Tecnología",
+      "descripcion_oficial": "The project that exemplifies the most innovative use of technology.",
+      "descripcion_es": "Al proyecto que ejemplifique el uso más innovador de la tecnología.",
+      "enfoque_clave": "Innovación técnica, solidez de arquitectura, prototipos funcionales y código eficiente.",
+      "consejo_jurado": "Presentar un prototipo que funcione, demuestre estabilidad y utilice tecnología moderna."
+    },
+    {
+      "id": 4,
+      "categoria_en": "Galactic Impact",
+      "categoria_es": "Impacto Galáctico",
+      "descripcion_oficial": "The project with the most potential to improve life on Earth or in the universe.",
+      "descripcion_es": "Al proyecto con el mayor potencial para mejorar la vida en la Tierra o en el universo.",
+      "enfoque_clave": "Escalabilidad, impacto dual (beneficio simultáneo en la Tierra y en misiones espaciales).",
+      "consejo_jurado": "Destacar la trascendencia del problema resuelto y cuántas personas o misiones se benefician."
+    },
+    {
+      "id": 5,
+      "categoria_en": "Best Mission Concept",
+      "categoria_es": "Mejor Concepto de Misión",
+      "descripcion_oficial": "The project with the most plausible concept and design.",
+      "descripcion_es": "Al proyecto con el concepto y diseño de misión más verosímil, viable y estructurado.",
+      "enfoque_clave": "Factibilidad de ingeniería, viabilidad operativa, análisis de etapas y riesgos.",
+      "consejo_jurado": "Plantear una arquitectura de misión creíble que cumpla restricciones reales de espacio, masa, tiempo y recursos."
+    },
+    {
+      "id": 6,
+      "categoria_en": "Most Inspirational",
+      "categoria_es": "El Más Inspirador",
+      "descripcion_oficial": "The project that captures our hearts.",
+      "descripcion_es": "Al proyecto que capture los corazones y conmueva la imaginación de la comunidad y el jurado.",
+      "enfoque_clave": "Factor humano, empatía, inclusión, superación y motivación.",
+      "consejo_jurado": "Conectar la tecnología con la experiencia y emoción humana frente a grandes desafíos."
+    },
+    {
+      "id": 7,
+      "categoria_en": "Best Use of Storytelling",
+      "categoria_es": "Mejor Uso de la Narrativa",
+      "descripcion_oficial": "The project that most creatively communicates the potential of open data through the art of storytelling.",
+      "descripcion_es": "Al proyecto que comunique más creativamente el potencial de los datos abiertos mediante el arte de contar historias.",
+      "enfoque_clave": "Claridad comunicacional, narrativa atrapante, diseño visual y experiencia de usuario.",
+      "consejo_jurado": "Explicar temas espaciales y científicos de manera fluida, intuitiva y atractiva para todo público."
+    },
+    {
+      "id": 8,
+      "categoria_en": "Global Connection",
+      "categoria_es": "Conexión Global",
+      "descripcion_oficial": "The project that best connects people around the world through technology.",
+      "descripcion_es": "Al proyecto que mejor conecte a personas de todo el mundo mediante la tecnología.",
+      "enfoque_clave": "Colaboración internacional, interoperabilidad, código abierto y accesibilidad global.",
+      "consejo_jurado": "Mostrar cómo la herramienta facilita la cooperación entre personas y equipos de distintas regiones."
+    },
+    {
+      "id": 9,
+      "categoria_en": "Art & Technology",
+      "categoria_es": "Arte y Tecnología",
+      "descripcion_oficial": "The project that most effectively combines technical and creative skills.",
+      "descripcion_es": "Al proyecto que combine de la manera más efectiva habilidades técnicas con artes creativas.",
+      "enfoque_clave": "Diseño estético, interacción visual, armonía entre arte visual y rigor técnico.",
+      "consejo_jurado": "Demostrar que el aspecto visual y la experiencia de usuario potencian la funcionalidad del proyecto."
+    },
+    {
+      "id": 10,
+      "categoria_en": "Local Impact",
+      "categoria_es": "Impacto Local",
+      "descripcion_oficial": "The project that demonstrates the greatest potential for local impact or making a difference in the local community.",
+      "descripcion_es": "Al proyecto que demuestre el mayor potencial para resolver problemas locales o beneficiar a una comunidad específica.",
+      "enfoque_clave": "Solución de retos concretos a escala local o comunitaria.",
+      "consejo_jurado": "Identificar claramente la comunidad afectada y medir el beneficio directo tangible."
+    }
+  ],
+  "criterios_evaluacion": [
+    {
+      "criterio": "Impacto (Impact)",
+      "descripcion": "¿Qué tan relevante es el problema y qué escala de solución propone?"
+    },
+    {
+      "criterio": "Creatividad (Creativity)",
+      "descripcion": "¿Es una solución novedosa, ingeniosa y diferenciadora frente a lo existente?"
+    },
+    {
+      "criterio": "Validez Científica (Validity)",
+      "descripcion": "¿Tiene fundamento científico riguroso y hace uso correcto del método científico y datos abiertos?"
+    },
+    {
+      "criterio": "Relevancia (Relevance)",
+      "descripcion": "¿Cumple con la consigna del reto y aprovecha activamente los recursos oficiales de la NASA?"
+    },
+    {
+      "criterio": "Presentación (Presentation)",
+      "descripcion": "¿La comunicación, el video, la demo interactiva y la documentación son claros, concisos y profesionales?"
+    }
+  ],
+  "fases_juzgamiento": [
+    {
+      "fase": 1,
+      "nombre": "Evaluación Local y Universal",
+      "resultado": "Nominados Globales (Global Nominees)",
+      "evaluadores": "Jueces locales de cada ciudad sede y comité de evaluación universal."
+    },
+    {
+      "fase": 2,
+      "nombre": "Evaluación Global",
+      "resultado": "Finalistas Globales (Global Finalists) y Menciones de Honor",
+      "evaluadores": "Expertos temáticos (SMEs) de NASA, ESA, JAXA, CSA, CNES y otras agencias espaciales."
+    },
+    {
+      "fase": 3,
+      "nombre": "Juzgamiento Ejecutivo",
+      "resultado": "Ganadores Globales (Global Winners)",
+      "evaluadores": "Comité directivo y altos ejecutivos de la NASA y agencias internacionales asociadas."
+    }
+  ],
+  "beneficios_ganadores_globales": [
+    "Reconocimiento internacional en el sitio y redes oficiales de la NASA.",
+    "Invitación a visitar un Centro Espacial de la NASA (ej. Kennedy Space Center o Goddard Space Flight Center).",
+    "Oportunidad de presenciar en vivo el despegue de un cohete espacial."
+  ]
+}
