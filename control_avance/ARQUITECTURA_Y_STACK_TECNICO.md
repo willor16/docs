@@ -1,6 +1,7 @@
 # Arquitectura y Stack Técnico Oficial — SpaceScan
 
 > **Regla de Ejecución (RNF 1):** Todo el sistema corre **a bordo y sin internet**. Cero CDNs y cero APIs en la nube en tiempo de ejecución: tipografías, iconos, modelos de IA y datasets espaciales residen localmente dentro del proyecto.  
+> **Guía Maestra de Construcción y UI/UX:** Ver plantillas de código, paleta de 6 colores (`tokens.css`) y mapeo de las 16 pantallas en [`REGLAS_DISENO_UI_UX.md`](./REGLAS_DISENO_UI_UX.md).  
 > **Convención de Prioridad:** `[núcleo]` = obligatorio para la demo oficial · `[extra]` = solo si sobra tiempo tras completar el núcleo.
 
 ---
@@ -9,20 +10,20 @@
 
 * **Nuxt 4 (Vue 3 + TypeScript estricto), modo SPA (`ssr: false`)** `[núcleo]`
   * Se compila como aplicación estática y es servida directamente por el mismo backend Python: una sola pieza desplegable a bordo en un único puerto.
-  * **Idioma:** Estrictamente 100% en inglés (conforme a [`REGLAS_INQUEBRANTABLES.md`](./REGLAS_INQUEBRANTABLES.md)).
-* **Tailwind CSS 4 + Tokens del Figma como Variables CSS (`assets/css/tokens.css`)** `[núcleo]`
-  * Garantiza fidelidad visual exacta al diseño en Figma y alto contraste en cabina; la conmutación al modo "alerta" rojo se realiza mutando variables CSS.
-* **Reka UI (Componentes accesibles sin estilo preimpuesto)** `[núcleo]`
-  * Diálogos, pestañas y selectores con el aspecto exacto del Figma, sin colisiones de estilos externos.
-* **Apache ECharts (`vue-echarts`)** `[núcleo]`
-  * Gráficas de barras, áreas, indicadores radiales (*gauges*) y trazos de ondas continuas (ECG, fonocardiograma) bajo un tema holográfico propio.
-* **SVG Exportado del Figma + CSS (Brillo y líneas de escaneo)** `[núcleo]`
-  * Representación holográfica de cuerpo humano y órganos.
-  * **Motion for Vue (`motion-v`)** `[extra]` para micro-transiciones; **TresJS (Three.js)** `[extra]` para visualización corporal 3D opcional.
+  * **Idioma y Limpieza Visual:** Estrictamente 100% en inglés claro y cero jerga técnica en pantalla (`@nuxtjs/i18n` configurado con `defaultLocale: 'en'` centralizado en `app/locales/en.json`, conforme a [`REGLAS_DISENO_UI_UX.md`](./REGLAS_DISENO_UI_UX.md)).
+* **Tailwind CSS 4 + Paleta Oficial de 6 Colores en Variables CSS (`frontend/app/assets/css/tokens.css`)** `[núcleo]`
+  * Fidelidad visual exacta al diseño en Figma (`#001524`, `#15616D`, `#FFECD1`, `#2AEF4B`, `#000C5C`, `#D5110B`) y alto contraste (`15.6:1` AAA); la conmutación al **Modo Alerta Crítica** se activa cambiando `data-cabin-mode="critical"` en `<html>`.
+* **Reka UI (Componentes accesibles sin estilo preimpuesto) + `<HudWindow>`** `[núcleo]`
+  * Contenedor universal con esquinas angulares de precisión y primitivas `TabsRoot`, `DialogRoot`, `SelectRoot` con el aspecto exacto del Figma.
+* **Apache ECharts (`vue-echarts`) con Tema Propio `'spacescan-hud'`** `[núcleo]`
+  * Usa `CanvasRenderer`, `animation: false` y muestreo `lttb` en ondas continuas (`ECG`, fonocardiograma `S1/S2`) para fluidez en CPU; serie `type: 'custom'` para la gráfica de barra de cintas de fases de sueño (`Awake`, `REM`, `Light`, `Deep`).
+* **SVG Exportado del Figma + CSS (Brillo y línea de barrido)** `[núcleo]`
+  * Representación holográfica de cuerpo humano y órganos (`SpaceScanHologram.vue`).
+  * **Motion for Vue (`motion-v`)** `[extra]` para micro-transiciones; **TresJS (Three.js)** `[extra]` para visualización corporal 3D opcional (`.glb` local).
 * **Pinia + VueUse** `[núcleo]`
   * Gestión de sesión autenticada por PIN, estado reactivo de cabina y utilidades nativas (temporizadores, acceso a micrófono).
-* **`@nuxt/fonts` + `@nuxt/icon` con colecciones 100% locales** `[núcleo]`
-  * Fuentes e iconos autoalojados para garantizar renderizado sin acceso a red externa.
+* **`@nuxt/fonts` (`Inter` + `JetBrains Mono` en `.woff2`) + `@nuxt/icon` (colección local `spacescan` con 16 SVGs)** `[núcleo]`
+  * Fuentes e iconos 100% autoalojados (`provider: 'local'` y `clientBundle: { scan: true }`) para garantizar cero peticiones externas.
 * **Web Audio API + MediaRecorder (Nativo del navegador)** `[núcleo]`
   * Medidor de nivel de ruido ambiental de cabina en tiempo real y grabación acústica de 30 segundos para auscultación cardíaca y pulmonar.
 * **Zod** `[núcleo]`

@@ -84,10 +84,17 @@ Todo registro, análisis y visualización de salud se estructura a través de la
 
 ---
 
-## 4. Fidelidad Estricta al Diseño (Figma)
+## 4. Fidelidad Estricta al Diseño (Figma) y las 5 Leyes UI/UX
 
-* Toda interfaz y pantalla de la aplicación debe ser **estrictamente fiel al diseño oficial en Figma**:
-  * **Enlace al Diseño:** [SpaceScan — Figma Design](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1)
+> La especificación visual completa, la paleta oficial de 6 colores y el mapeo de las 16 pantallas se rigen por [`REGLAS_DISENO_UI_UX.md`](./REGLAS_DISENO_UI_UX.md).
+
+* **Diseño Oficial en Figma (`1568 × 940`):** [SpaceScan — Figma Design (`node-id=7382-2`)](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1)
+* **Paleta Oficial Única de 6 Colores (`tokens.css`):** `#001524` (Fondo Principal), `#15616D` (Tarjetas y Botones), `#FFECD1` (Texto e Iconos), `#2AEF4B` (Estado OK/Nominal), `#000C5C` (Selección activa en menús/filtros al 30%–52% opacidad con filete `#263BB0`, líneas guía, pastillas de referencia y Warning) y `#D5110B` (Estado Crítico/Alerta).
+* **Separación Estricta Resultados vs. Captura:** Las pantallas de monitoreo (`Profile`, `Sleep`, `Vision`, `Auscultation`, `Crew Overview`, `Crew Streaks`) son **100% de solo lectura (Solo Resultados)**; toda entrada manual, grabación de 30 s o prueba psicomotriz vive exclusivamente en **`Capture`** (`/capture/*`).
+* **Jerarquía de Navegación en 2 Niveles:**
+  * **Público (sin PIN):** Barra inferior de 3 pestañas (`Sign In · Crew Overview · Crew Streaks`).
+  * **Autenticado (tras PIN):** Dock inferior trapezoidal simétrico de 7 módulos con **`Profile` elevado al centro exacto** (`1 Vision · 2 Sleep · 3 Auscultation · [4 PROFILE] · 5 Capture · 6 Guide · 7 Comms`), y **`Notifications (N)` únicamente en el header superior**.
+* **Densidad Controlada:** Máximo 2 o 3 contenedores `<HudWindow>` por pantalla (`28 px` margen exterior, `18 px` gap), sin footers informativos redundantes.
 
 ---
 
@@ -105,15 +112,16 @@ Todo registro, análisis y visualización de salud se estructura a través de la
 
 ---
 
-## 6. Regla Estricta de Idioma (100% Inglés)
+## 6. Regla Estricta de Idioma (100% Inglés en Interfaz y Código + Cero Jerga Técnica en UI)
 
 * **Exclusividad de Idioma:** La aplicación, su interfaz de usuario, catálogos de datos, textos clínicos, protocolos de la Wiki, alertas y entregables deben estar **estrictamente en inglés**.
-* **Cero mezcla de idiomas:** No debe integrarse ningún otro idioma en el software entregable; **ni una sola palabra en español u otro idioma** dentro de la aplicación, esto incluye el codigo.
+* **Cero mezcla de idiomas (Incluye el Código):** No debe integrarse ningún otro idioma en el software entregable; **ni una sola palabra en español u otro idioma** dentro de la aplicación, **esto incluye el código** (variables, funciones, rutas, endpoints, tablas, comentarios y componentes).
+* **Cero Jerga Tecnológica Interna en Pantalla:** Prohibido mostrar en la interfaz palabras técnicas de infraestructura o protocolos internos como `SQLite`, `JSON`, `FHIR`, `HL7`, `Kiwix`, `ZIM`, `FTS5`, `WAL`, `Offline`, `Break-Glass`, `DTN`, `OSDR`, `DONKI`, `ONNX`, `Ollama`, `Nuxt` o `Python`. El astronauta solo ve información clínica y operativa limpia.
 
 ---
 
 ## 7. Palabras y Referencias Prohibidas
 
-* **Restricción de Marca y Geopolítica:**
-  1. El producto/interfaz **no debe usar de ninguna forma el nombre o marca "NASA" esto incluye el nombre logos y menciones de ningun tipo**
+* **Restricción Absoluta de Marca y Geopolítica:**
+  1. **Prohibición total respecto a "NASA" en el producto/interfaz:** El producto/interfaz **no debe usar de ninguna forma el nombre o marca "NASA"; esto incluye el nombre, logos y menciones de ningún tipo**.
   2. **Prohibición absoluta respecto a China:** El proyecto no debe contener mención alguna, datos, agencias, modelos ni referencias relacionadas directa o indirectamente con **China** (cumplimiento estricto de las políticas de elegibilidad del evento).

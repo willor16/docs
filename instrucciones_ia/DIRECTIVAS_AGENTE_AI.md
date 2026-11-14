@@ -1,6 +1,6 @@
 # Directivas Maestras e Instrucciones para Agentes de IA — SpaceScan
 
-> **PROPÓSITO:** Establecer las reglas de gobernanza, arquitectura técnica, restricciones normativas y protocolos operativos que debe cumplir cualquier asistente de Inteligencia Artificial al colaborar en el proyecto **SpaceScan**.
+> **PROPÓSITO:** Establecer las reglas de gobernanza, arquitectura técnica, estándar visual UI/UX, restricciones normativas y protocolos operativos que debe cumplir cualquier asistente de Inteligencia Artificial al colaborar en el proyecto **SpaceScan (`Scan Space · ARES VII`)**.
 
 ---
 
@@ -10,8 +10,8 @@ El ecosistema del proyecto se divide en **3 áreas con responsabilidades y permi
 
 | Espacio | Propósito Principal | Reglas de Gobernanza para la IA |
 | :--- | :--- | :--- |
-| **`wakax-nasa-challenge-2026/`** | **Repositorio Oficial de Código** (`willor16/wakax-nasa-challenge-2026`). Contiene el software **SpaceScan** (`frontend/` en Nuxt 4 y `backend/` en FastAPI + SQLite). | **Restringido:** No crear, modificar ni eliminar archivos sin orden y confirmación explícita del usuario. Prohibido ejecutar comandos de Git (`add`, `commit`, `push`, `branch`, `checkout`) sin instrucción directa. |
-| **`wakax-docs/`** | **Repositorio Oficial de Documentación y Gestión.** Centraliza las reglas inquebrantables, especificación de requerimientos, stack técnico, división del trabajo (`control_avance/`), bases del reto (`investigacion/`) y directivas de IA (`instrucciones_ia/`). | **Espacio documental oficial:** Toda especificación funcional, arquitectura, contratos de base de datos, parámetros biomédicos y bitácoras se consultan y actualizan aquí. |
+| **`wakax-nasa-challenge-2026/`** | **Repositorio Oficial de Código** (`willor16/wakax-nasa-challenge-2026`). Contiene el software **SpaceScan** (`frontend/` en Nuxt 4 SPA y `backend/` en FastAPI + SQLite 3 STRICT). | **Restringido:** No crear, modificar ni eliminar archivos sin orden y confirmación explícita del usuario. Prohibido ejecutar comandos de Git (`add`, `commit`, `push`, `branch`, `checkout`) sin instrucción directa. |
+| **`docs/`** | **Repositorio Oficial de Documentación y Gestión** (`willor16/docs`). Centraliza las reglas inquebrantables, estándar de diseño UI/UX, especificación de requerimientos, stack técnico, división del trabajo (`control_avance/`), bases del reto (`investigacion/`) y directivas de IA (`instrucciones_ia/`). | **Espacio documental oficial:** Toda especificación funcional, reglas visuales, arquitectura, contratos de base de datos, parámetros biomédicos y bitácoras se consultan y actualizan aquí. |
 | **`miWork/`** | **Torre de Control Interna — Scan Workspace (Aislado).** Servidor local Python (`server.py`), dashboard colaborativo (`index.html`) y estado en tiempo real (`state.json`). | **Aislamiento total:** Ningún archivo, script, log o estado de `miWork/` debe copiarse ni integrarse en `wakax-nasa-challenge-2026/`. |
 
 ---
@@ -19,39 +19,55 @@ El ecosistema del proyecto se divide en **3 áreas con responsabilidades y permi
 ## 2. Perfil Técnico y Modo de Comunicación
 
 1. **Rigor Técnico Directo:**
-   * Comunicación profesional, concisa y orientada a arquitectura de software fullstack (Nuxt 4, FastAPI, SQLite 3, inferencia local ONNX/LLM) e ingeniería biomédica espacial.
+   * Comunicación profesional, concisa y orientada a arquitectura de software fullstack (Nuxt 4, Tailwind CSS 4, Reka UI, Apache ECharts, FastAPI, SQLite 3 STRICT, inferencia local ONNX/Ollama) e ingeniería biomédica espacial.
 2. **Cero Condescendencia ni Analogías Forzadas:**
    * Tratar conceptos técnicos de manera directa, sin simplificaciones excesivas ni metáforas innecesarias.
 3. **Orientación a la Acción:**
-   * Respuestas estructuradas con diagnósticos fundamentados, apego estricto a los documentos de `wakax-docs/control_avance/` y pasos concretos.
+   * Respuestas estructuradas con diagnósticos fundamentados, apego estricto a los documentos de `docs/control_avance/` y pasos concretos.
 
 ---
 
-## 3. Reglas Inquebrantables que la IA Debe Hacer Cumplir
+## 3. Reglas Inquebrantables de Producto y Diseño UI/UX que la IA Debe Hacer Cumplir
 
-Al redactar código, especificaciones, textos de interfaz o pruebas para **SpaceScan**, el agente de IA está obligado a verificar:
+Al redactar código, especificaciones, estilos CSS, componentes Vue o textos de interfaz para **SpaceScan**, el agente de IA está obligado a verificar el cumplimiento estricto de [`REGLAS_INQUEBRANTABLES.md`](../control_avance/REGLAS_INQUEBRANTABLES.md) y [`REGLAS_DISENO_UI_UX.md`](../control_avance/REGLAS_DISENO_UI_UX.md):
 
-1. **Idioma 100% Inglés en el Producto ([`REGLAS_INQUEBRANTABLES.md`](../control_avance/REGLAS_INQUEBRANTABLES.md) §6):**
-   * Todo texto dentro de la aplicación entregable (UI, etiquetas, alertas, prediagnósticos del LLM, entradas de la Wiki, semillas de datos) debe estar **estrictamente en inglés**. No incluir ni una sola palabra en español u otro idioma dentro del software entregable.
-2. **Palabras y Entidades Prohibidas ([`REGLAS_INQUEBRANTABLES.md`](../control_avance/REGLAS_INQUEBRANTABLES.md) §7):**
+1. **Idioma 100% Inglés Puro (Incluye el Código) y Cero Jerga Tecnológica en Pantalla:**
+   * Ni una sola palabra en español u otro idioma dentro de la aplicación entregable, **incluyendo el código fuente** (identificadores, variables, rutas, endpoints, tablas, comentarios y textos).
+   * Todo texto visible dentro de la aplicación debe estar en **inglés claro y humano** (`Sign In`, `Sleep Score`, `Right Eye Elevated`, `Save Lung Recording`). Si se usa `@nuxtjs/i18n`, se fija `defaultLocale: 'en'` en `app/locales/en.json` sin mezclar español.
+   * **Prohibido mostrar jerga técnica interna en la UI:** Nunca escribir en pantalla palabras como `SQLite`, `JSON`, `FHIR`, `HL7`, `Kiwix`, `ZIM`, `FTS5`, `WAL`, `Offline`, `Break-Glass`, `DTN`, `OSDR`, `DONKI`, `ONNX`, `Ollama`, `Nuxt` o `Python`.
+2. **Palabras y Entidades Prohibidas:**
+   * **Prohibido usar "NASA" de ninguna forma en el producto/interfaz:** Esto incluye el nombre, logos y menciones de ningún tipo dentro de la aplicación o el código visible.
    * **Prohibido** incluir menciones, datos, modelos o referencias directas o indirectas a **China** o entidades relacionadas.
-   * **Prohibido** usar indebidamente la marca/nombre de la **NASA** como identidad comercial de la app.
-3. **Ejecución 100% Offline a Bordo ([`ARQUITECTURA_Y_STACK_TECNICO.md`](../control_avance/ARQUITECTURA_Y_STACK_TECNICO.md)):**
-   * Prohibido introducir CDNs externos (Google Fonts remotos, scripts por CDN) o llamadas a APIs en la nube en tiempo de ejecución. Todo corre localmente: Nuxt 4 SPA (`ssr: false`) servido por FastAPI, SQLite 3 (`scan.db` sin ORM), fuentes/iconos locales, ONNX Runtime y Ollama/`llama.cpp` locales.
-4. **Fidelidad al Diseño en Figma y a la Especificación:**
-   * Respetar el diseño oficial en [Figma](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2), los 5 roles del sistema (`Astronauta`, `Piloto`, `Operador`, `Médico`, `Control a tierra`), las 3 etapas (`Despegue`, `Misión`, `Regreso`) y la inmutabilidad *append-only* de la tabla `measurements`.
-5. **Cumplimiento de los 10 Criterios de Premios Globales:**
-   * Validar toda propuesta contra el checklist de 10 premios de [`REGLAS_INQUEBRANTABLES.md`](../control_avance/REGLAS_INQUEBRANTABLES.md).
+3. **Ejecución 100% Onboard & Air-Gapped (`RNF 1`):**
+   * Prohibido introducir CDNs externos (`googleapis`, `unpkg`, `jsdelivr`, Iconify remoto) o llamadas a APIs en la nube en tiempo de ejecución.
+   * Un solo proceso y un solo puerto: FastAPI sirve el build estático de Nuxt 4 (`ssr: false`), la API REST y el stream `SSE`. Fuentes `.woff2` (`Inter`, `JetBrains Mono`) y los 16 iconos de la colección `spacescan` son 100% locales.
+4. **Paleta Oficial de 6 Colores (`frontend/app/assets/css/tokens.css`):**
+   * Prohibido escribir códigos hexadecimales sueltos en componentes. Usar exclusivamente los tokens basados en los 6 colores oficiales:
+     * `#001524` (`--color-bg-base` — Fondo Principal)
+     * `#15616D` (`--color-surface-card` — Tarjetas *smoked-glass* y Botones)
+     * `#FFECD1` (`--color-text-primary` — Texto e Iconos principales)
+     * `#2AEF4B` (`--color-status-ok` — Estado OK / Nominal, trazos ECG/S1-S2/Deep)
+     * `#000C5C` (`--color-navy-accent` — Selección activa en menús/filtros al 30%–52% opacidad con filete `#263BB0`, líneas guía en gráficas, pastillas de referencia y nivel Warning)
+     * `#D5110B` (`--color-status-critical` — Estado Crítico / Alerta, Awake y modo alerta global `data-cabin-mode="critical"`)
+5. **Separación Estricta entre Vistas de Resultados y Módulo `Capture`:**
+   * Las pantallas de monitoreo (`Profile`, `Sleep`, `Vision`, `Auscultation`, `Crew Overview`, `Crew Streaks`) son **100% de solo lectura (Solo Resultados)**: cero inputs y cero botones de registro incrustados.
+   * Toda entrada manual, validación con `Zod`, grabación acústica de `30 s` o prueba psicomotriz vive **exclusivamente** en el módulo **`Capture`** (`/capture/auscultation`, `/capture/physical`, `/capture/vision`, `/capture/psych-sleep`).
+6. **Jerarquía de Navegación en 2 Niveles y Densidad Controlada:**
+   * **Nivel 1 Público (sin PIN):** Barra inferior de 3 pestañas (`Sign In · Crew Overview · Crew Streaks`).
+   * **Nivel 2 Autenticado (tras PIN de 4 dígitos):** Dock inferior trapezoidal **simétrico de 7 módulos** con **`Profile` elevado exactamente al centro**: `1 Vision · 2 Sleep · 3 Auscultation · [4 PROFILE] · 5 Capture · 6 Guide · 7 Comms`.
+   * **`Notifications (N)` nunca va en el dock inferior:** vive **únicamente en el header superior** (`/notifications`).
+   * Máximo 2 o 3 contenedores `<HudWindow>` por pantalla (`28 px` margen exterior, `18 px` gap), sin footers informativos redundantes.
 
 ---
 
-## 4. Documentos Prioritarios de Referencia en `wakax-docs/`
+## 4. Orden de Prioridad Documental en `docs/`
 
-Antes de proponer cambios arquitectónicos o de implementación, el agente debe consultar en orden de prioridad:
-1. [`control_avance/REGLAS_INQUEBRANTABLES.md`](../control_avance/REGLAS_INQUEBRANTABLES.md) — Los 10 criterios, datos a recolectar, Figma, flujo de trabajo, idioma inglés estricto y prohibiciones.
-2. [`control_avance/ESPECIFICACION_REQUERIMIENTOS.md`](../control_avance/ESPECIFICACION_REQUERIMIENTOS.md) — Objetivos, 5 roles, RF 3.1 a 3.12, Requerimientos de Información y RNF 1 a 5.
-3. [`control_avance/ARQUITECTURA_Y_STACK_TECNICO.md`](../control_avance/ARQUITECTURA_Y_STACK_TECNICO.md) — Stack oficial `[núcleo]` y `[extra]` para Frontend, Backend, SQLite y Calidad.
-4. [`control_avance/DIVISION_TRABAJO_DEVS.md`](../control_avance/DIVISION_TRABAJO_DEVS.md) — Contrato de Fase 0 (`backend/db/schema.sql`, 16 tablas) y reparto de tareas `D1-xx`, `D2-xx`, `D3-xx`.
+Antes de proponer o escribir código, el agente debe consultar en orden de prioridad:
+1. [`control_avance/REGLAS_INQUEBRANTABLES.md`](../control_avance/REGLAS_INQUEBRANTABLES.md) — Los 10 criterios de premios, datos a recolectar, flujo de trabajo, idioma inglés estricto y prohibiciones.
+2. [`control_avance/REGLAS_DISENO_UI_UX.md`](../control_avance/REGLAS_DISENO_UI_UX.md) — Estándar global UI/UX, las 5 Leyes de Diseño, paleta de 6 colores (`tokens.css`), mapeo de las 16 pantallas Figma y plantillas de código (Vue/ECharts/WebAudio/Zod/SQLite/FastAPI).
+3. [`control_avance/ESPECIFICACION_REQUERIMIENTOS.md`](../control_avance/ESPECIFICACION_REQUERIMIENTOS.md) — Objetivos, 5 roles, RF 3.1 a 3.12, Requerimientos de Información y RNF 1 a 5.
+4. [`control_avance/ARQUITECTURA_Y_STACK_TECNICO.md`](../control_avance/ARQUITECTURA_Y_STACK_TECNICO.md) — Stack oficial `[núcleo]` y `[extra]`.
+5. [`control_avance/DIVISION_TRABAJO_DEVS.md`](../control_avance/DIVISION_TRABAJO_DEVS.md) — Contrato de Fase 0 (`backend/db/schema.sql`) y reparto de tareas `D1-xx`, `D2-xx`, `D3-xx`.
 
 ---
 

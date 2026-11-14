@@ -1,46 +1,42 @@
 # Bitácora de Avance y Resumen Maestro del Proyecto — SpaceScan
 
-> **ESTADO ACTUAL:** Especificación de requerimientos, reglas inquebrantables, stack técnico y división de trabajo en paralelo (Fase 0 y Fase 1) cerrados y consolidados en `wakax-docs/`.  
-> **NOMBRE DEL SISTEMA:** **SpaceScan**  
-> **DISEÑO OFICIAL (FIGMA):** [SpaceScan — Figma Design](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2)
+> **ESTADO ACTUAL:** Especificación de requerimientos, reglas inquebrantables, estándar global de diseño UI/UX (`Scan Space · ARES VII`), stack técnico y división de trabajo en paralelo (Fase 0 y Fase 1) cerrados y consolidados en `docs/`.  
+> **NOMBRE DEL SISTEMA:** **SpaceScan (`Scan Space · ARES VII`)**  
+> **DISEÑO OFICIAL (FIGMA):** [SpaceScan — Figma Design (`node-id=7382-2`)](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1)
 
 ---
 
-## 1. Índice de Documentación Prioritaria Consolidada
+## 1. Índice de Documentación Prioritaria Consolidada en `docs/`
 
-Toda la definición funcional, normativa y técnica revisada por el equipo ha sido integrada en los siguientes documentos dentro de `wakax-docs/control_avance/`:
+Toda la definición funcional, visual, normativa y técnica revisada por el equipo ha sido integrada en los siguientes documentos dentro de `docs/control_avance/`:
 
 | Documento | Contenido Clave |
 | :--- | :--- |
-| [**1. Reglas Inquebrantables**](./REGLAS_INQUEBRANTABLES.md) | Regla de oro de los **10 premios globales** + checklist obligatorio por PR, etapas (*Antes / Durante / Después* del despegue), datos a recolectar, fidelidad al Figma, flujo de trabajo, **idioma 100% inglés estricto** y **palabras/entidades prohibidas** (NASA / China). |
-| [**2. Especificación de Requerimientos**](./ESPECIFICACION_REQUERIMIENTOS.md) | Objetivo general y específicos, **5 actores y roles** (`Astronauta`, `Piloto`, `Operador`, `Médico`, `Control a tierra`), niveles de acceso en cabina (público vs. PIN de 4 dígitos), **RF 3.1 a 3.12**, Requerimientos de Información y **RNF 1 a 5**. |
-| [**3. Arquitectura y Stack Técnico**](./ARQUITECTURA_Y_STACK_TECNICO.md) | Ejecución **100% a bordo y sin internet** (cero CDNs/APIs cloud): **Nuxt 4 SPA** + Tailwind 4 + Reka UI + ECharts + Web Audio API; **Python 3.13 + FastAPI + SQLite 3** (WAL, STRICT, triggers *append-only*, FTS5, JSON1) + **ONNX Runtime** (Red Neuronal) + **Ollama/llama.cpp** (LLM local). |
-| [**4. División del Trabajo (3 Devs)**](./DIVISION_TRABAJO_DEVS.md) | **Fase 0** (`backend/db/schema.sql` con 16 tablas y tabla genérica `measurements` *append-only*) y **Fase 1** en paralelo: **Dev 1** (`D1-01` a `D1-07`), **Dev 2** (`D2-01` a `D2-06`) y **Dev 3** (`D3-01` a `D3-07`), con calendario de 4 semanas y sustitutos temporales sin bloqueos. |
+| [**1. Reglas Inquebrantables**](./REGLAS_INQUEBRANTABLES.md) | Regla de oro de los **10 premios globales** + checklist obligatorio por PR, etapas (*Antes / Durante / Después* del despegue), datos a recolectar, fidelidad al Figma, flujo de trabajo, **idioma 100% inglés puro sin jerga técnica en UI** y **palabras/entidades prohibidas** (NASA / China). |
+| [**2. Estándar Global de Diseño UI/UX**](./REGLAS_DISENO_UI_UX.md) | **Única fuente de verdad de diseño y construcción:** las **5 Leyes Inquebrantables de Diseño**, **Paleta Oficial de 6 Colores** (`#001524`, `#15616D`, `#FFECD1`, `#2AEF4B`, `#000C5C`, `#D5110B` en `tokens.css`), tipografía (`Inter` + `JetBrains Mono`) e iconos locales, **mapeo de las 16 pantallas Figma (`1568 × 940`)**, plantillas de código y checklist *Definition of Done*. |
+| [**3. Especificación de Requerimientos**](./ESPECIFICACION_REQUERIMIENTOS.md) | Objetivo general y específicos, **5 actores y roles** (`Astronauta`, `Piloto`, `Operador`, `Médico`, `Control a tierra`), niveles de acceso en cabina (público vs. PIN de 4 dígitos), **RF 3.1 a 3.12**, Requerimientos de Información y **RNF 1 a 5**. |
+| [**4. Arquitectura y Stack Técnico**](./ARQUITECTURA_Y_STACK_TECNICO.md) | Ejecución **100% a bordo y sin internet** en un solo proceso y puerto: **Nuxt 4 SPA** + Tailwind 4 + Reka UI + ECharts (`'spacescan-hud'`) + Web Audio API; **Python 3.13 + FastAPI + SQLite 3 STRICT** (WAL, triggers *append-only*, FTS5, JSON1) + **ONNX Runtime** + **Ollama** local. |
+| [**5. División del Trabajo (3 Devs)**](./DIVISION_TRABAJO_DEVS.md) | **Fase 0** (`backend/db/schema.sql` con tablas `STRICT` y `measurements` *append-only*) y **Fase 1** en paralelo: **Dev 1** (`D1-01` a `D1-07`), **Dev 2** (`D2-01` a `D2-06`) y **Dev 3** (`D3-01` a `D3-07`), con calendario de 4 semanas y sustitutos temporales sin bloqueos. |
 
 ---
 
-## 2. Síntesis Arquitectónica de SpaceScan
+## 2. Síntesis Arquitectónica y Visual de SpaceScan (`16 Pantallas Figma`)
 
-### 2.1 Roles Operativos y Control de Acceso
-* **Sin sesión (Público en cabina):** Vista General de Salud (*Optimal / Nominal / Attention*, signos clave y ambiente de cabina) y Rachas de Constancia (individuales y grupal).
-* **Con sesión (Selección de perfil + PIN de 4 dígitos):**
-  * `Astronauta`: Monitoreo longitudinal personal en *Despegue*, *Misión* y *Regreso*.
-  * `Piloto`: Énfasis en aptitud neurocognitiva y visual (atención, tiempo de reacción en ms, precisión, agudeza visual y descanso).
-  * `Operador`: Énfasis en aptitud cardiorrespiratoria y recuperación post-EVA ($\text{VO}_2\text{ máx}$, auscultación, respuesta ortostática) + **gestión local de usuarios**.
-  * `Médico`: Supervisión clínica global, revisión de salud ocular (SANS), **validación de prediagnósticos de IA (RN + LLM)** y atención de escalamientos.
-  * `Control a tierra` (Remoto/Asíncrono): Recepción diferida de paquetes médicos (`sync_packets`), emisión de directrices remotas y **gestión remota de usuarios**.
-
-### 2.2 Módulos Nucleares del Sistema
-1. **Gestión de Usuarios, Perfiles y Línea Base (`crew`, `baselines`):** Comparación longitudinal por etapa contra la línea base pre-misión individual.
-2. **Ingesta Centralizada Inmutable (`measurements`, `metric_catalog`):** Tabla genérica *append-only* para datos manuales y automáticos; nuevas métricas se agregan como filas en `metric_catalog`.
-3. **Módulo de Sueño (`sleep_sessions`, `sleep_stages`):** Puntaje de calidad, eficiencia y fases (*Deep, REM, Light, Awake*) filtrables por última noche, 7, 14 y 30 días.
-4. **Evaluación Psicológica y Cognitivo-Motriz (`psych_tests`, `cognitive_tests`):** Ánimo, estrés, soledad y motivación (tendencia 14 días) + prueba interactiva de tiempo de reacción y atención.
-5. **Módulo de Visión y Salud Ocular SANS (`measurements` L/R):** Seguimiento bilateral de diámetro de vaina del nervio óptico, presión intraocular, grosor retiniano y agudeza visual.
-6. **Módulo de Auscultación Acústica (`auscultation_samples`):** Verificación previa de ruido ambiental en cabina y grabación de 30 s cardíaca/pulmonar (Web Audio API + MediaRecorder, audio en disco con hash SHA-256).
-7. **Diagnóstico Asistido Dual Offline (`diagnoses`):** Red Neuronal Convencional (ONNX Runtime) para detección temprana de anomalías + LLM local (`Ollama` / `llama.cpp`) para explicación orientativa sujeta a validación del `Médico`.
-8. **Guía Médica y Wiki de Respaldo (`wiki_entries` con SQLite FTS5):** Protocolos de emergencia buscables offline ($\text{CO}_2$, visión, sueño/fatiga, trauma, medicación) enriquecidos con diagnósticos ya validados.
-9. **Alertas, Chequeos y Quiet Hours (`alerts`, `scheduled_checks`):** Notificaciones vía SSE con protección del horario de descanso para avisos no críticos.
-10. **Comunicación Asíncrona con Control a Tierra (`sync_packets`):** Cola *store-and-forward* tolerante a alta latencia inspirada en DTN.
+### 2.1 Jerarquía de Navegación en 2 Niveles y Separación Resultados vs. Captura
+* **Nivel 1 Público (Sin PIN — Barra inferior de 3 pestañas):**
+  * `01_Sign_In.svg` (`/login`): Acceso exclusivo por PIN de 4 dígitos + botones directos a vistas públicas.
+  * `02_Crew_Overview.svg` (`/crew-overview`): Resumen grupal de solo lectura (*Optimal / Nominal / Attention*, signos clave y ambiente de cabina).
+  * `03_Crew_Streaks.svg` (`/crew-streaks`): Rachas individuales y grupal de solo lectura.
+* **Nivel 2 Autenticado (Tras PIN — Dock inferior trapezoidal simétrico de 7 módulos con `Profile` elevado al centro):**
+  * `1 Vision` (`/vision` — `08_Vision_Exam.svg`, **Solo Resultados**).
+  * `2 Sleep` (`/sleep` — `07_Sleep_Monitor.svg`, **Solo Resultados** con barra de cintas ECharts).
+  * `3 Auscultation` (`/auscultation` — `09_Auscultation_Results.svg`, **Solo Resultados** con fonocardiograma `S1/S2` y $\text{CO}_2$).
+  * **`[4 PROFILE — Principal Central]`** (`/profile/personal` `04`, `/profile/psychological` `05`, `/profile/physical` `06`, **Solo Resultados**).
+  * `5 Capture` (**Único módulo con formularios e inputs**, dividido en 4 sub-pestañas: `/capture/auscultation` `10`, `/capture/physical` `11`, `/capture/vision` `12`, `/capture/psych-sleep` `13`).
+  * `6 Guide` (`/guide` — `14_Medical_Guide.svg`, buscador instantáneo FTS5 y localizador de botiquín).
+  * `7 Comms` (`/comms` — `15_Mission_Control.svg`, cola diferida *store-and-forward* hacia Tierra y clima solar).
+* **Header Superior Exclusivo (`TopTelemetryBar.vue`):**
+  * Reloj `MISSION CLOCK`, estado global de cabina y campana de **`Notifications (N)`** (`/notifications` — `16_Notifications_Header.svg`, nunca en el dock inferior).
 
 ---
 
@@ -56,4 +52,5 @@ De acuerdo con la revisión de `MyWork comentarios.md`, quedan registrados en [`
 
 | Fecha | Hito / Decisión | Descripción Técnica | Responsable |
 | :--- | :--- | :--- | :--- |
-| **2026-11-14** | **Consolidación de Especificación, Reglas, Stack y División de Trabajo** | Integración prioritaria en `wakax-docs/` de los 5 documentos validados (`reglas inquebrantables.md`, `Especifcacion.md`, `requerimientos tecnicos.md`, `divicion del trabajo.md` y `MyWork comentarios.md`), reemplazando supuestos preliminares por la arquitectura definitiva de **SpaceScan**. | Equipo / IA |
+| **2026-11-14** | **Consolidación de Especificación, Reglas, Stack y División de Trabajo** | Integración prioritaria de los documentos validados (`reglas inquebrantables.md`, `Especifcacion.md`, `requerimientos tecnicos.md`, `divicion del trabajo.md` y `MyWork comentarios.md`). | Equipo / IA |
+| **2026-11-14** | **Renombrado a `docs/` e Integración del Estándar de Diseño UI/UX** | Actualización de rutas del repositorio documental a `docs/` (`willor16/docs`) e incorporación de [`REGLAS_DISENO_UI_UX.md`](./REGLAS_DISENO_UI_UX.md) con las 5 Leyes de Diseño, Paleta Oficial de 6 Colores (`tokens.css`), mapeo de las 16 pantallas Figma y plantillas de construcción. | Equipo / IA |
