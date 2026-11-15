@@ -1,0 +1,12 @@
+# OS & Editor
+.DS_Store
+Thumbs.db
+
+# Python / Torre de Control (docs/miWork/)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Respaldos locales generados en disco
+*.bak
+*.bak_*

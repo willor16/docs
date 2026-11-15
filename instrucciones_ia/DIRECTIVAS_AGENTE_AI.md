@@ -6,13 +6,13 @@
 
 ## 1. Delimitación Estricta de Espacios de Trabajo
 
-El ecosistema del proyecto se divide en **3 áreas con responsabilidades y permisos diferenciados**:
+El ecosistema del proyecto se divide en **2 repositorios principales** (con la Torre de Control Interna alojada dentro de `docs/miWork/`):
 
 | Espacio | Propósito Principal | Reglas de Gobernanza para la IA |
 | :--- | :--- | :--- |
 | **`wakax-nasa-challenge-2026/`** | **Repositorio Oficial de Código** (`willor16/wakax-nasa-challenge-2026`). Contiene el software **SpaceScan** (`frontend/` en Nuxt 4 SPA y `backend/` en FastAPI + SQLite 3 STRICT). | **Restringido:** No crear, modificar ni eliminar archivos sin orden y confirmación explícita del usuario. Prohibido ejecutar comandos de Git (`add`, `commit`, `push`, `branch`, `checkout`) sin instrucción directa. |
-| **`docs/`** | **Repositorio Oficial de Documentación y Gestión** (`willor16/docs`). Centraliza las reglas inquebrantables, estándar de diseño UI/UX, especificación de requerimientos, stack técnico, división del trabajo (`control_avance/`), bases del reto (`investigacion/`) y directivas de IA (`instrucciones_ia/`). | **Espacio documental oficial:** Toda especificación funcional, reglas visuales, arquitectura, contratos de base de datos, parámetros biomédicos y bitácoras se consultan y actualizan aquí. |
-| **`miWork/`** | **Torre de Control Interna — Scan Workspace (Aislado).** Servidor local Python (`server.py`), dashboard colaborativo (`index.html`) y estado en tiempo real (`state.json`). | **Aislamiento total:** Ningún archivo, script, log o estado de `miWork/` debe copiarse ni integrarse en `wakax-nasa-challenge-2026/`. |
+| **`docs/`** | **Repositorio Oficial de Documentación y Gestión** (`willor16/docs`). Centraliza las reglas inquebrantables, estándar de diseño UI/UX, especificación de requerimientos, stack técnico, división del trabajo (`control_avance/`), bases del reto (`investigacion/`), directivas de IA (`instrucciones_ia/`) y la Torre de Control (`miWork/`). | **Espacio documental oficial:** Toda especificación funcional, reglas visuales, arquitectura, contratos de base de datos, parámetros biomédicos y bitácoras se consultan y actualizan en `docs/control_avance/`. La subcarpeta `docs/miWork/docs/` es solo almacenamiento de trabajo del editor Colab y **no** sustituye la documentación normativa. |
+| **`docs/miWork/`** | **Torre de Control Interna — Scan Workspace (Aislado dentro de `docs/`).** Servidor local Python (`server.py`), dashboard colaborativo (`index.html`), estado en tiempo real (`state.json`) y archivos `.md` de Colab (`docs/miWork/docs/`). | **Aislamiento total respecto al código:** Ningún archivo, script, log o estado de `docs/miWork/` debe copiarse ni integrarse en `wakax-nasa-challenge-2026/`. |
 
 ---
 
@@ -59,7 +59,7 @@ Al redactar código, especificaciones, estilos CSS, componentes Vue o textos de 
    * Máximo 2 o 3 contenedores `<HudWindow>` por pantalla (`28 px` margen exterior, `18 px` gap), sin footers informativos redundantes.
 7. **Patrones Técnicos de Arranque, Puertos y Redirección en Nuxt/FastAPI:**
    * **Redirección de Rutas:** Usar siempre `definePageMeta({ redirect: '/login' })` para navegación declarativa en SPA. Prohibido usar `await navigateTo()` en nivel superior de `<script setup>` en páginas puente sin vista.
-   * **Matriz de Puertos y CORS:** No asumir el puerto `8000` para FastAPI si `miWork/` está presente; apuntar por defecto a `8080`. Configurar siempre `devServer: { host: '0.0.0.0', port: 3000 }` en Nuxt y `CORSMiddleware` con `allow_origin_regex` en FastAPI para admitir clientes LAN (`192.168.*.*`, `10.*.*.*`).
+   * **Matriz de Puertos y CORS:** No asumir el puerto `8000` para FastAPI si `docs/miWork/` está presente; apuntar por defecto a `8080`. Configurar siempre `devServer: { host: '0.0.0.0', port: 3000 }` en Nuxt y `CORSMiddleware` con `allow_origin_regex` en FastAPI para admitir clientes LAN (`192.168.*.*`, `10.*.*.*`).
    * **Empaquetado Backend:** Todo cambio en `pyproject.toml` debe incluir `[build-system]` con `setuptools.build_meta` y `[tool.setuptools.packages.find]` (`include = ["app*", "db*"]`).
 
 ---
@@ -75,11 +75,11 @@ Antes de proponer o escribir código, el agente debe consultar en orden de prior
 
 ---
 
-## 5. Normas Técnicas y Backlog de la Torre de Control Interna (`miWork/`)
+## 5. Normas Técnicas y Backlog de la Torre de Control Interna (`docs/miWork/`)
 
-Cuando el usuario solicite intervenir específicamente en la herramienta colaborativa interna `miWork/`, se aplican las siguientes reglas técnicas y tareas de mantenimiento:
+Cuando el usuario solicite intervenir específicamente en la herramienta colaborativa interna `docs/miWork/`, se aplican las siguientes reglas técnicas y tareas de mantenimiento:
 
-### 5.1 Invariantes del Editor y Sincronizador (`miWork/`)
+### 5.1 Invariantes del Editor y Sincronizador (`docs/miWork/`)
 1. **Identificadores Canónicos (`doc_<slug>`):**
    * Todo documento Markdown sincronizado utiliza un identificador determinista derivado de su nombre de archivo (ej. `especificacion.md` $\rightarrow$ `doc_especificacion`). No generar IDs aleatorios temporales para evitar duplicaciones en `state.json`.
 2. **Blindaje del Editor en Vivo:**
@@ -90,6 +90,6 @@ Cuando el usuario solicite intervenir específicamente en la herramienta colabor
    * `Tab`: Inserta 2 espacios de sangría sin desenfocar el editor.
    * `Cmd + S` (Mac) / `Ctrl + S` (Windows): Guarda inmediatamente en el servidor local con confirmación visual.
 
-### 5.2 Ajustes Pendientes Reportados para `miWork/` (Ref: `MyWork comentarios.md`)
+### 5.2 Ajustes Pendientes Reportados para `docs/miWork/` (Ref: `MyWork comentarios.md`)
 * [ ] **Preservación de posición de scroll en Checklist:** Corregir el comportamiento donde marcar una tarea del checklist y pulsar el botón de "Listo" fuerza un desplazamiento inesperado (`scrollTop`) hacia la parte superior de la página.
 * [ ] **Renombrado de Interfaz Principal:** Cambiar el título de la página principal de la herramienta interna de **`Scan Space`** a **`Scan Workspace`** (diferenciando claramente la Torre de Control interna del producto entregable **SpaceScan**).

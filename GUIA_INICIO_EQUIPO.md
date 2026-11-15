@@ -1,20 +1,21 @@
 # 👥 Guía de Coordinación y Gobernanza del Equipo — SpaceScan (NASA Challenge 2026)
 
-## 1. Arquitectura de los Tres Espacios del Proyecto
+## 1. Arquitectura de los Espacios del Proyecto
 
-El ecosistema de trabajo se estructura estrictamente en tres directorios con responsabilidades independientes:
+El ecosistema de trabajo se estructura estrictamente en **dos repositorios independientes**, con la Torre de Control Interna integrada como subespacio aislado dentro de `docs/`:
 
 1. **`wakax-nasa-challenge-2026/` (Repositorio Oficial de Código — SpaceScan)**:
    * Directorio del software entregable oficial (`willor16/wakax-nasa-challenge-2026`).
    * Contiene el frontend (**Nuxt 4 SPA**) y el backend (**Python 3.13 + FastAPI + SQLite 3 STRICT** en `backend/db/schema.sql`), servidos como un único proceso y en un solo puerto.
    * **Regla de Gobernanza:** Solo se integran módulos validados que cumplan los 10 criterios de premios globales, las 5 Leyes de Diseño UI/UX y bajo confirmación explícita. No se ejecutan operaciones de Git sin instrucción directa.
 
-2. **`docs/` (Repositorio Oficial de Documentación y Gestión — `willor16/docs`)**:
-   * Centraliza las reglas inquebrantables, el estándar global de diseño UI/UX y guía maestra de construcción, la especificación formal de requerimientos, la arquitectura técnica, la división de trabajo para los 3 Devs fullstack, las bases oficiales del desafío y las directivas para modelos de IA.
+2. **`docs/` (Repositorio Oficial de Documentación, Gestión y Workspace — `willor16/docs`)**:
+   * Centraliza las reglas inquebrantables, el estándar global de diseño UI/UX y guía maestra de construcción, la especificación formal de requerimientos, la arquitectura técnica, la división de trabajo para los 3 Devs fullstack, las bases oficiales del desafío, las directivas para modelos de IA y la Torre de Control Interna (`docs/miWork/`).
 
-3. **`miWork/` (Torre de Control Interna — Aislado)**:
-   * Espacio exclusivo de coordinación interactiva en red local (**Scan Workspace**): dashboard web (`index.html`), servidor Python (`server.py`), base de datos colaborativa en tiempo real (`state.json`) y scripts de arranque (`iniciar_servidor.*`).
-   * **Regla de Aislamiento:** Ningún archivo, script, log o dato de `miWork/` debe formar parte del repositorio oficial de código `wakax-nasa-challenge-2026/`.
+   * **`docs/miWork/` (Torre de Control Interna — Aislado dentro de `docs/`)**:
+     * Espacio exclusivo de coordinación interactiva en red local (**Scan Workspace**): dashboard web (`index.html`), servidor Python (`server.py`), base de datos colaborativa en tiempo real (`state.json`), notas del editor Colab (`docs/miWork/docs/`) y scripts de arranque (`iniciar_servidor.*`).
+     * **Regla de Aislamiento:** Ningún archivo, script, log o dato de `docs/miWork/` debe formar parte del repositorio oficial de código `wakax-nasa-challenge-2026/`.
+     * **Jerarquía Documental:** La fuente de verdad normativa del proyecto reside exclusivamente en `docs/control_avance/`; la subcarpeta `docs/miWork/docs/` es solo almacenamiento de trabajo del editor Colab.
 
 ---
 
@@ -28,13 +29,20 @@ docs/
 ├── investigacion/
 │   ├── RETO_OFICIAL_NASA_2026.md                    # Consigna oficial del reto, criterios del jurado y 10 premios.
 │   └── reto_oficial_nasa_2026.json                  # Esquema estructurado en JSON de las bases oficiales del reto.
-└── control_avance/
-    ├── REGLAS_INQUEBRANTABLES.md                    # PRIORITARIO: Los 10 criterios, idioma 100% inglés, prohibiciones y Figma.
-    ├── REGLAS_DISENO_UI_UX.md                       # PRIORITARIO: Estándar UI/UX, 5 Leyes, 6 Colores, 16 Pantallas y Código Guía.
-    ├── ESPECIFICACION_REQUERIMIENTOS.md             # PRIORITARIO: Objetivos, 5 roles, RF 3.1–3.12, Datos y RNF 1–5.
-    ├── ARQUITECTURA_Y_STACK_TECNICO.md              # PRIORITARIO: Stack Nuxt 4 + FastAPI + SQLite3 + ONNX/Ollama offline.
-    ├── DIVISION_TRABAJO_DEVS.md                     # PRIORITARIO: Fase 0 (tablas SQLite) y Fase 1 (tareas D1, D2, D3).
-    └── BITACORA_AVANCE_RETO.md                      # Resumen ejecutivo del estado actual, trazabilidad y bitácora.
+├── control_avance/
+│   ├── REGLAS_INQUEBRANTABLES.md                    # PRIORITARIO: Los 10 criterios, idioma 100% inglés, prohibiciones y Figma.
+│   ├── REGLAS_DISENO_UI_UX.md                       # PRIORITARIO: Estándar UI/UX, 5 Leyes, 6 Colores, 16 Pantallas y Código Guía.
+│   ├── ESPECIFICACION_REQUERIMIENTOS.md             # PRIORITARIO: Objetivos, 5 roles, RF 3.1–3.12, Datos y RNF 1–5.
+│   ├── ARQUITECTURA_Y_STACK_TECNICO.md              # PRIORITARIO: Stack Nuxt 4 + FastAPI + SQLite3 + ONNX/Ollama offline.
+│   ├── DIVISION_TRABAJO_DEVS.md                     # PRIORITARIO: Fase 0 (tablas SQLite) y Fase 1 (tareas D1, D2, D3).
+│   └── BITACORA_AVANCE_RETO.md                      # Resumen ejecutivo del estado actual, trazabilidad y bitácora.
+└── miWork/                                          # Torre de Control Interna (aislada del código entregable).
+    ├── server.py                                    # Servidor HTTP colaborativo en tiempo real (Puerto 8000).
+    ├── index.html                                   # Dashboard colaborativo, checklist y editor Markdown Colab.
+    ├── state.json                                   # Estado sincronizado de tareas, asignaciones, notas y docs.
+    ├── ESPECIFICACION_CONTROL_AVANCE.md             # Manual técnico y funcional de la Torre de Control.
+    ├── iniciar_servidor.command / .bat              # Lanzadores rápidos para macOS y Windows.
+    └── docs/                                        # Almacén físico de archivos .md sincronizados por Colab.
 ```
 
 ---
@@ -84,7 +92,7 @@ docs/
 
 ### 5.1 Matriz Oficial de Puertos en Desarrollo
 Para evitar colisiones de enlace en la máquina de desarrollo (`[Errno 48] Address already in use`):
-* **`Puerto 8000`:** Torre de Control Interna (`miWork/server.py`).
+* **`Puerto 8000`:** Torre de Control Interna (`docs/miWork/server.py`).
 * **`Puerto 8080`:** Backend FastAPI + Telemetría SSE (`wakax-nasa-challenge-2026/backend`).
 * **`Puerto 3000`:** Frontend Nuxt 4 (`wakax-nasa-challenge-2026/frontend`).
 

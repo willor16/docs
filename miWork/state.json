@@ -1,0 +1,961 @@
+{
+  "markdownDocs": {
+    "doc_especifcacion": {
+      "id": "doc_especifcacion",
+      "title": "Especifcacion.md",
+      "content": "# Especificación de Requerimientos — SpaceScan\n\n## 1. Objetivos y Alcance\n\n### 1.1 Objetivo General\nCaptura, análisis e interpretación de datos orientados exclusivamente a la salud general de todos los tripulantes (excluyendo datos operativos o externos ajenos a la salud).\n\n### 1.2 Objetivos Específicos\n- **Recopilación de datos por etapa:** Despegue, Misión y Regreso.\n- **Diagnóstico asistido:** Entrenamiento e integración de red neuronal convencional + LLM para apoyo diagnóstico.\n- **Wiki de respaldo:** Creación de una Wiki médica de respaldo alimentada mediante los datos obtenidos previamente.\n\n---\n\n## 2. Actores y Roles\n\n- **Astronauta:** Tripulante base sujeto al monitoreo integral de salud general en Despegue, Misión y Regreso; registra sus mediciones y consulta su estado personal y grupal.\n- **Piloto:** Tripulante cuya evaluación de salud corrobora los requerimientos físicos y neurocognitivos necesarios para desempeñar sus funciones (como retención de atención, tiempo de reacción, agudeza visual y descanso).\n- **Operador:** Tripulante encargado de actividades fuera de la nave cuya evaluación de salud corrobora su estado físico, cardiorrespiratorio y recuperación post-esfuerzo; además, gestiona usuarios de forma local.\n- **Médico:** Oficial médico a bordo que, además de su propio monitoreo, supervisa los indicadores clínicos, alertas y diagnósticos de la tripulación y atiende escalamientos de salud.\n- **Control a tierra:** Equipo remoto que recibe de forma asíncrona (sin inicio de sesión en cabina) los resúmenes y registros de salud de la tripulación, emite directrices médicas y gestiona usuarios de forma remota.\n\n> **Niveles de acceso en cabina:** Consulta pública sin sesión para resumen general de salud y rachas de tripulación; acceso mediante selección de perfil y PIN de 4 dígitos para módulos individuales y gestión local.\n\n---[Texto del enlace](https://www.nasa.gov)\n\n## 3. Requerimientos Funcionales (RF)\n\n### 3.1 Gestión de Usuarios y Acceso\n- **Creación y gestión de usuarios (Operador local y Control a tierra):** Alta, edición y baja/desactivación de perfiles de tripulantes con datos base pre-misión, rol (`Astronauta`, `Piloto`, `Operador`, `Médico`) y PIN de 4 dígitos, ejecutable localmente por el `Operador` y de forma remota/asíncrona por `Control a tierra`.\n- **Inicio de sesión con perfil y PIN / Acceso público en cabina:** Selección visual de perfil (con indicador de estado general de salud) e ingreso de PIN de 4 dígitos para acceder a módulos individuales y cerrar sesión; acceso directo sin sesión a la vista general de salud y a las rachas de tripulación.\n\n### 3.2 Vista General de Salud y Rachas de Tripulación\n- **Resumen grupal de salud:** Visualización pública del estado global por tripulante (*Óptimo / Nominal / Atención*), signos clave recientes (frecuencia cardíaca, HRV, sueño en 24 h y SpO₂) y variables ambientales de cabina con impacto directo en la salud (CO₂, ruido, temperatura y humedad).\n- **Rachas de constancia:** Visualización de rachas individuales y racha grupal de días consecutivos cumpliendo registros y hábitos de salud, incluyendo racha activa, mejor marca personal e historial de los últimos 7 días.\n\n### 3.3 Perfil de Salud del Tripulante (Despegue, Misión y Regreso)\n- **Comparativa por etapa y línea base:** Consulta del historial del tripulante segmentado por *Despegue*, *Misión* y *Regreso*, contrastando cada indicador contra su línea base personal.\n- **Datos personales y biométricos:** Consulta de edad, sexo, tipo de sangre, estatura, peso, IMC, retención de masa muscular, densidad ósea y capacidad aeróbica (VO₂ máx).\n- **Estado psicológico:** Consulta del índice global de bienestar, métricas de ánimo, estrés, soledad y motivación, tendencia de los últimos 14 días y desempeño cognitivo-motriz.\n- **Estado físico y clínico:** Consulta de signos vitales (frecuencia cardíaca en reposo, presión arterial, SpO₂, temperatura corporal, ECG y HRV), cumplimiento diario de hábitos (ejercicio, hidratación y calorías) y últimos resultados de glucosa, sangre, orina, visión y auscultación.\n\n### 3.4 Toma y Captura de Datos de Salud\n- **Ingesta manual y automática:** Captura guiada de mediciones manuales y recepción automática de sensores con marca temporal y etapa de misión, actualizando de inmediato el perfil, las alertas y las rachas.\n- **Captura de auscultación:** Grabación guiada de muestras acústicas cardíacas y pulmonares (30 s) previa verificación de ruido ambiental apto para lectura clínica.\n- **Captura física, hábitos y laboratorio:** Registro diario de signos vitales, peso, hidratación, ingesta calórica y minutos de ejercicio, junto con resultados periódicos de glucosa, sangre y orina.\n- **Captura ocular y psicofísica:** Registro bilateral de parámetros oculares (diámetro de vaina del nervio óptico, presión intraocular, grosor retiniano y agudeza visual), ventana de sueño, escala psicológica y prueba interactiva de atención y tiempo de reacción.\n\n### 3.5 Módulo de Sueño\n- **Indicadores de descanso:** Consulta filtrable por periodo (*última noche, 7, 14 y 30 días*) del puntaje de calidad de sueño, horas dormidas frente a la meta mínima, tiempo en cama y eficiencia de sueño.\n- **Etapas y ciclos:** Desglose de duración, porcentaje e intervalos horarios por fase (*Profundo, REM, Ligero y Despierto*) para evaluar la recuperación del tripulante.\n\n### 3.6 Evaluación Psicológica y Cognitivo-Motriz\n- **Test psicológico periódico:** Registro y seguimiento estandarizado de estado de ánimo, estrés, aislamiento/soledad y motivación frente a la zona óptima individual.\n- **Evaluación cognitivo-motriz:** Pruebas objetivas de retención de atención, coordinación y tiempo de reacción (latencia en ms y precisión), clave para corroborar la aptitud de salud en roles como `Piloto`.\n\n### 3.7 Módulo de Visión y Salud Ocular\n- **Seguimiento neuro-ocular bilateral:** Consulta comparativa de ojo izquierdo y derecho para diámetro de vaina del nervio óptico, presión intraocular, grosor retiniano y agudeza visual.\n- **Control de riesgo visual:** Gráfica de tendencia frente a línea base y umbrales de alerta clínica, estado de revisión del `Médico` y recomendaciones preventivas.\n\n### 3.8 Módulo de Auscultación\n- **Evaluación acústica cardiorrespiratoria:** Consulta de hallazgos cardíacos (ritmicidad S1/S2, frecuencia, presencia de soplos y fonocardiograma) y pulmonares (frecuencia respiratoria, murmullo vesicular por zona y ruidos adventicios).\n- **Capacidad física y entorno respiratorio:** Seguimiento de VO₂ máx, respuesta ortostática e índice cardiorrespiratorio (clave para corroborar condición física y recuperación post-esfuerzo en roles como `Operador`), junto con la tendencia de CO₂ en cabina asociada a salud respiratoria.\n\n### 3.9 Diagnóstico Asistido (Red Neuronal Convencional + LLM)\n- **Detección de patrones y anomalías (Red Neuronal Convencional):** Análisis conjunto de series biométricas, señales clínicas (ECG, auscultación, mediciones oculares) e indicadores psicofísicos para detectar desviaciones tempranas respecto a la línea base personal.\n- **Interpretación clínica orientativa (LLM):** Generación en lenguaje claro de prediagnósticos asistidos, explicación de hallazgos y sugerencias preventivas basadas en el historial del tripulante, sujetas a supervisión y validación del `Médico`.\n\n### 3.10 Guía Médica y Wiki de Respaldo\n- **Protocolos de atención y emergencia:** Búsqueda por síntomas o categorías clínicas (*exposición a CO₂, visión/presión, sueño/fatiga, trauma y medicación*) con pasos secuenciales de actuación, criterios de escalamiento al `Médico` y referencia de insumos en el botiquín médico.\n- **Wiki evolutiva de respaldo:** Consulta y enriquecimiento local del repositorio médico a partir de los datos, casos e interpretaciones registrados en etapas previas de la misión.\n\n### 3.11 Notificaciones y Alertas de Salud\n- **Bandeja clasificada:** Gestión de *Avisos de Salud* (anomalías frente a línea base o umbrales críticos) y *Chequeos Programados* (recordatorios de mediciones y pruebas periódicas).\n- **Atención y protección del descanso:** Confirmación de lectura, acciones de cuidado recomendadas, vínculo directo al protocolo de la Wiki médica y modo de horario silencioso (*Quiet Hours*) para avisos no urgentes durante el descanso.\n\n### 3.12 Comunicación Médica Asíncrona con Control a Tierra\n- **Envío y recepción diferida:** Transmisión manual o programada de resúmenes diarios de salud y resultados clínicos hacia `Control a tierra`, y recepción asíncrona de directrices médicas remotas.\n- **Estado de transmisión:** Registro de latencia estimada y trazabilidad de entrega/sincronización de cada paquete médico.\n\n---\n\n## 4. Requerimientos de Información (Datos)\n> Información de salud en Despegue, Misión y Regreso que el sistema debe registrar y conservar.\n\n- **Trazabilidad obligatoria:** Identificador de tripulante, marca temporal (UTC), etapa (*Despegue, Misión o Regreso*) y origen del dato (*manual o automático*) en cada medición.\n- **Usuarios y línea base:** Datos demográficos (edad, sexo, tipo de sangre, estatura), rol, PIN de acceso y valores de referencia pre-misión por tripulante.\n- **Biometría, signos vitales y carga física:** Peso, IMC, masa muscular, densidad ósea, VO₂ máx, frecuencia cardíaca, HRV, ECG, presión arterial, SpO₂, temperatura corporal, respuesta ortostática y tiempo de esfuerzo físico/exposición (interior y exterior).\n- **Registros clínicos, oculares y acústicos:** Glucosa, parámetros de sangre y orina, diámetro de vaina del nervio óptico, presión intraocular, grosor retiniano, agudeza visual y muestras/resultados de auscultación cardíaca y pulmonar.\n- **Sueño, estado psicológico, motricidad, hábitos y entorno clínico:** Duración y etapas de sueño, ánimo, estrés, soledad, motivación, tiempo de reacción y precisión motriz, ingesta calórica, hidratación y variables ambientales de cabina con impacto clínico (CO₂, ruido, temperatura y humedad).\n- **Diagnósticos, Wiki y bitácoras:** Prediagnósticos e interpretaciones asistidas (RN + LLM), entradas de la Wiki médica de respaldo, alertas, rachas de cumplimiento e historial de sincronización médica con `Control a tierra`.\n\n---\n\n## 5. Requerimientos No Funcionales (RNF)\n- **Autonomía offline y sincronización asíncrona:** Operación completa a bordo (captura, consulta, alertas, inferencia diagnóstica RN + LLM y Wiki de respaldo) sin depender de conexión continua con la Tierra, encolando paquetes médicos para transmisión diferida tolerante a alta latencia.\n- **Evaluación personalizada con base científica:** Detección de desviaciones contra la línea base individual de cada tripulante y los requerimientos psicofísicos propios de su rol, respaldada por rangos clínicos de referencia.\n- **Privacidad y control de acceso en cabina:** Separación entre consulta grupal sin sesión (limitada a resumen general y rachas) y acceso individual autenticado con PIN de 4 dígitos, restringiendo la gestión de usuarios a `Operador` (local) y `Control a tierra` (remota).\n- **Usabilidad crítica y baja fatiga visual:** Interfaz legible de alto contraste en cabina, acceso en pocos pasos a protocolos de emergencia y respeto de horarios de sueño (*Quiet Hours*) para notificaciones no críticas.\n- **Integridad y conservación histórica:** Resguardo íntegro, inalterable y trazable de todas las series temporales de salud en *Despegue*, *Misión* y *Regreso* ante cortes de enlace o reinicios del sistema.\n[[Texto del enlace](https://www.nasa.gov)](https://www.nasa.gov)",
+      "updatedBy": "Carlos",
+      "updatedAt": "2026-11-15T05:26:46.242Z"
+    },
+    "doc_reglas_inquebrantables": {
+      "id": "doc_reglas_inquebrantables",
+      "title": "reglas inquebrantables.md",
+      "content": "# Nuevo Documento\n\nEscribe aquí tus apuntes, notas o instrucciones...# 🚀 Scan Space\n> **Reto:** NASA Space Apps Challenge 2026 — *Create Health Monitoring Software for Astronauts on Space Missions*.\n\n---\n\n## 0. ⭐ Regla de oro — Los 10 criterios de premios globales\n\n> **Obligatorio:** cada módulo, pantalla, dato, decisión, tarea o commit **debe satisfacer los 10 criterios** de abajo.\n> Si algo no aporta a ninguno de ellos, se replantea antes de hacerlo.\n> Fuente: [Space Apps — Awards](https://www.spaceappschallenge.org/awards/) y la [Guía de jueces y premios](https://www.spaceappschallenge.org/resources/judging-awards-guide/).\n\n| # | Premio | Qué piden | Cómo lo cumple Scan Space |\n|---|---|---|---|\n| 1 | **Best Use of Data** | El proyecto que mejor hace accesibles los datos espaciales o los usa en una aplicación única | Usar datasets reales de NASA (OSDR/GeneLab, DONKI) además de datos simulados, y mostrarlos de forma clara |\n| 2 | **Best Use of Science** | El uso más válido de la ciencia y/o del método científico | Rangos de referencia y frecuencias de medición respaldados por fuentes citadas |\n| 3 | **Best Use of Technology** | El uso más innovador de la tecnología | Detección de anomalías contra la línea base personal; funcionamiento sin conexión con la Tierra |\n| 4 | **Best Storytelling** | Comunicar de forma creativa el potencial de los datos abiertos mediante una narrativa | Contar la historia **antes / durante / después** del despegue en la demo y el video |\n| 5 | **Best Mission Concept** | El concepto y diseño más plausibles | Respetar limitaciones reales: radiación, poca muestra de sangre/orina, latencia y espacio a bordo |\n| 6 | **Galactic Impact** | El mayor potencial de mejorar la vida en la Tierra o en el universo | Que la solución también sirva para telemedicina remota en la Tierra |\n| 7 | **Global Connection** | El proyecto que mejor conecta a personas de todo el mundo mediante la tecnología | Varios idiomas, código abierto en repo público, datos en formato estándar (JSON) |\n| 8 | **Local Impact** (?) | El mayor impacto en la comunidad local | Caso de uso local: zonas rurales o aisladas, centros de salud remotos |\n| 9 | **Most Inspirational** | El proyecto que \"conquista corazones\" | Foco humano: ánimo, soledad, motivación, rachas |\n| 10 | **Art & Technology** (?) | Unir arte y tecnología | UI y visualizaciones cuidadas, con estética espacial |\n\n> `(?)` = descripción oficial no confirmada (la web no abrió por un error de certificado); revisar la redacción exacta.\n\n### Checklist de validación (aplicar a TODO entregable)\n\n- [ ] 1. Best Use of Data — ¿usa o hace accesibles datos espaciales reales?\n- [ ] 2. Best Use of Science — ¿está respaldado por ciencia y fuentes citadas?\n- [ ] 3. Best Use of Technology — ¿la tecnología aporta algo innovador?\n- [ ] 4. Best Storytelling — ¿se puede contar como parte de la historia de la misión?\n- [ ] 5. Best Mission Concept — ¿es plausible en una misión real?\n- [ ] 6. Galactic Impact — ¿mejora la vida en la Tierra o en el espacio?\n- [ ] 7. Global Connection — ¿es abierto y lo puede usar gente de cualquier lugar?\n- [ ] 8. Local Impact — ¿tiene aplicación en nuestra comunidad?\n- [ ] 9. Most Inspirational — ¿pone a la persona en el centro?\n- [ ] 10. Art & Technology — ¿se ve y se siente bien diseñado?\n\n\n\n## 2. Objetivos (Obj. 1–3)\n\n- Datos de la misión: **antes / durante / después** del despegue\n\n---\n\n## 3. Datos a recolectar\n\n### 3.1 Datos del usuario (biométricos)\n\n- Hora\n- Edad\n- Sexo\n- Altura\n- Peso\n- Masa muscular\n- Densidad ósea\n- IMC\n- Ritmo cardíaco\n- Presión arterial\n- Ruido (ambiente)\n\n### 3.2 Datos de misión (directos)\n\n| Manuales | Automáticos |\n|---|---|\n| Glucosa | Temperatura |\n| Auscultaciones (?) | Humedad |\n| Sangre | Tiempo de misión |\n| Orina | Tiempo de trabajo (interior y exterior) |\n| Exámenes de la vista | Saturación de oxígeno |\n| Motrices | Ejercicio |\n\n### 3.3 Datos indirectos\n\n- Estado de ánimo\n- Sueño\n- Nivel de estrés\n- Soledad\n- Motivación\n- Alimentación\n- Hidratación\n\nlos datos pendientes estan sujetos a lo que este en el archivo Especificacion.md\n---\n\n## 4. App \nsujeto al diseño de figma debe ser fiel al disño generado en figma  https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1\n\n## 5. Flujo de trabajo\n\n- **Datos (esto es especifico para los investigadores no tiene que ver con los devs):** Investigar → Filtrar → JSON\n- **Validadores:** Módulo → Revisan → OK (si no pasa → regresa a Devs)\n- **Testers:** GIT → clonar\n\n## 6 idioma\nel idioma debe ser estrictamente ingles sin integrar ningun otro idioma, todo debe estar en ingles ni una sola palabra en eespañol u otro idioma \n\n## 7 palabras prohibidas\nno debe tener ni hacer mencion a la nasa ni ningun ente relacionado con china o directamente a china",
+      "updatedBy": "Wilmer",
+      "updatedAt": "2026-11-14T19:43:04.778Z"
+    },
+    "doc_requerimientos_tecnicos": {
+      "id": "doc_requerimientos_tecnicos",
+      "title": "requerimientos tecnicos.md",
+      "content": "**Regla:** todo corre **a bordo y sin internet** (RNF 1). Cero CDNs y cero APIs en la nube en tiempo de ejecución: fuentes, iconos, modelos y datos de NASA van dentro del proyecto.\n> **[núcleo]** = obligatorio para la demo · **[extra]** = solo si sobra tiempo.\n\n### frontend\n- **Nuxt 4 (Vue 3 + TypeScript estricto), modo SPA (`ssr: false`)** [núcleo] — se genera estático y lo sirve el mismo backend: una sola pieza a bordo, un solo puerto.\n- **Tailwind CSS 4 + tokens del Figma como variables CSS** (`assets/css/tokens.css`) [núcleo] — fidelidad al diseño y alto contraste; el modo \"alerta\" rojo es solo cambiar variables.\n- **Reka UI** (componentes sin estilo, accesibles) [núcleo] — diálogos, pestañas y selectores con el aspecto exacto del Figma, sin pelear contra estilos ajenos.\n- **Apache ECharts (`vue-echarts`)** [núcleo] — barras, áreas, gauges radiales y ondas (ECG, fonocardiograma) con un tema holográfico propio.\n- **SVG exportado del Figma + CSS (brillo, líneas de escaneo)** [núcleo] — hologramas de cuerpo y órganos. **Motion for Vue (`motion-v`)** [extra] para transiciones; **TresJS (Three.js)** [extra] si se quiere el cuerpo en 3D.\n- **Pinia + VueUse** [núcleo] — sesión, estado y utilidades (temporizadores, micrófono).\n- **@nuxt/fonts + @nuxt/icon con colecciones locales** [núcleo] — fuentes e iconos autoalojados.\n- **Web Audio API + MediaRecorder** (nativo del navegador) [núcleo] — medidor de ruido ambiente y grabación de 30 s de auscultación.\n- **Zod** [núcleo] — validación de los formularios de captura antes de enviar.\n- **@vite-pwa/nuxt** [extra] — instalable en tablet y con caché; es lo que permite reusarla en clínicas con internet intermitente.\n\n### backend\n- **Python 3.13 + FastAPI + Pydantic v2 + Uvicorn** [núcleo] — API tipada con OpenAPI automático; un router por módulo.\n- **`sqlite3` (librería estándar) con consultas parametrizadas** [núcleo] — `backend/db/schema.sql` es la única fuente de verdad; sin ORM que la duplique.\n- **argon2-cffi + PyJWT** [núcleo] — PIN cifrado, sesión firmada y bloqueo tras intentos fallidos.\n- **Server-Sent Events (SSE)** [núcleo] — alertas y lecturas de sensores en vivo hacia la pantalla; más simple que WebSocket.\n- **APScheduler** [núcleo] — chequeos programados, Quiet Hours y la cola *store-and-forward* hacia Control a tierra con latencia simulada (inspirada en la red tolerante a retardos, DTN, de NASA).\n- **httpx** [núcleo] — `seed.py` descarga datos reales de NASA (OSDR/GeneLab, DONKI) **antes del despegue**; a bordo quedan guardados en la base.\n- **Simulador de sensores en Python** [núcleo] — reproduce series reales y simuladas como si llegaran de los sensores.\n\n### db\n- **SQLite 3** [núcleo] — un solo archivo, sin servidor, resistente a cortes y reinicios; es la base usada en software embebido y aeroespacial.\n  - Modo **WAL**, `foreign_keys = ON`, tablas `STRICT` y disparadores *append-only* en `measurements` (RNF 5).\n  - **FTS5** — búsqueda de texto completo en la Wiki médica, sin internet.\n  - **JSON1** — paquetes de sincronización y exportación en JSON estándar.\n- **Audio de auscultación en disco** (WebM/WAV) [núcleo] — en la base solo la ruta y su hash SHA-256.\n\n### frameworks y calidad\n- **uv + Ruff + pytest** (Python) y **@nuxt/eslint + Vitest** (Nuxt) [núcleo] — entorno reproducible, formato y pruebas.\n- **openapi-typescript** [núcleo] — los tipos del frontend se generan del OpenAPI del backend; el contrato no se desincroniza.\n- **Playwright** [extra] — prueba del flujo completo: login → captura → alerta → notificación → Wiki → paquete a Tierra.\n- **Licencia MIT en repo público** [núcleo].\n### Qué premio cubre cada tecnología\n| # | Premio | Tecnología que lo sostiene |\n|---|---|---|\n| 1 | Best Use of Data | `seed.py` + httpx con OSDR/GeneLab y DONKI; ECharts para mostrarlos claros; exportación JSON |\n| 2 | Best Use of Science | `metric_catalog` con rango y fuente; z-score contra línea base; comparación de modelos; LLM que cita la Wiki |\n| 3 | Best Use of Technology | Red neuronal en ONNX Runtime + LLM local con Ollama, todo sin conexión |\n| 4 | Best Storytelling | Etapa (Despegue / Misión / Regreso) en cada dato + gráficas comparativas + simulador para la demo en vivo |\n| 5 | Best Mission Concept | SQLite en un archivo, cola con latencia tipo DTN, inferencia en CPU, equipo pequeño |\n| 6 | Galactic Impact | PWA offline + Docker: la misma app sirve para telemedicina remota |\n| 7 | Global Connection | @nuxtjs/i18n, repo público MIT, OpenAPI y JSON estándar |\n| 8 | Local Impact | Funciona sin internet y en equipo barato: centros de salud rurales |\n| 9 | Most Inspirational | Rachas, test psicológico y prueba cognitiva como mini juego (Vue + Motion) |\n| 10 | Art & Technology | Tokens del Figma, hologramas SVG/3D, tema ECharts propio, modo alerta |",
+      "updatedBy": "Sistema",
+      "updatedAt": 1794682201.5847008
+    },
+    "doc_reglas_de_diseño": {
+      "id": "doc_reglas_de_diseño",
+      "title": "reglas de diseño.md",
+      "content": "# Estándar Global de Diseño UI/UX y Guía Maestra de Construcción (`Scan Space · ARES VII`)\n\n> **Propósito de este Documento:** Ser la **única fuente de verdad de diseño e implementación** para cualquier desarrollador del equipo. Define qué reglas visuales son obligatorias, la paleta exacta de 6 colores, el uso estricto del idioma inglés sin jerga técnica, y cómo se construye cada módulo del stack **[núcleo]** y **[extra]** cumpliendo la regla **100% a bordo y sin internet (RNF 1)**.\n>\n> **Diseño Maestro en Figma (Fuente Oficial ante Cualquier Duda Visual, Medidas o Exportación de SVGs):**\n> - **Figma Oficial del Proyecto:** [SpaceScan — Figma Design (`node-id=7382-2`)](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1) *(Todo desarrollador debe guiarse directamente de este archivo de Figma ante cualquier detalle de espaciado, proporción, iconografía o estados visuales).*\n> - Respaldo local en el repositorio (`16` pantallas `1568 × 940`): [SPACESCAN_FIGMA_COMPLETO.svg](../../diseno_ui_figma/SPACESCAN_FIGMA_COMPLETO.svg) · [SPACESCAN_FIGMA_COMPLETO.png](../../diseno_ui_figma/SPACESCAN_FIGMA_COMPLETO.png) · [`diseno_ui_figma/pantallas_svg/`](../../diseno_ui_figma/pantallas_svg/)\n\n---\n\n## 0. Análisis de Viabilidad y Decisiones Técnicas Clave del Stack\n\nPara mantener coherencia total entre todas las piezas solicitadas (**Nuxt 4 + Tailwind CSS 4 + Reka UI + ECharts + Python 3.13 + FastAPI + SQLite 3 STRICT**):\n\n1. **Arquitectura Unificada de Borde (Un Solo Proceso, Un Solo Puerto, Cero Nube — `RNF 1`):**\n   - `Nuxt 4` compila en modo estático (`ssr: false`) y `FastAPI` sirve tanto los archivos estáticos del SPA como la API REST y el canal `SSE` desde un único puerto local, sin depender de servidores externos, CDNs ni ORM (`backend/db/schema.sql` es la única verdad con `sqlite3` parametrizado).\n2. **Conciliación entre Regla *\"Solo Inglés en UI\"* y `@nuxtjs/i18n` (Premio *Global Connection*):**\n   - Toda la interfaz debe mostrarse **100% en inglés (`en`)**, sin mezclar español/inglés en ningún componente. Si se integra `@nuxtjs/i18n` para cubrir *Global Connection*, se fija `defaultLocale: 'en'` centralizando todas las cadenas en `app/locales/en.json`, manteniendo la experiencia visual de cabina estrictamente en inglés.\n3. **Fluidez de `Apache ECharts` en Ondas de Tiempo Real (`ECG` y Fonocardiograma):**\n   - Para evitar carga excesiva de CPU en hardware económico o desconectado, `vue-echarts` debe usar **`CanvasRenderer`**, desactivar animaciones (`animation: false`) en ondas continuas y aplicar muestreo `lttb` al refrescar trazos provenientes de `SSE` o `Web Audio API`.\n\n---\n\n## 1. Las 5 Leyes Inquebrantables de Diseño y Producto\n\nCualquier componente o pantalla nueva que viole una sola de estas 5 leyes debe rechazarse en revisión de código:\n\n1. **RNF 1 — Cero Red Exterior en Tiempo de Ejecución (`100% Onboard & Air-Gapped`):**\n   - Prohibido usar `<link href=\"https://fonts.googleapis.com...\">`, CDNs (`unpkg`, `jsdelivr`), iconos remotos de Iconify o llamadas a APIs en la nube (`OpenAI`, `Gemini`, `NASA API`) mientras corre la app. Fuentes `.woff2`, iconos SVG, datasets `OSDR/DONKI`, modelos `.onnx` y pesos de `Ollama` viven **dentro del contenedor/disco local**.\n2. **Idioma 100% Inglés Puro y Cero Jerga Tecnológica en Pantalla:**\n   - **Todo texto visible va en inglés claro y humano** (`Sign In`, `Sleep Score`, `Right Eye Elevated`, `Save Lung Recording`).\n   - **Prohibido mostrar nombres de tecnologías, formatos o protocolos internos en la UI:** nunca escribir en pantalla palabras como `SQLite`, `JSON`, `FHIR`, `HL7`, `Kiwix`, `ZIM`, `FTS5`, `WAL`, `Offline`, `Break-Glass`, `DTN`, `OSDR`, `DONKI`, `ONNX`, `Ollama`, `Nuxt` o `Python`. Esos conceptos operan bajo el capó; el astronauta solo ve información clínica y operativa limpia.\n3. **Separación Estricta entre Vistas de Resultados y Módulo de Captura (`Capture`):**\n   - Las pantallas de monitoreo clínico (`Profile`, `Sleep`, `Vision`, `Auscultation`, `Crew Overview`, `Crew Streaks`) son **100% de solo lectura (Solo Resultados)**: cero inputs, cero selectores de ánimo y cero botones `+ Log` incrustados.\n   - Toda entrada manual, grabación de audio cardíaco/pulmonar de `30 s` o prueba psicomotriz vive **exclusivamente** dentro del módulo **`Capture`** dividido en sus 4 sub-pestañas (`Auscultation Audio · Physical & Labs · Vision & Ocular · Psych, Motor & Sleep`).\n4. **Jerarquía de Navegación en 2 Niveles (`Profile` al Centro · `Notifications` Solo en Header):**\n   - **Nivel 1 Público (sin PIN):** `Sign In` (`01`), `Crew Overview` (`02`) y `Crew Streaks` (`03`) comparten la misma barra inferior pública de 3 pestañas (`Sign In · Crew Overview · Crew Streaks`). En `Sign In`, el acceso personal es **solo por PIN de 4 dígitos** (sin correo ni contraseña) y existen dos botones externos directos a las vistas públicas.\n   - **Nivel 2 Autenticado (tras PIN):** Barra inferior trapezoidal **simétrica de 7 módulos** con **`Profile` elevado exactamente al centro**:\n     `1 Vision · 2 Sleep · 3 Auscultation · [4 PROFILE — Principal Central] · 5 Capture · 6 Guide · 7 Comms`.\n   - **`Notifications (N)` nunca va en el menú inferior:** vive **únicamente en el header superior** de las vistas autenticadas.\n5. **Densidad Controlada (Cero Saturación Visual):**\n   - Máximo `2` o `3` contenedores `HudWindow` por pantalla, márgenes exteriores de `28 px`, separación entre ventanas de `18 px`, cero pies de página (*footers*) informativos y cero textos explicativos redundantes.\n\n---\n\n## 2. Paleta Oficial de 6 Colores y Tokens Globales (`assets/css/tokens.css`)\n\nNingún desarrollador debe escribir códigos hexadecimales sueltos en componentes Vue. Todo color se consume desde variables CSS definidas en `frontend/app/assets/css/tokens.css` e integradas en **Tailwind CSS 4**.\n\n### 2.1 Tabla Maestra de la Paleta Oficial\n\n| # | Rol Semántico | Hex Oficial | Variable CSS | Regla de Uso Obligatoria |\n| :-: | :--- | :---: | :--- | :--- |\n| **1** | **Fondo Principal** | `#001524` | `--color-bg-base` | Fondo oceánico profundo de toda la aplicación (base del degradado multicapa). |\n| **2** | **Tarjetas y Botones** | `#15616D` | `--color-surface-card` | Color único para tarjetas *smoked-glass*, cabeceras de ventana, botones y halo radial inferior. |\n| **3** | **Texto e Iconos** | `#FFECD1` | `--color-text-primary` | Color único de tipografía, cifras tabulares e iconografía principal (`15.6:1` AAA sobre `#001524`). |\n| **4** | **Estado OK / Nominal** | `#2AEF4B` | `--color-status-ok` | Valores óptimos, ondas sanas (`ECG`, fonocardiograma `S1/S2`, `CO₂`), sueño `Deep` y metas cumplidas. |\n| **5** | **Selección de Menú / Guías / Pastillas / Warning** | `#000C5C` *(baja opacidad)* | `--color-menu-select` / `--color-status-warn` | **1)** Selección activa exclusiva en menús y filtros (`30%–52%` opacidad). **2)** Líneas guía y bandas meta en gráficas. **3)** Pastillas pequeñas de referencia (`OPTIMAL`, `Positive`, `Low`). **4)** Nivel *Warning* intermedio. |\n| **6** | **Estado Crítico / Alerta** | `#D5110B` | `--color-status-critical` | Desviaciones críticas fuera de umbral, despertares (`Awake`), avisos urgentes y modo alerta global. |\n\n### 2.2 Implementación Exacta en `frontend/app/assets/css/tokens.css` (Tailwind CSS 4 + Modo Alerta)\n\nCambiar toda la cabina a **Modo Alerta Rojo** (Premio *Art & Technology*) no requiere condicionales en los componentes: basta alternar `data-cabin-mode=\"critical\"` en `<html>` para conmutar las variables del resplandor de horizonte y bordes.\n\n```css\n/* frontend/app/assets/css/tokens.css */\n@import \"tailwindcss\";\n\n:root {\n  /* === 6 COLORES OFICIALES === */\n  --color-bg-base: #001524;\n  --color-surface-card: #15616D;\n  --color-text-primary: #FFECD1;\n  --color-status-ok: #2AEF4B;\n  --color-navy-accent: #000C5C;\n  --color-status-critical: #D5110B;\n\n  /* === DERIVADOS TONALES DE SOPORTE (MISMA FAMILIA CROMÁTICA) === */\n  --color-bg-top: #00101C;\n  --color-bg-bottom: #062838;\n  --color-surface-inset: rgba(4, 30, 46, 0.72);     /* #041E2E para cajas de gráficas e inputs */\n  --color-border-card: rgba(21, 97, 109, 0.78);\n  --color-border-hi: #25899B;\n  --color-rem-accent: #2994A6;                      /* Diferenciación de fase REM derivada de #15616D */\n  --color-navy-edge: #263BB0;                       /* Filete de 1px (232°) para legibilidad de #000C5C */\n  --color-text-secondary: #F2DEC0;\n  --color-text-muted: #C8B69C;\n  --color-text-dim: #968976;\n\n  /* === SUPERFICIES DINÁMICAS (CAMBIAN AUTOMÁTICAMENTE EN MODO ALERTA) === */\n  --horizon-glow-core: rgba(21, 97, 109, 0.86);\n  --horizon-glow-mid: rgba(12, 67, 80, 0.58);\n  --upper-glow: rgba(21, 97, 109, 0.34);\n  --window-frame-stroke: var(--color-border-card);\n}\n\n/* MODO ALERTA CRÍTICA: se activa con document.documentElement.dataset.cabinMode = 'critical' */\n:root[data-cabin-mode=\"critical\"] {\n  --horizon-glow-core: rgba(122, 22, 18, 0.88);\n  --horizon-glow-mid: rgba(61, 18, 24, 0.60);\n  --upper-glow: rgba(213, 17, 11, 0.26);\n  --window-frame-stroke: rgba(213, 17, 11, 0.85);\n}\n\n@theme {\n  --color-cabin-bg: var(--color-bg-base);\n  --color-cabin-card: var(--color-surface-card);\n  --color-cabin-inset: var(--color-surface-inset);\n  --color-cabin-text: var(--color-text-primary);\n  --color-cabin-ice: var(--color-text-secondary);\n  --color-cabin-muted: var(--color-text-muted);\n  --color-cabin-ok: var(--color-status-ok);\n  --color-cabin-navy: var(--color-navy-accent);\n  --color-cabin-navy-edge: var(--color-navy-edge);\n  --color-cabin-crit: var(--color-status-critical);\n\n  --font-sans: \"Inter\", system-ui, sans-serif;\n  --font-mono: \"JetBrains Mono\", monospace;\n}\n\n/* Lienzo global con el degradado multicapa exacto del Figma */\n.cockpit-canvas {\n  background-color: var(--color-bg-base);\n  background-image:\n    radial-gradient(66% 52% at 50% 86%, var(--horizon-glow-core) 0%, var(--horizon-glow-mid) 38%, rgba(3, 31, 47, 0.28) 74%, transparent 100%),\n    radial-gradient(55% 32% at 50% 12%, var(--upper-glow) 0%, transparent 100%),\n    linear-gradient(180deg, var(--color-bg-top) 0%, var(--color-bg-base) 52%, var(--color-bg-bottom) 100%);\n  color: var(--color-text-primary);\n  font-family: var(--font-sans);\n  font-variant-numeric: tabular-nums;\n}\n\n/* Selección exclusiva de menús, sub-pestañas y filtros (#000C5C con baja opacidad) */\n.menu-item-active {\n  background: linear-gradient(180deg, rgba(0, 12, 92, 0.30) 0%, rgba(0, 12, 92, 0.52) 100%);\n  border: 1.3px solid rgba(38, 59, 176, 0.82);\n}\n```\n\n---\n\n## 3. Reglas Tipográficas, Iconográficas y Geométricas\n\n1. **Fuentes Locales (`@nuxt/fonts` — `[núcleo]`):**\n   - Colocar los archivos `.woff2` en `frontend/public/fonts/` (`Inter-Regular.woff2`, `Inter-SemiBold.woff2`, `Inter-Bold.woff2`, `JetBrainsMono-Medium.woff2`, `JetBrainsMono-Bold.woff2`).\n   - Configurar `@nuxt/fonts` con `provider: 'local'` para cero descargas externas.\n   - **Uso:** `Inter` para títulos, etiquetas clínicas y navegación; `JetBrains Mono` (`tabular-nums`) obligatorio en relojes `UTC`, duraciones (`7h 12m`), intervalos (`22:54–23:36`), ejes numéricos y cronómetros (`00:18 / 00:30 SEC`).\n2. **Iconos Locales (`@nuxt/icon` — `[núcleo]`):**\n   - Guardar los iconos vectoriales del Figma en `frontend/app/assets/icons/spacescan/` (`rocket.svg`, `sans.svg`, `moon.svg`, `stethoscope.svg`, `profile.svg`, `capture.svg`, `wiki.svg`, `earth.svg`, `bell.svg`, `mic.svg`, `lock.svg`, `flame.svg`, `vitruvian.svg`, `reticle.svg`, `kit.svg`, `shield.svg`).\n   - Registrar colección personalizada `spacescan` en `nuxt.config.ts` (`clientBundle: { scan: true }`) para empaquetarlos dentro del bundle estático.\n3. **Proporciones de Pantalla (`1568 × 940` Escalable):**\n   - **Top Header (`TopTelemetryBar.vue`):** altura fija `56 px`, fondo `rgba(0, 21, 36, 0.86)`, reloj `MISSION CLOCK`, botón `Notifications (N)` (`x=1166` relativo / alineado a la derecha antes del estado de cabina) y pastilla global de estado (`CABIN NOMINAL` / `SCORE 84 · OPTIMAL`).\n   - **Sub-barra de Pestañas o Filtros (`36 px` de alto):** usada solo en `Profile` (3 pestañas), `Sleep` (4 filtros de tiempo), `Capture` (4 categorías) y `Notifications` (3 filtros).\n   - **Bottom Dock Autenticado (`BottomCockpitDock.vue`, `72 px` de alto):**\n     - Izquierda: tarjeta de sesión activa (`ID·01 · E. VARGAS`).\n     - Centro trapezoidal simétrico (`7` ranuras): `1 Vision` (`138 px`), `2 Sleep` (`138 px`), `3 Auscultation` (`138 px`), **`4 Profile` (`192 px`, elevado `+8 px` por encima del trapecio en el centro exacto)**, `5 Capture` (`138 px`), `6 Guide` (`138 px`), `7 Comms` (`138 px`).\n     - Derecha: botón `Sign Out` en `#15616D`.\n\n---\n\n## 4. Cómo Construir Cada Componente y Tecnología (Con Ejemplos Reales)\n\n### 4.1 Contenedor Universal `HudWindow.vue` + `Reka UI` (`[núcleo]`)\n\nTodo módulo visual va envuelto en `<HudWindow>` y usa primitivas sin estilo de **`reka-ui`** (`TabsRoot`, `DialogRoot`, `SelectRoot`) para accesibilidad por teclado sin romper el diseño del Figma:\n\n```vue\n<!-- frontend/app/components/shell/HudWindow.vue -->\n<script setup lang=\"ts\">\nwithDefaults(defineProps<{\n  title?: string\n  subtitle?: string\n  tagText?: string\n  tagTone?: 'reference' | 'warn' | 'critical'\n  icon?: string\n}>(), {\n  tagTone: 'reference',\n})\n</script>\n\n<template>\n  <section\n    class=\"relative rounded-[6px] bg-cabin-card/28 border flex flex-col overflow-hidden\"\n    :style=\"{ borderColor: 'var(--window-frame-stroke)' }\"\n  >\n    <!-- Esquinas angulares de precisión de 8px (#FFECD1 al 44%) -->\n    <span class=\"pointer-events-none absolute top-0 left-0 w-2 h-2 border-t-[1.4px] border-l-[1.4px] border-cabin-text/45\" />\n    <span class=\"pointer-events-none absolute top-0 right-0 w-2 h-2 border-t-[1.4px] border-r-[1.4px] border-cabin-text/45\" />\n    <span class=\"pointer-events-none absolute bottom-0 left-0 w-2 h-2 border-b-[1.4px] border-l-[1.4px] border-cabin-text/45\" />\n    <span class=\"pointer-events-none absolute bottom-0 right-0 w-2 h-2 border-b-[1.4px] border-r-[1.4px] border-cabin-text/45\" />\n\n    <header\n      v-if=\"title\"\n      class=\"px-4 py-2.5 bg-cabin-card/58 border-b border-cabin-text/18 flex items-center justify-between gap-3\"\n    >\n      <div class=\"flex items-center gap-2.5\">\n        <div\n          v-if=\"icon\"\n          class=\"w-[22px] h-[22px] rounded-[4px] bg-[#062534]/90 border border-[#25899B]/70 flex items-center justify-center\"\n        >\n          <Icon :name=\"`spacescan:${icon}`\" class=\"w-3.5 h-3.5 text-cabin-text\" />\n        </div>\n        <div>\n          <h2 class=\"text-[12.5px] font-bold tracking-[0.03em] uppercase text-cabin-text\">{{ title }}</h2>\n          <p v-if=\"subtitle\" class=\"text-[10.5px] text-cabin-muted\">{{ subtitle }}</p>\n        </div>\n      </div>\n\n      <!-- Pastilla pequeña de referencia siempre en #000C5C translúcido salvo alerta crítica -->\n      <span\n        v-if=\"tagText\"\n        class=\"px-3 h-[22px] rounded-full text-[9.8px] font-semibold tracking-[0.03em] inline-flex items-center gap-1.5 border\"\n        :class=\"{\n          'bg-cabin-navy/42 border-cabin-navy-edge/70 text-cabin-text': tagTone === 'reference',\n          'bg-cabin-navy/55 border-cabin-navy-edge/90 text-cabin-text': tagTone === 'warn',\n          'bg-cabin-crit/25 border-cabin-crit/85 text-cabin-text': tagTone === 'critical',\n        }\"\n      >\n        <i v-if=\"tagTone === 'warn'\" class=\"w-1.5 h-1.5 rounded-full bg-cabin-navy-edge\" />\n        {{ tagText }}\n      </span>\n    </header>\n\n    <div class=\"p-5 flex-1\">\n      <slot />\n    </div>\n  </section>\n</template>\n```\n\n**Ejemplo de Pestañas con `Reka UI` (`CaptureSubnavBar.vue` o `SleepTimeFilterBar.vue`):**\n```vue\n<script setup lang=\"ts\">\nimport { TabsList, TabsRoot, TabsTrigger } from 'reka-ui'\n\nconst activeTab = defineModel<string>({ default: 'auscultation' })\nconst tabs = [\n  { id: 'auscultation', label: 'Auscultation Audio' },\n  { id: 'physical', label: 'Physical & Labs' },\n  { id: 'vision', label: 'Vision & Ocular' },\n  { id: 'psych-sleep', label: 'Psych, Motor & Sleep' },\n]\n</script>\n\n<template>\n  <TabsRoot v-model=\"activeTab\">\n    <TabsList class=\"flex items-center gap-2\">\n      <TabsTrigger\n        v-for=\"tab in tabs\"\n        :key=\"tab.id\"\n        :value=\"tab.id\"\n        class=\"relative h-9 px-6 rounded-[4px] text-[11.2px] transition-colors bg-cabin-inset border border-cabin-card/60 text-cabin-text/80 data-[state=active]:menu-item-active data-[state=active]:font-extrabold data-[state=active]:text-cabin-text\"\n      >\n        {{ tab.label }}\n      </TabsTrigger>\n    </TabsList>\n  </TabsRoot>\n</template>\n```\n\n---\n\n### 4.2 Tema Holográfico Propio en `Apache ECharts` (`vue-echarts` — `[núcleo]`)\n\nTodas las gráficas de la aplicación (arcos `Sleep Score` / `Crew Score`, curva bilateral `Vision`, tendencia `CO₂`, ondas `ECG`/fonocardiograma y **gráfica de barra de cintas de fases de sueño**) deben usar el tema registrado `'spacescan-hud'` para garantizar que las líneas guía sean `#000C5C` / `#263BB0`, las etiquetas `#C8B69C` y los trazos `#2AEF4B` / `#D5110B`:\n\n```ts\n// frontend/app/plugins/echarts.client.ts\nimport { registerTheme, use } from 'echarts/core'\nimport { CanvasRenderer } from 'echarts/renderers'\nimport { BarChart, CustomChart, GaugeChart, LineChart } from 'echarts/charts'\nimport { GridComponent, MarkAreaComponent, MarkLineComponent, TooltipComponent } from 'echarts/components'\n\nexport default defineNuxtPlugin(() => {\n  use([CanvasRenderer, LineChart, BarChart, GaugeChart, CustomChart, GridComponent, TooltipComponent, MarkLineComponent, MarkAreaComponent])\n\n  registerTheme('spacescan-hud', {\n    backgroundColor: 'rgba(4, 30, 46, 0.72)', // #041E2E inset\n    textStyle: {\n      fontFamily: \"'JetBrains Mono', monospace\",\n      color: '#FFECD1',\n    },\n    color: ['#2AEF4B', '#2994A6', '#263BB0', '#D5110B'],\n    categoryAxis: {\n      axisLine: { lineStyle: { color: '#15616D' } },\n      axisLabel: { color: '#C8B69C', fontSize: 10 },\n      splitLine: { show: true, lineStyle: { color: 'rgba(38, 59, 176, 0.42)', width: 1 } }, // Guía #000C5C legible\n    },\n    valueAxis: {\n      axisLine: { show: false },\n      axisLabel: { color: '#C8B69C', fontSize: 10 },\n      splitLine: { show: true, lineStyle: { color: 'rgba(38, 59, 176, 0.42)', width: 1 } },\n    },\n    tooltip: {\n      backgroundColor: '#041E2E',\n      borderColor: '#25899B',\n      textStyle: { color: '#FFECD1', fontSize: 11 },\n    },\n  })\n})\n```\n\n- **Cómo construir la Gráfica de Barra de Cintas de Sueño (`07_Sleep_Monitor.svg`):** Usar `type: 'custom'` en ECharts (`renderItem` dibuja un `rect` redondeado `[startUtcMin, endUtcMin, stageIndex]` con `#D5110B` para `Awake`, `#2994A6` para `REM`, `#263BB0` para `Light` y `#2AEF4B` para `Deep`, más la pista continua inferior en `stageIndex = 0`).\n- **Cómo construir Ondas `ECG` y Fonocardiograma (`06`, `09`, `10`):** Serie `type: 'line'`, `showSymbol: false`, `animation: false`, `sampling: 'lttb'`, `lineStyle: { color: '#2AEF4B', width: 2 }`.\n\n---\n\n### 4.3 Hologramas SVG del Figma + Escaneo CSS (`[núcleo]`) y 3D (`[extra]`)\n\nExtraer los vectores limpios del cuerpo y órganos (`astronaut_body.svg`, `heart.svg`, `lungs.svg`, `brain.svg`) desde `diseno_ui_figma/pantallas_svg/` hacia `frontend/app/components/telemetry/SpaceScanHologram.vue` y aplicar brilho + línea de barrido puramente con CSS:\n\n```css\n/* Brillo holográfico y línea de escaneo vertical sin dependencias externas */\n.hologram-shell {\n  filter: drop-shadow(0 0 12px rgba(42, 239, 75, 0.22));\n}\n.hologram-scanline::after {\n  content: \"\";\n  position: absolute;\n  inset-inline: 12%;\n  height: 2px;\n  background: linear-gradient(90deg, transparent, rgba(42, 239, 75, 0.65), transparent);\n  animation: scan-sweep 4.5s ease-in-out infinite;\n}\n@keyframes scan-sweep {\n  0%, 100% { top: 10%; opacity: 0.25; }\n  50% { top: 88%; opacity: 0.85; }\n}\n```\n> **[extra]:** Si sobra tiempo, envolver transiciones de entrada de tarjetas con `motion-v` (`<Motion :initial=\"{ opacity: 0, y: 6 }\" :animate=\"{ opacity: 1, y: 0 }\">`) y habilitar una vista opcional 3D en `04_Profile_Personal_Data` con `TresJS` cargando un `.glb` local desde `public/models/astronaut.glb`.\n\n---\n\n### 4.4 Grabación de Auscultación Cardíaca y Pulmonar de 30 s (`Web Audio API` + `MediaRecorder` — `[núcleo]`)\n\nPara la pantalla `10_Capture_Auscultation.svg`, el composable mide primero el ruido de cabina (`< 55 dBA`), captura exactamente `30 s` por foco anatómico (`aortic | pulmonic | tricuspid | mitral | upper_left | upper_right | lower_left | lower_right`) y calcula el hash `SHA-256` local antes de enviar el archivo al backend:\n\n```ts\n// frontend/app/composables/useAuscultationRecorder.ts\nexport function useAuscultationRecorder() {\n  const cabinDba = ref(48)\n  const secondsElapsed = ref(0)\n  const isRecording = ref(false)\n  const waveform = shallowRef<number[]>([])\n\n  async function recordThirtySeconds(site: string): Promise<{ blob: Blob; sha256: string; site: string }> {\n    const stream = await navigator.mediaDevices.getUserMedia({\n      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }, // Crudo para fonocardiograma\n    })\n    const ctx = new AudioContext()\n    const source = ctx.createMediaStreamSource(stream)\n    const analyser = ctx.createAnalyser()\n    analyser.fftSize = 512\n    source.connect(analyser)\n\n    const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })\n    const chunks: BlobPart[] = []\n    recorder.ondataavailable = e => chunks.push(e.data)\n\n    isRecording.value = true\n    secondsElapsed.value = 0\n\n    return new Promise((resolve) => {\n      const timer = setInterval(() => {\n        secondsElapsed.value += 1\n        if (secondsElapsed.value >= 30) recorder.stop()\n      }, 1000)\n\n      recorder.onstop = async () => {\n        clearInterval(timer)\n        isRecording.value = false\n        stream.getTracks().forEach(t => t.stop())\n        await ctx.close()\n\n        const blob = new Blob(chunks, { type: 'audio/webm' })\n        const buf = await blob.arrayBuffer()\n        const hashBuf = await crypto.subtle.digest('SHA-256', buf)\n        const sha256 = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('')\n        resolve({ blob, sha256, site })\n      }\n\n      recorder.start(250)\n    })\n  }\n\n  return { cabinDba, secondsElapsed, isRecording, waveform, recordThirtySeconds }\n}\n```\n\n---\n\n### 4.5 Validación con `Zod` + Tipos Generados con `openapi-typescript` (`[núcleo]`)\n\n1. **Contrato Único Backend $\\rightarrow$ Frontend:** Cada vez que cambia un modelo Pydantic en FastAPI, ejecutar:\n   ```bash\n   npx openapi-typescript http://127.0.0.1:8000/openapi.json -o frontend/app/types/api.d.ts\n   ```\n2. **Validación Pre-envío en `Capture` (`11`, `12`, `13`) con mensajes 100% en inglés:**\n   ```ts\n   // frontend/app/schemas/capture.ts\n   import { z } from 'zod'\n\n   export const ocularCaptureSchema = z.object({\n     missionStage: z.enum(['LAUNCH', 'MISSION', 'RETURN']),\n     leftOpticSheathMm: z.number().min(3.0, 'Minimum 3.0 mm').max(9.0, 'Maximum 9.0 mm'),\n     rightOpticSheathMm: z.number().min(3.0, 'Minimum 3.0 mm').max(9.0, 'Maximum 9.0 mm'),\n     leftIopMmhg: z.number().min(8).max(35),\n     rightIopMmhg: z.number().min(8).max(35),\n     retinalThicknessUm: z.number().min(70).max(160),\n     visualAcuity: z.string().regex(/^20\\/\\d{2}$/, 'Use Snellen format, e.g. 20/20'),\n   })\n   ```\n\n---\n\n## 5. Construcción del Backend (`Python 3.13 + FastAPI`) y Base de Datos (`SQLite 3 STRICT`)\n\n### 5.1 Esquema Único `backend/db/schema.sql` (`WAL` + `STRICT` + `Append-Only` + `FTS5` + `JSON1`)\n\n`backend/db/schema.sql` es la **única fuente de verdad** de datos (sin ORM). Incluye la etapa narrativa (`LAUNCH`, `MISSION`, `RETURN`) en cada medición para cubrir *Best Storytelling*, `metric_catalog` con rangos científicos para *Best Use of Science*, inmutabilidad *append-only* en `measurements` (RNF 5) y ruta + `SHA-256` para grabaciones de auscultación:\n\n```sql\n-- backend/db/schema.sql\nPRAGMA journal_mode = WAL;\nPRAGMA foreign_keys = ON;\nPRAGMA synchronous = NORMAL;\n\nCREATE TABLE IF NOT EXISTS crew_members (\n  id TEXT PRIMARY KEY,\n  code TEXT NOT NULL UNIQUE,           -- Ej: 'ID·01'\n  full_name TEXT NOT NULL,             -- Ej: 'Elena Vargas'\n  role TEXT NOT NULL,                  -- Ej: 'Commander'\n  pin_hash TEXT NOT NULL,              -- Argon2id hash del PIN de 4 dígitos\n  failed_attempts INTEGER NOT NULL DEFAULT 0,\n  locked_until_utc TEXT\n) STRICT;\n\nCREATE TABLE IF NOT EXISTS metric_catalog (\n  metric_key TEXT PRIMARY KEY,         -- Ej: 'optic_sheath_right_mm', 'sleep_total_min'\n  display_name_en TEXT NOT NULL,\n  unit TEXT NOT NULL,\n  nominal_min REAL NOT NULL,\n  nominal_max REAL NOT NULL,\n  critical_threshold REAL,\n  clinical_reference TEXT NOT NULL     -- Fuente científica (usada en backend/reportes, no jerga en UI)\n) STRICT;\n\nCREATE TABLE IF NOT EXISTS measurements (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  crew_id TEXT NOT NULL REFERENCES crew_members(id),\n  metric_key TEXT NOT NULL REFERENCES metric_catalog(metric_key),\n  mission_stage TEXT NOT NULL CHECK (mission_stage IN ('LAUNCH', 'MISSION', 'RETURN')),\n  recorded_at_utc TEXT NOT NULL,\n  value_num REAL,\n  payload_json TEXT NOT NULL DEFAULT '{}' CHECK (json_valid(payload_json))\n) STRICT;\n\n-- RNF 5: Inmutabilidad biomédica (Append-Only en measurements)\nCREATE TRIGGER IF NOT EXISTS trg_measurements_no_update\nBEFORE UPDATE ON measurements\nBEGIN\n  SELECT RAISE(ABORT, 'Measurements table is append-only');\nEND;\n\nCREATE TRIGGER IF NOT EXISTS trg_measurements_no_delete\nBEFORE DELETE ON measurements\nBEGIN\n  SELECT RAISE(ABORT, 'Measurements table is append-only');\nEND;\n\n-- Audio de auscultación en disco: en SQLite solo metadatos, ruta relativa y SHA-256\nCREATE TABLE IF NOT EXISTS auscultation_recordings (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  crew_id TEXT NOT NULL REFERENCES crew_members(id),\n  organ_type TEXT NOT NULL CHECK (organ_type IN ('CARDIAC', 'PULMONARY')),\n  anatomical_site TEXT NOT NULL,       -- 'mitral', 'upper_right', etc.\n  duration_sec INTEGER NOT NULL CHECK (duration_sec <= 30),\n  cabin_noise_dba REAL NOT NULL,\n  file_rel_path TEXT NOT NULL UNIQUE,  -- Ej: 'audio/ID01_cardiac_mitral_20261114.webm'\n  sha256_hex TEXT NOT NULL,\n  recorded_at_utc TEXT NOT NULL\n) STRICT;\n\n-- Wiki médica local con búsqueda instantánea sin internet (FTS5)\nCREATE TABLE IF NOT EXISTS wiki_articles (\n  id TEXT PRIMARY KEY,\n  category_en TEXT NOT NULL,\n  title_en TEXT NOT NULL,\n  drawer_code TEXT NOT NULL,           -- Ej: 'DRAWER B2'\n  steps_json TEXT NOT NULL CHECK (json_valid(steps_json)),\n  escalation_en TEXT NOT NULL\n) STRICT;\n\nCREATE VIRTUAL TABLE IF NOT EXISTS wiki_articles_fts USING fts5(\n  title_en,\n  category_en,\n  steps_json,\n  content='wiki_articles',\n  content_rowid='rowid'\n);\n\n-- Cola Store-and-Forward hacia Tierra con latencia simulada (APScheduler)\nCREATE TABLE IF NOT EXISTS ground_outbox (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  bundle_json TEXT NOT NULL CHECK (json_valid(bundle_json)),\n  created_at_utc TEXT NOT NULL,\n  deliver_after_utc TEXT NOT NULL,     -- +12 min (Marte/Tránsito) calculado al encolar\n  status TEXT NOT NULL CHECK (status IN ('QUEUED', 'IN_TRANSIT', 'DELIVERED'))\n) STRICT;\n```\n\n### 5.2 Patrón del Backend (`FastAPI` + `sqlite3` Parametrizado + `SSE` + Build Estático en Un Solo Puerto)\n\n```python\n# backend/app/main.py\nimport asyncio\nimport json\nimport sqlite3\nfrom contextlib import asynccontextmanager\nfrom pathlib import Path\nfrom apscheduler.schedulers.asyncio import AsyncIOScheduler\nfrom fastapi import FastAPI\nfrom fastapi.responses import StreamingResponse\nfrom fastapi.staticfiles import StaticFiles\n\nDB_PATH = Path(__file__).resolve().parents[1] / \"db\" / \"spacescan.db\"\nSCHEMA_PATH = Path(__file__).resolve().parents[1] / \"db\" / \"schema.sql\"\nSTATIC_SPA_DIR = Path(__file__).resolve().parents[2] / \"frontend\" / \".output\" / \"public\"\n\ndef get_db() -> sqlite3.Connection:\n    conn = sqlite3.connect(DB_PATH, check_same_thread=False)\n    conn.row_factory = sqlite3.Row\n    conn.execute(\"PRAGMA foreign_keys = ON;\")\n    return conn\n\n@asynccontextmanager\nasync def lifespan(app: FastAPI):\n    with get_db() as conn:\n        conn.executescript(SCHEMA_PATH.read_text(encoding=\"utf-8\"))\n    scheduler = AsyncIOScheduler()\n    # Procesa cada 15 s la cola store-and-forward hacia Houston respetando Quiet Hours (22:00-06:00 UTC)\n    scheduler.start()\n    yield\n    scheduler.shutdown()\n\napp = FastAPI(title=\"Scan Space Onboard API\", version=\"1.0.0\", lifespan=lifespan)\n\n# Server-Sent Events (SSE): telemetría y alertas en vivo sin complejidad de WebSocket\n@app.get(\"/api/v1/stream/telemetry\")\nasync def stream_telemetry(crew_id: str = \"ID·01\"):\n    async def event_generator():\n        while True:\n            with get_db() as conn:\n                rows = conn.execute(\n                    \"\"\"\n                    SELECT metric_key, value_num, recorded_at_utc\n                    FROM measurements\n                    WHERE crew_id = ?\n                    ORDER BY id DESC LIMIT 8\n                    \"\"\",\n                    (crew_id,),  # SIEMPRE consulta parametrizada (?)\n                ).fetchall()\n            payload = json.dumps([dict(r) for r in rows])\n            yield f\"event: vitals\\ndata: {payload}\\n\\n\"\n            await asyncio.sleep(1.0)\n\n    return StreamingResponse(event_generator(), media_type=\"text/event-stream\")\n\n# En producción a bordo: el mismo FastAPI sirve el SPA estático de Nuxt 4 en un solo puerto\nif STATIC_SPA_DIR.exists():\n    app.mount(\"/\", StaticFiles(directory=STATIC_SPA_DIR, html=True), name=\"spa\")\n```\n\n### 5.3 Separación Pre-Despegue vs. En Vuelo (`seed.py` + `ONNX Runtime` + `Ollama`)\n\n- **Antes del despegue (`uv run python backend/db/seed.py`):** Usa `httpx` para descargar series reales de **NASA OSDR / GeneLab** y eventos solares de **DONKI**, guardándolos en `backend/db/seed_snapshots/` y poblando `spacescan.db`. Si en una demo no hay internet, `seed.py` lee los snapshots locales incluidos en el repositorio.\n- **Durante la misión (100% sin red):**\n  - Clasificación automática de fonocardiograma (`S1/S2` normal vs. artefacto/soplo) o riesgo de fatiga con **`onnxruntime`** en CPU cargando `backend/models/auscultation_clf.onnx`.\n  - Recomendación preventiva de 3 pasos en `16_Notifications_Header` generada localmente con **`Ollama`** citando artículos de `wiki_articles_fts` (con *fallback* determinista instantáneo si el equipo no tiene `Ollama` activo).\n\n---\n\n## 6. Mapeo Global de las 16 Pantallas Figma para el Equipo\n\n| Sección | Pantalla SVG | Ruta Nuxt 4 | Rol de Datos | Componentes Clave |\n| :--- | :--- | :--- | :---: | :--- |\n| **1. Pública** | [01_Sign_In.svg](../../diseno_ui_figma/pantallas_svg/01_Sign_In.svg) | `/login` | Auth PIN | `PinPad4Digits` + 2 botones públicos + `PublicHierarchyBar` |\n| **1. Pública** | [02_Crew_Overview.svg](../../diseno_ui_figma/pantallas_svg/02_Crew_Overview.svg) | `/crew-overview` | **Solo Resultados** | 4 tarjetas de tripulantes + `ECharts` Gauge `84/100` |\n| **1. Pública** | [03_Crew_Streaks.svg](../../diseno_ui_figma/pantallas_svg/03_Crew_Streaks.svg) | `/crew-streaks` | **Solo Resultados** | Rachas activas de los 4 tripulantes + escudo `EVA` |\n| **2. Resultados** | [04_Profile_Personal_Data.svg](../../diseno_ui_figma/pantallas_svg/04_Profile_Personal_Data.svg) | `/profile/personal` | **Solo Resultados** | `Profile` en Slot 4 Central + `SpaceScanHologram` |\n| **2. Resultados** | [05_Profile_Psychological.svg](../../diseno_ui_figma/pantallas_svg/05_Profile_Psychological.svg) | `/profile/psychological` | **Solo Resultados** | Curva ECharts 14 días (`Mood`/`Calmness`) + resultados `268 ms` |\n| **2. Resultados** | [06_Profile_Physical.svg](../../diseno_ui_figma/pantallas_svg/06_Profile_Physical.svg) | `/profile/physical` | **Solo Resultados** | 6 barras clínicas + `ECharts` `ECG` en vivo + 4 labs |\n| **2. Resultados** | [07_Sleep_Monitor.svg](../../diseno_ui_figma/pantallas_svg/07_Sleep_Monitor.svg) | `/sleep` | **Solo Resultados** | `SleepTimeFilterBar` + Score `84` + **Barra de Cintas ECharts** + Lapsos |\n| **2. Resultados** | [08_Vision_Exam.svg](../../diseno_ui_figma/pantallas_svg/08_Vision_Exam.svg) | `/vision` | **Solo Resultados** | Arcos Ojo Izq/Der + Curva bilateral `ONSD` + 3 pasos |\n| **2. Resultados** | [09_Auscultation_Results.svg](../../diseno_ui_figma/pantallas_svg/09_Auscultation_Results.svg) | `/auscultation` | **Solo Resultados** | Fonocardiograma `S1/S2` + envolvente pulmonar + `CO₂` 24 h |\n| **3. Captura** | [10_Capture_Auscultation.svg](../../diseno_ui_figma/pantallas_svg/10_Capture_Auscultation.svg) | `/capture/auscultation` | **Entrada Audio** | `useAuscultationRecorder` (`30 s` cardíaco y pulmonar + `dBA`) |\n| **3. Captura** | [11_Capture_Physical_Labs.svg](../../diseno_ui_figma/pantallas_svg/11_Capture_Physical_Labs.svg) | `/capture/physical` | **Entrada Datos** | Formulario validado con `Zod` para signos, hábitos y tiras |\n| **3. Captura** | [12_Capture_Vision_Ocular.svg](../../diseno_ui_figma/pantallas_svg/12_Capture_Vision_Ocular.svg) | `/capture/vision` | **Entrada Datos** | Formulario ocular `Zod` + guía visual axial `3.0 mm` |\n| **3. Captura** | [13_Capture_Psych_Sleep.svg](../../diseno_ui_figma/pantallas_svg/13_Capture_Psych_Sleep.svg) | `/capture/psych-sleep` | **Entrada Datos** | Escalas `1–5` + ventana `UTC` de sueño + arena interactiva `2 min` |\n| **4. Soporte** | [14_Medical_Guide.svg](../../diseno_ui_figma/pantallas_svg/14_Medical_Guide.svg) | `/guide` | Consulta `FTS5` | Buscador médico instantáneo + localizador `Drawer B2` |\n| **4. Soporte** | [15_Mission_Control.svg](../../diseno_ui_figma/pantallas_svg/15_Mission_Control.svg) | `/comms` | Cola `DTN` | Mensajes `Flight Surgeon` (`+12 min`) + clima solar `DONKI` |\n| **4. Header** | [16_Notifications_Header.svg](../../diseno_ui_figma/pantallas_svg/16_Notifications_Header.svg) | `/notifications` | **Solo Header** | Avisos y plan preventivo (abierta únicamente desde la campana del header) |\n\n---\n\n## 7. Matriz de Trazabilidad Tecnológica por Categoría de Premio\n\nCada pieza del stack **[núcleo]** y **[extra]** sostiene directamente una categoría de evaluación:\n\n| # | Premio | Cómo se Construye en el Proyecto |\n| :-: | :--- | :--- |\n| **1** | **Best Use of Data** | `seed.py` + `httpx` pre-despegue con series reales de **OSDR/GeneLab** y **DONKI** persistidas en `SQLite`; visualización limpia en `Apache ECharts` y exportación estándar `JSON1`. |\n| **2** | **Best Use of Science** | Tabla `metric_catalog` con rangos y fuente científica, cálculo de *z-score* contra línea base personal del tripulante y modelo local que cita artículos de `wiki_articles`. |\n| **3** | **Best Use of Technology** | Inferencia acústica/biométrica con **ONNX Runtime** en CPU + orientación preventiva local con **Ollama**, `100%` sin red. |\n| **4** | **Best Storytelling** | Columna `mission_stage` (`LAUNCH` / `MISSION` / `RETURN`) en cada medición + gráficas longitudinales comparativas + simulador de sensores Python en vivo para la demo. |\n| **5** | **Best Mission Concept** | `SQLite 3` en un único archivo (`WAL` + `STRICT`), cola *store-and-forward* tipo `DTN` con `APScheduler` e inferencia ligera en CPU desde un solo puerto. |\n| **6** | **Galactic Impact** | `@vite-pwa/nuxt` **[extra]** + `Docker`: la misma plataforma sirve para telemedicina autónoma fuera de órbita y en zonas aisladas en Tierra. |\n| **7** | **Global Connection** | `@nuxtjs/i18n` configurado con `en` por defecto (100% inglés en UI sin mezclas), repositorio público bajo **Licencia MIT**, contrato `OpenAPI` y paquetes `JSON1`. |\n| **8** | **Local Impact** | Operación completa sin internet y sobre hardware económico (laptops/tablets de bajo consumo) aplicable en clínicas rurales. |\n| **9** | **Most Inspirational** | Tablero público `Crew Streaks` (`03`), check-in conductual y arena interactiva de reacción psicomotriz de `2 min` (`13`) en Vue + `motion-v` **[extra]**. |\n| **10** | **Art & Technology** | Variables CSS fieles al [Figma Oficial (`node-id=7382-2`)](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1), hologramas SVG con barrido CSS (`TresJS` **[extra]**), tema propio `'spacescan-hud'` en ECharts y conmutación instantánea a Modo Alerta. |\n\n---\n\n## 8. Checklist Obligatorio de Definición de Hecho (*Definition of Done*)\n\nAntes de fusionar cualquier rama a `main`, el desarrollador debe verificar:\n\n- [ ] **Fidelidad contra el Figma Oficial:** Comparar visualmente la vista contra [SpaceScan en Figma (`node-id=7382-2`)](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1) verificando proporciones, márgenes, dock de `7` módulos con `Profile` al centro y `Notifications` solo en el header.\n- [ ] **Prueba en Modo Avión (`RNF 1`):** Abrir DevTools $\\rightarrow$ pestaña *Network* con Wi-Fi/Ethernet apagado: `0` peticiones fallidas a dominios externos; fuentes `.woff2`, iconos locales y gráficas ECharts cargan al `100%`.\n- [ ] **Auditoría de Idioma y Limpieza:** `100%` de las etiquetas visibles están en inglés; `0` menciones a `SQLite`, `JSON`, `FHIR`, `Offline`, `Break-Glass` o tecnologías internas en la interfaz.\n- [ ] **Fidelidad Cromática:** Solo existen variables de `tokens.css` (`#001524`, `#15616D`, `#FFECD1`, `#2AEF4B`, `#000C5C`, `#D5110B`); los ítems activos del menú y líneas guía usan `#000C5C` translúcido.\n- [ ] **Separación Resultados vs. Captura:** Ninguna pantalla de `Profile`, `Sleep`, `Vision` o `Auscultation` contiene botones de registro; todo formulario pasa por `Zod` dentro de `/capture/*`.\n- [ ] **Calidad, Contrato Tipado y Pruebas:** `uv run ruff check .`, `uv run pytest`, `npx openapi-typescript`, `pnpm lint` (`@nuxt/eslint`), `pnpm test` (`Vitest`) y, si aplica **[extra]**, flujo E2E en `Playwright` pasan con `0` errores.\n",
+      "updatedBy": "Carlos",
+      "updatedAt": "2026-11-14T19:22:56.656Z"
+    },
+    "doc_divicion_del_trabajo": {
+      "id": "doc_divicion_del_trabajo",
+      "title": "divicion del trabajo.md",
+      "content": "# 👩‍🚀 Proceso Devs — Reparto de trabajo en paralelo (3 desarrolladores fullstack)\n\n## Contexto\nSpaceScan (NASA Space Apps 2026) usa **Nuxt + Python (FastAPI) + SQLite**. Ya existe un frontend en `frontend/` con login, panel, perfil, rachas y notificaciones leyendo datos simulados de `frontend/public/data/*.json`.\n\n**Los 3 desarrolladores son fullstack.** Cada uno es dueño de módulos completos, de punta a punta: **sus tablas + sus endpoints en Python + sus pantallas en Nuxt**.\n\n**Orden de trabajo:**\n1. **Fase 0 — Base de datos** (primero, la revisan los 3 juntos).\n2. **Fase 1 — Tareas en paralelo**: cada quien toma sus tareas `D1-xx`, `D2-xx`, `D3-xx`.\n\n> Cada desarrollador toma del [Figma](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2) las pantallas de sus tareas.\n\n---\n\n## Fase 0 — Base de datos (primera tarea, los 3 juntos, ~2–3 h)\n**Archivo:** `backend/db/schema.sql` (ya creado). Crear la base: `sqlite3 scan.db < backend/db/schema.sql`\n\n*Qué es:* la estructura completa de la base, con **todas** las tablas de todos los módulos definidas desde el inicio.\n*Para qué:* es lo único que los 3 comparten. Con la estructura cerrada, nadie espera a nadie ni choca con otro.\n\n**Tarea de los 3:** leer el archivo juntos, ajustar lo que falte y hacer un solo PR a `main`. Desde ese momento se considera el contrato.\n\n### Decisión clave: una tabla genérica de mediciones\nTodo dato numérico (vitales, peso, hábitos, laboratorio, ojos, VO₂…) va a **`measurements`**, una fila por dato:\n`crew_id` + `metric` + `value` + `ts_utc` + `stage` (despegue/mision/regreso) + `source` (manual/auto).\nLos rangos clínicos y la fuente científica de cada métrica viven en **`metric_catalog`**.\n\n👉 **¿Necesitas una métrica nueva?** Agregas una fila al catálogo, **no** una columna. Así nadie rompe la base de otro.\n\n`measurements` es **append-only**: unos triggers impiden editar o borrar mediciones. Así se garantiza un historial íntegro aunque haya cortes o reinicios (RNF 5).\n\n### Tablas y dueños\n| Tabla | Qué guarda | Dueño |\n|---|---|---|\n| `mission` | nombre de la misión, despegue, regreso y latencia con la Tierra | Dev 1 |\n| `crew` | tripulantes: rol, datos demográficos, PIN cifrado, activo | Dev 1 |\n| `metric_catalog` | métricas con unidad, rango clínico y fuente científica | Dev 1 (cada dev agrega sus filas) |\n| `baselines` | línea base pre-misión por tripulante y métrica (media y desviación) | Dev 1 |\n| `measurements` | todas las mediciones numéricas (append-only) | Dev 1 |\n| `environment_readings` | CO₂, ruido, temperatura, humedad y radiación de cabina | Dev 1 |\n| `streak_days` | cumplimiento diario de hábitos (base para las rachas) | Dev 1 |\n| `sync_packets` | paquetes enviados a Control a tierra y recibidos de ahí | Dev 1 |\n| `sleep_sessions` + `sleep_stages` | noches de sueño y sus fases | Dev 2 |\n| `auscultation_samples` | grabaciones de corazón y pulmón con sus hallazgos | Dev 2 |\n| `psych_tests` | test de ánimo, estrés, soledad y motivación | Dev 3 |\n| `cognitive_tests` | tiempo de reacción, precisión y atención | Dev 3 |\n| `scheduled_checks` | chequeos programados | Dev 3 |\n| `alerts` | avisos de salud y recordatorios | Dev 3 |\n| `diagnoses` | detecciones de la red neuronal y explicaciones del LLM, con validación del Médico | Dev 3 |\n| `wiki_entries` | protocolos y casos de la guía médica | Dev 3 |\n\n### Reglas\n- Solo el dueño modifica la estructura de sus tablas. Cualquiera puede **leer** cualquier tabla.\n- Los cambios de estructura van en un PR pequeño a `main` y se avisa a los demás.\n- Cada dev agrega al catálogo las métricas que usa (algunas fuentes dicen \"Por confirmar\" y hay que investigarlas).\n\n### Organización del código (para no pisarse)\n- Backend: `backend/app/routers/<modulo>.py`, un archivo por módulo.\n- Frontend: páginas propias y un composable por módulo (`useSueno`, `useWiki`…).\n- Traducciones (`i18n/locales/*.json`): cada quien bajo su prefijo (`dev1.*`, `dev2.*`, `dev3.*`).\n- Estilo visual (`assets/css/tokens.css`, `components/` base): dueño Dev 1. Los demás crean componentes nuevos o piden cambios.\n- Ramas: `feat/D1-01-login`, `feat/D2-03-sueno`… Un PR por tarea terminada (tabla + API + pantalla). El validador revisa con el checklist de `SCAN_SPACE.md`.\n\n---\n\n## Fase 1 — Tareas en paralelo\nCada tarea indica:\n- **Tablas:** las que usa.\n- **Depende de:** otras tareas que necesita.\n- **Mientras no exista:** el sustituto temporal para no quedarse esperando.\n\n### Dev 1 — Acceso, tripulación y conexión con la Tierra\n**En resumen:** la base sobre la que todo funciona (API inicial, usuarios, sesión), las vistas de grupo y la comunicación con la Tierra.\n\n**D1-01 · Arranque del backend y datos iniciales**\n*Qué es:* proyecto FastAPI en `backend/app/`, conexión a SQLite y un script `seed.py` que llena la base con los JSON simulados actuales, 4 tripulantes de prueba y datos reales de NASA (OSDR/GeneLab).\n*Para qué:* que los 3 tengan desde el día 1 un backend que corre y datos realistas (\"Best Use of Data\").\n*Tablas:* todas las de Dev 1 · *Depende de:* Fase 0 · **Hacer primero:** Dev 2 y Dev 3 crean sus routers sobre este proyecto. Mientras tanto, cada uno puede arrancar con su propio `main.py` mínimo.\n\n**D1-02 · Estilo visual base** (RNF 4)\n*Qué es:* ajustar colores, tipografías y componentes base al Figma, con alto contraste.\n*Para qué:* que toda la app se vea consistente y se lea bien en cabina.\n*Depende de:* nada.\n\n**D1-03 · Login con perfil + PIN** (§3.1, RNF 3) — back + front\n*Qué es:* `GET /crew/perfiles` (con color de estado) y `POST /auth/login` (PIN de 4 dígitos cifrado), más la pantalla `pages/index.vue` con las tarjetas de los tripulantes y el teclado del PIN.\n*Para qué:* proteger los datos individuales; sin sesión solo se ven el resumen y las rachas.\n*Tablas:* `crew` · *Depende de:* D1-01 · *Mientras no exista:* los demás usan la sesión simulada actual (`useSession`).\n\n**D1-04 · Gestión de usuarios y línea base** (§3.1) — back + front\n*Qué es:* alta, edición y desactivación de tripulantes con su rol; cálculo de la línea base a partir de las mediciones de la etapa pre-misión (reutilizar la lógica de `utils/status.ts`).\n*Para qué:* el Operador (a bordo) y Control a tierra (remoto) administran la tripulación; la línea base es contra lo que se compara todo.\n*Tablas:* `crew`, `baselines` · *Depende de:* D1-01.\n\n**D1-05 · Vista general de salud** (§3.2) — back + front\n*Qué es:* `GET /panel` y `pages/panel.vue`: estado de cada tripulante (Óptimo / Nominal / Atención), signos clave y ambiente de cabina.\n*Para qué:* saber de un vistazo cómo está toda la tripulación.\n*Tablas:* `measurements`, `baselines`, `environment_readings` · *Depende de:* D1-01.\n\n**D1-06 · Rachas** (§3.2) — back + front\n*Qué es:* la función `update_streaks(crew_id, fecha)` llena `streak_days`, más `GET /rachas` y `pages/rachas.vue` (individual, grupal, mejor marca, últimos 7 días).\n*Para qué:* motivar la constancia (\"Most Inspirational\").\n*Tablas:* `streak_days`, `measurements` · *Depende de:* D1-01. **Publicar la firma de `update_streaks` el día 1**, porque D2-01 la llama.\n\n**D1-07 · Comunicación con Control a tierra** (§3.12, RNF 1) — back + front\n*Qué es:* cola que arma el resumen diario, lo \"envía\" cuando hay enlace (simulando la latencia), registra el estado de entrega y recibe directivas médicas; más la pantalla para ver envíos y directivas.\n*Para qué:* la nave funciona sin conexión continua; la comunicación es diferida, como en una misión real.\n*Tablas:* `sync_packets` · *Depende de:* D1-01.\n\n### Dev 2 — Salud física y clínica del tripulante\n**En resumen:** cómo **entran** las mediciones y cómo se **consulta** la salud física de cada persona.\n\n**D2-01 · Ingesta de mediciones** (§3.4) — back\n*Qué es:* `POST /measurements` valida que la métrica exista en el catálogo, guarda la medición y luego llama a `evaluate_alerts()` (Dev 3) y `update_streaks()` (Dev 1).\n*Para qué:* es la puerta de entrada de todos los datos.\n*Tablas:* `measurements`, `metric_catalog` · *Depende de:* Fase 0 · *Mientras no exista:* `evaluate_alerts` y `update_streaks` como funciones vacías con la firma acordada.\n\n**D2-02 · Formularios de captura** (§3.4) — front\n*Qué es:* pantallas paso a paso para signos vitales, peso, hidratación, calorías, ejercicio, laboratorio y horario de sueño.\n*Para qué:* registrar datos rápido y sin errores, incluso estando cansado.\n*Depende de:* D2-01 · *Mientras no exista:* mostrar el JSON que se enviaría.\n\n**D2-03 · Perfil del tripulante** (§3.3) — back + front\n*Qué es:* `GET /crew/{id}/perfil` y `pages/perfil/`: datos personales, biometría y estado físico-clínico, comparando Despegue / Misión / Regreso contra la línea base.\n*Para qué:* ver cómo cambia el cuerpo de cada persona a lo largo de la misión.\n*Tablas:* `crew`, `measurements`, `baselines` · *Depende de:* Fase 0 · *Mientras no exista D1-04:* calcular la línea base al vuelo con `utils/status.ts`.\n\n**D2-04 · Módulo de Sueño** (§3.5) — back + front\n*Qué es:* registro de noches y pantalla con puntaje, horas frente a la meta y fases (profundo, REM, ligero, despierto), con filtros de última noche, 7, 14 y 30 días.\n*Para qué:* evaluar si el tripulante descansa y se recupera bien.\n*Tablas:* `sleep_sessions`, `sleep_stages` · *Depende de:* Fase 0.\n\n**D2-05 · Módulo de Visión** (§3.4, §3.7) — back + front\n*Qué es:* captura de ojo izquierdo y derecho (nervio óptico, presión ocular, retina, agudeza) y pantalla comparativa con tendencia, umbrales y estado de revisión del Médico.\n*Para qué:* vigilar el síndrome neuro-ocular (SANS), un problema real en astronautas.\n*Tablas:* `measurements` (con `side` L/R) · *Depende de:* D2-01.\n\n**D2-06 · Módulo de Auscultación** (§3.4, §3.8) — back + front\n*Qué es:* grabar 30 s de corazón o pulmón con el micrófono (verificando antes el ruido ambiente), guardar el audio y mostrar resultados (ritmo, soplos, fonocardiograma, respiración, VO₂ máx, CO₂ de cabina).\n*Para qué:* evaluar la salud cardiorrespiratoria, clave para el Operador que sale de la nave.\n*Tablas:* `auscultation_samples`, `measurements` · *Depende de:* Fase 0.\n\n### Dev 3 — Mente, inteligencia y atención médica\n**En resumen:** la salud psicológica, la IA que interpreta los datos y todo lo que ayuda a **actuar**: alertas y guía médica.\n\n**D3-01 · Motor de alertas** (§3.11) — back\n*Qué es:* la función `evaluate_alerts(measurement_id)` compara contra el rango clínico y la línea base (misma lógica que `utils/status.ts`) y crea alertas. Incluye Quiet Hours: los avisos no urgentes se difieren mientras el tripulante duerme.\n*Para qué:* avisar temprano sin interrumpir el descanso por cosas menores.\n*Tablas:* `alerts`, `measurements`, `metric_catalog` · *Depende de:* Fase 0. **Publicar la firma el día 1**, porque D2-01 la llama.\n\n**D3-02 · Notificaciones y chequeos programados** (§3.11) — back + front\n*Qué es:* `GET /alertas` y `pages/notificaciones.vue` con *Avisos de Salud* y *Chequeos Programados*, botón de \"leído\" y enlace al protocolo de la Wiki.\n*Para qué:* que nadie se pierda una alerta y sepa de inmediato qué hacer.\n*Tablas:* `alerts`, `scheduled_checks` · *Depende de:* D3-01 · *Mientras no exista:* insertar alertas de prueba.\n\n**D3-03 · Evaluación psicológica** (§3.3, §3.6) — back + front\n*Qué es:* test de ánimo, estrés, soledad y motivación (1–5) y pantalla con la tendencia de 14 días frente a la zona óptima de cada persona.\n*Para qué:* cuidar la salud mental en aislamiento, uno de los mayores riesgos en misiones largas.\n*Tablas:* `psych_tests` · *Depende de:* Fase 0.\n\n**D3-04 · Prueba cognitivo-motriz** (§3.6) — back + front\n*Qué es:* mini juego que mide tiempo de reacción (ms), precisión y atención, y guarda el resultado.\n*Para qué:* comprobar que el Piloto está mentalmente apto.\n*Tablas:* `cognitive_tests` · *Depende de:* Fase 0.\n\n**D3-05 · Red neuronal de anomalías** (§3.9) — back\n*Qué es:* modelo (ej. autoencoder o LSTM) entrenado con datos simulados y de NASA que detecta cuando las series de un tripulante se alejan de su línea base; `POST /diagnosis/anomalies` guarda la detección.\n*Para qué:* detectar problemas temprano, antes de que crucen un umbral crítico.\n*Tablas:* `diagnoses` (lee `measurements`) · *Depende de:* Fase 0 · *Mientras no exista D1-01:* entrenar directamente con los JSON y CSV.\n\n**D3-06 · LLM local sin internet** (§3.9, RNF 1) — back + front\n*Qué es:* modelo de lenguaje pequeño en la nave (ej. Ollama o llama.cpp) que explica en lenguaje claro lo detectado y sugiere prevención, marcado como \"pendiente de validación del Médico\"; más la pantalla donde el Médico valida o rechaza.\n*Para qué:* traducir números en explicaciones entendibles sin depender de la Tierra ni reemplazar al Médico.\n*Tablas:* `diagnoses` · *Depende de:* D3-05 · *Mientras no exista:* usar diagnósticos de prueba.\n\n**D3-07 · Guía médica / Wiki** (§3.10) — back + front\n*Qué es:* protocolos buscables por síntoma o categoría (CO₂, visión, sueño/fatiga, trauma, medicación) con pasos, cuándo llamar al Médico e insumos del botiquín; los diagnósticos ya validados se convierten en casos de la Wiki.\n*Para qué:* saber qué hacer en una emergencia en pocos pasos y conservar el conocimiento médico generado a bordo.\n*Tablas:* `wiki_entries` · *Depende de:* Fase 0.\n\n---\n\n## Calendario en paralelo\n| Bloque | Dev 1 | Dev 2 | Dev 3 |\n|---|---|---|---|\n| Día 1 | **Fase 0 (los 3 juntos)** | **Fase 0** | **Fase 0** |\n| Semana 1 | D1-01 arranque + seed, D1-02 estilo | D2-01 ingesta, D2-02 captura | D3-01 alertas, D3-03 psicológico |\n| Semana 2 | D1-03 login, D1-04 usuarios | D2-03 perfil, D2-04 sueño | D3-02 notificaciones, D3-04 cognitivo |\n| Semana 3 | D1-05 panel, D1-06 rachas | D2-05 visión | D3-05 red neuronal, D3-07 Wiki |\n| Semana 4 | D1-07 Tierra + integración | D2-06 auscultación + integración | D3-06 LLM + integración |\n\n**Únicas dependencias entre devs (todas con sustituto):**\n| Quién necesita | Qué | De quién | Sustituto mientras tanto |\n|---|---|---|---|\n| D2-01 ingesta | `evaluate_alerts()` | Dev 3 (D3-01) | función vacía con la misma firma |\n| D2-01 ingesta | `update_streaks()` | Dev 1 (D1-06) | función vacía con la misma firma |\n| Todas las pantallas privadas | sesión con PIN | Dev 1 (D1-03) | `useSession` simulado actual |\n| D2-03 perfil, D3-01 alertas | línea base | Dev 1 (D1-04) | calcularla al vuelo con `utils/status.ts` |\n| Todos los routers | proyecto FastAPI | Dev 1 (D1-01) | `main.py` mínimo propio, luego se une |\n\n---\n\n## Verificación\n- La base se crea sin errores: `sqlite3 scan.db < backend/db/schema.sql`.\n- Cada PR funciona contra el backend real, no solo con mocks: `uvicorn` + `pytest` para su API y `npm run dev` para sus pantallas.\n- Prueba final del flujo completo: login → captura → alerta → notificación → protocolo de la Wiki → paquete a Tierra.\n- Cada PR pasa el checklist de los 10 criterios de `SCAN_SPACE.md`.\n",
+      "updatedBy": "Wilmer",
+      "updatedAt": "2026-11-14T19:42:06.906Z"
+    },
+    "doc_mywork_comentarios": {
+      "id": "doc_mywork_comentarios",
+      "title": "MyWork comentarios.md",
+      "content": "# Nuevo Documento\n\ncada que le doy listo a una tarea me obliga a desplazarme hasta la parte de arriba\ndoy el chekcklist luego pongo listo y sucede el evento\n-cambiar nombre de pagina principal de scan space a scan workspace",
+      "updatedBy": "Foco (Poco)",
+      "updatedAt": "2026-11-14T19:41:17.164Z"
+    }
+  },
+  "ind-alimentacion": true,
+  "itemStatus": {
+    "ind-alimentacion": {
+      "tomado": true,
+      "tomadoPor": "Steve",
+      "proceso": true,
+      "procesoPor": "Steve",
+      "listo": true,
+      "listoPor": "Steve"
+    },
+    "phase-antes": {
+      "tomado": false,
+      "tomadoPor": null,
+      "proceso": false,
+      "procesoPor": null,
+      "listo": false,
+      "listoPor": null
+    },
+    "mis-humedad": {
+      "tomado": true,
+      "tomadoPor": "Foco (Poco)",
+      "proceso": true,
+      "procesoPor": "Foco (Poco)",
+      "listo": true,
+      "listoPor": "Foco (Poco)"
+    },
+    "mis-temp": {
+      "tomado": true,
+      "tomadoPor": "Foco (Poco)",
+      "proceso": true,
+      "procesoPor": "Foco (Poco)",
+      "listo": true,
+      "listoPor": "Foco (Poco)"
+    },
+    "mis-tiempo-mision": {
+      "tomado": true,
+      "tomadoPor": "Foco (Poco)",
+      "proceso": true,
+      "procesoPor": "Foco (Poco)",
+      "listo": true,
+      "listoPor": "Foco (Poco)"
+    },
+    "data-osea": {
+      "tomado": true,
+      "tomadoPor": "Steve",
+      "proceso": true,
+      "procesoPor": "Steve",
+      "listo": true,
+      "listoPor": "Steve"
+    },
+    "res-radiacion": {
+      "tomado": true,
+      "tomadoPor": "Steve",
+      "proceso": true,
+      "procesoPor": "Steve",
+      "listo": true,
+      "listoPor": "Steve"
+    },
+    "ind-hidratacion": {
+      "tomado": true,
+      "tomadoPor": "Steve",
+      "proceso": true,
+      "procesoPor": "Steve",
+      "listo": true,
+      "listoPor": "Steve"
+    },
+    "mis-ejercicio": {
+      "tomado": true,
+      "tomadoPor": "Sandra",
+      "proceso": true,
+      "procesoPor": "Sandra",
+      "listo": true,
+      "listoPor": "Sandra"
+    },
+    "ind-animo": {
+      "tomado": true,
+      "tomadoPor": "Foco (Poco)",
+      "proceso": true,
+      "procesoPor": "Foco (Poco)",
+      "listo": true,
+      "listoPor": "Foco (Poco)"
+    },
+    "ind-estres": {
+      "tomado": true,
+      "tomadoPor": "Foco (Poco)",
+      "proceso": true,
+      "procesoPor": "Foco (Poco)",
+      "listo": true,
+      "listoPor": "Foco (Poco)"
+    },
+    "ind-soledad": {
+      "tomado": true,
+      "tomadoPor": "Foco (Poco)",
+      "proceso": true,
+      "procesoPor": "Foco (Poco)",
+      "listo": true,
+      "listoPor": "Foco (Poco)"
+    },
+    "ind-motivacion": {
+      "tomado": true,
+      "tomadoPor": "Foco (Poco)",
+      "proceso": true,
+      "procesoPor": "Foco (Poco)",
+      "listo": true,
+      "listoPor": "Foco (Poco)"
+    },
+    "data-ritmo": {
+      "tomado": true,
+      "tomadoPor": "Foco (Poco)",
+      "proceso": true,
+      "procesoPor": "Foco (Poco)",
+      "listo": true,
+      "listoPor": "Foco (Poco)"
+    },
+    "data-presion": {
+      "tomado": true,
+      "tomadoPor": "Foco (Poco)",
+      "proceso": true,
+      "procesoPor": "Foco (Poco)",
+      "listo": false,
+      "listoPor": null
+    },
+    "data-imc": {
+      "tomado": true,
+      "tomadoPor": "Foco (Poco)",
+      "proceso": true,
+      "procesoPor": "Foco (Poco)",
+      "listo": true,
+      "listoPor": "Foco (Poco)"
+    },
+    "ind-sueno": {
+      "tomado": true,
+      "tomadoPor": "Steve",
+      "proceso": true,
+      "procesoPor": "Steve",
+      "listo": true,
+      "listoPor": "Steve"
+    },
+    "mis-glucosa": {
+      "tomado": true,
+      "tomadoPor": "Steve",
+      "proceso": true,
+      "procesoPor": "Steve",
+      "listo": true,
+      "listoPor": "Steve"
+    },
+    "mis-oxigeno": {
+      "tomado": true,
+      "tomadoPor": "Steve",
+      "proceso": true,
+      "procesoPor": "Steve",
+      "listo": true,
+      "listoPor": "Steve"
+    },
+    "data-muscular": {
+      "tomado": true,
+      "tomadoPor": "Steve",
+      "proceso": true,
+      "procesoPor": "Steve",
+      "listo": true,
+      "listoPor": "Steve"
+    },
+    "mis-motrices": {
+      "tomado": true,
+      "tomadoPor": "Foco (Poco)",
+      "proceso": true,
+      "procesoPor": "Foco (Poco)",
+      "listo": false,
+      "listoPor": null
+    }
+  },
+  "data-hora": true,
+  "data-edad": true,
+  "data-sexo": true,
+  "data-peso": true,
+  "data-muscular": true,
+  "data-altura": true,
+  "phase-antes": false,
+  "orders": {
+    "obj1-fases": [
+      "phase-antes",
+      "phase-despegue",
+      "phase-durante"
+    ]
+  },
+  "sectionOrders": {
+    "test": [
+      "card-sec-obj1",
+      "card-sec-mission",
+      "card-sec-research"
+    ]
+  },
+  "phase-durante": false,
+  "phase-despegue": false,
+  "archived": {
+    "cust_1794668361463_ie8m": {
+      "title": "aaaa",
+      "reason": "Sin motivo especificado",
+      "by": "Steve",
+      "date": "2026-11-14T19:12:17.717Z",
+      "section": "card-sec-obj1"
+    },
+    "cust_1794668375663_lsxy": {
+      "title": "aaa",
+      "reason": "Sin motivo especificado",
+      "by": "Steve",
+      "date": "2026-11-14T19:12:22.245Z",
+      "section": "card-sec-obj1"
+    },
+    "cust_1794670056723_ywzg": {
+      "title": "rrrr",
+      "reason": "Sin motivo especificado",
+      "by": "Carlos",
+      "date": "2026-11-14T19:15:12.660Z",
+      "section": "card-sec-flow"
+    },
+    "cust_1794667251820_9wi7": {
+      "title": "algo",
+      "reason": "no aplica",
+      "by": "Foco (Poco)",
+      "date": "2026-11-14T19:30:44.047Z",
+      "section": "card-sec-obj1"
+    },
+    "mis-int": {
+      "title": "Tiempo de trabajo (interior)",
+      "reason": "nA",
+      "by": "Foco (Poco)",
+      "date": "2026-11-14T19:35:54.348Z",
+      "section": "card-sec-mission"
+    },
+    "mis-ext": {
+      "title": "Tiempo de trabajo (exterior)",
+      "reason": "na",
+      "by": "Foco (Poco)",
+      "date": "2026-11-14T19:37:25.935Z",
+      "section": "card-sec-mission"
+    },
+    "data-hora": {
+      "title": "Hora",
+      "reason": "na",
+      "by": "Foco (Poco)",
+      "date": "2026-11-14T19:46:52.193Z",
+      "section": "card-sec-obj1"
+    },
+    "data-edad": {
+      "title": "Edad",
+      "reason": "na",
+      "by": "Foco (Poco)",
+      "date": "2026-11-14T19:46:57.517Z",
+      "section": "card-sec-obj1"
+    },
+    "data-sexo": {
+      "title": "Sexo",
+      "reason": "na",
+      "by": "Foco (Poco)",
+      "date": "2026-11-14T19:47:01.537Z",
+      "section": "card-sec-obj1"
+    },
+    "data-altura": {
+      "title": "Altura",
+      "reason": "na",
+      "by": "Foco (Poco)",
+      "date": "2026-11-14T19:47:04.178Z",
+      "section": "card-sec-obj1"
+    },
+    "data-peso": {
+      "title": "Peso",
+      "reason": "na",
+      "by": "Foco (Poco)",
+      "date": "2026-11-14T19:47:07.448Z",
+      "section": "card-sec-obj1"
+    },
+    "mis-tiempo-mision": {
+      "title": "Tiempo de misión",
+      "reason": "ns",
+      "by": "Foco (Poco)",
+      "date": "2026-11-14T19:48:39.265Z",
+      "section": "card-sec-mission"
+    },
+    "mis-tiempo-trabajo": {
+      "title": "Tiempo de trabajo",
+      "reason": "na",
+      "by": "Foco (Poco)",
+      "date": "2026-11-14T19:48:45.436Z",
+      "section": "card-sec-mission"
+    },
+    "mis-sangre": {
+      "title": "Sangre",
+      "reason": "Sin motivo especificado",
+      "by": "Sandra",
+      "date": "2026-11-14T20:04:27.016Z",
+      "section": "card-sec-mission"
+    },
+    "mis-orina": {
+      "title": "Orina",
+      "reason": "Sin motivo especificado",
+      "by": "Sandra",
+      "date": "2026-11-14T20:04:30.490Z",
+      "section": "card-sec-mission"
+    },
+    "res-ultrasonidos": {
+      "title": "Ultrasonidos",
+      "reason": "Sin motivo especificado",
+      "by": "Sandra",
+      "date": "2026-11-14T20:05:51.750Z",
+      "section": "card-sec-research"
+    }
+  },
+  "mis-humedad": true,
+  "subtasks": {
+    "mis-humedad": [
+      {
+        "id": "t_1794684479194_weum",
+        "title": "rangos de confort",
+        "text": "rangos de confort",
+        "link": "https://www.nasa.gov/reference/6-0-natural-and-induced-environments-vol-2/?utm_source",
+        "notes": "Extremos de referencia\t18 °C / 75 % y 27 °C / 25 %\nZona de rendimiento citada\t20–25 °C / 30–60 %",
+        "tomado": true,
+        "tomadoPor": "Foco (Poco)",
+        "enProceso": true,
+        "procesoPor": "Foco (Poco)",
+        "listo": true,
+        "listoPor": "Foco (Poco)",
+        "done": true,
+        "createdBy": "Foco (Poco)",
+        "createdAt": "2026-11-14T19:27:59.194Z"
+      }
+    ],
+    "data-osea": [
+      {
+        "id": "t_1794634815157_ku9b",
+        "title": "Riesgo de disminución de la capacidad cardiorrespiratoria y musculoesquelética",
+        "text": "Riesgo de disminución de la capacidad cardiorrespiratoria y musculoesquelética",
+        "link": "https://www.nasa.gov/reference/risk-of-reduced-cardiorespiratory-and-musculoskeletal-fitness/",
+        "notes": "solo se observa de manera macro y da cuidados y recomendaciones",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": false,
+        "procesoPor": null,
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-14T05:40:15.157Z"
+      },
+      {
+        "id": "t_1794634885048_8fv6",
+        "title": "Revisión sistemática y metaanálisis de la pérdida ósea en viajeros espaciales",
+        "text": "Revisión sistemática y metaanálisis de la pérdida ósea en viajeros espaciales",
+        "link": "https://www.nature.com/articles/s41526-020-0103-2",
+        "notes": "las observaciones on de manera micro",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": false,
+        "procesoPor": null,
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-14T05:41:25.048Z"
+      },
+      {
+        "id": "t_1794636305799_aymu",
+        "title": "figura 2 PERDIDA DE DENSIDAD EN AREAS",
+        "text": "figura 2 PERDIDA DE DENSIDAD EN AREAS",
+        "link": "https://www.nature.com/articles/s41526-020-0103-2",
+        "notes": "Cráneo y cuello (Región 1): Ganancia de densidad del 2,2%.   Tórax y extremidades superiores (Región 2): Pérdida del 0,7% (en misiones mayores a 28 días).   Pelvis y columna lumbar (Región 3): Pérdida severa del 6,2%.   Extremidades inferiores (Región 4): Pérdida severa del 5,4% (en misiones mayores a 28 días).",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": false,
+        "procesoPor": null,
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-14T06:05:05.799Z"
+      }
+    ],
+    "res-radiacion": [
+      {
+        "id": "t_1794666944348_5k57",
+        "title": "radiación espacial",
+        "text": "radiación espacial",
+        "link": "https://www.nasa.gov/humans-in-space/the-human-body-in-space/",
+        "notes": "nos presenta la problemática de la radiación espacial la cual se a visto que hay mas probabilidades de desarrollar cáncer en donde los problemas mas desarrolladas son cardiopatías y cataratas. Puntos clave para evitar la radiacion blindaje y monitoreo de la radiacion",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-14T14:35:44.348Z"
+      },
+      {
+        "id": "t_1794668143547_sj6f",
+        "title": "NASA creó SRE",
+        "text": "NASA creó SRE",
+        "link": "https://www.nasa.gov/reference/about-the-space-radiation-element/",
+        "notes": "El objetivo de SRE es desarrollar la base de conocimientos que la NASA necesita para predecir y gestionar los riesgos que la radiación del espacio profundo supone para la salud humana.",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-14T14:55:43.547Z"
+      },
+      {
+        "id": "t_1794694674992_jb8j",
+        "title": "Estándares de Radiación",
+        "text": "Estándares de Radiación",
+        "link": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-020-radiation-protection.pdf",
+        "notes": "Radiación Natural de Fondo (Cualquier persona)                   2.4 - 3.0 mSv \nLímite para el Público General (Fuentes artificiales)   1 mSv / año\nTrabajador Ocupacional (Radiólogos, planta nuclear)20 mSv / año",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-14T22:17:54.992Z"
+      }
+    ],
+    "phase-antes": [
+      {
+        "id": "t_1794666784006_1w9r",
+        "title": "algo",
+        "text": "algo",
+        "link": "",
+        "notes": "",
+        "tomado": false,
+        "tomadoPor": null,
+        "enProceso": false,
+        "procesoPor": null,
+        "listo": false,
+        "listoPor": null,
+        "done": false,
+        "createdBy": "Wilson",
+        "createdAt": "2026-11-14T14:33:04.006Z",
+        "archived": true,
+        "archiveReason": "Medición no viable en vuelo espacial por equipo a bordo",
+        "archivedBy": "Wilson",
+        "archivedAt": "2026-11-14T14:33:18.670Z"
+      }
+    ],
+    "cust_1794667251820_9wi7": [
+      {
+        "id": "t_1794667286006_chht",
+        "title": "algodd",
+        "text": "algodd",
+        "link": "",
+        "notes": "",
+        "tomado": false,
+        "tomadoPor": null,
+        "enProceso": false,
+        "procesoPor": null,
+        "listo": false,
+        "listoPor": null,
+        "done": false,
+        "createdBy": "Wilson",
+        "createdAt": "2026-11-14T14:41:26.006Z",
+        "archived": true,
+        "archiveReason": "d",
+        "archivedBy": "Wilson",
+        "archivedAt": "2026-11-14T14:41:37.069Z"
+      }
+    ],
+    "mis-ejercicio": [
+      {
+        "id": "t_1794686432906_vxqv",
+        "title": "Duración y frecuencia de Ejercicio",
+        "text": "Duración y frecuencia de Ejercicio",
+        "link": "https://www.nasa.gov/wp-content/uploads/2025/02/sp-20250000273.pdf?emrc=",
+        "notes": "Parámetros generales según la duración de la misión\nMisión muy corta (menos de 10 días):\n- Frecuencia de ejercicio: sin ejercicio.\n- Duración de sesión: sin ejercicio.\nMisión corta (hasta 14 días):\n- Frecuencia de ejercicio: 3 días por semana.\n- Duración por sesión: 20 minutos (variable).\nMisión larga (180 días o más):\n- Frecuencia de ejercicio: 6–7 días por semana.\n- Duración por sesión: 30 minutos.\n- Norma aeróbica: mantener al menos el 80 % del VO₂ máx. previo al vuelo.",
+        "tomado": true,
+        "tomadoPor": "Sandra",
+        "enProceso": true,
+        "procesoPor": "Sandra",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Sandra",
+        "createdAt": "2026-11-14T20:00:32.906Z"
+      }
+    ],
+    "mis-temp": [
+      {
+        "id": "t_1794686500964_oggo",
+        "title": "temperatura",
+        "text": "temperatura",
+        "link": "https://www.medlineplus.gov/ency/article/002341.htm?utm_source",
+        "notes": "Temperatura: 97,7°F a 99,1°F (36,5°C a 37,3°C); media 98,6°F (37°C)",
+        "tomado": true,
+        "tomadoPor": "Foco (Poco)",
+        "enProceso": true,
+        "procesoPor": "Foco (Poco)",
+        "listo": true,
+        "listoPor": "Foco (Poco)",
+        "done": true,
+        "createdBy": "Foco (Poco)",
+        "createdAt": "2026-11-14T20:01:40.964Z"
+      }
+    ],
+    "data-imc": [
+      {
+        "id": "t_1794689449859_7h7t",
+        "title": "IMC preVuelo, vuelo y postVuelo",
+        "text": "IMC preVuelo, vuelo y postVuelo",
+        "link": "https://www.nasa.gov/wp-content/uploads/2025/05/nasa-std-3001-vol-2.pdf",
+        "notes": "Fase Pre-vuelo \n- IMC óptimo (bueno): 18.5 – 24.9 g/m2\n- IMC aceptable (precaución): 25.0 – 27.9 kg/m2 (o 18.0 – 18.4 kg/m2 condicionado a composición corporal magra).\n- IMC crítico (no apto): < 18.0 kg/m2 o $\\ge$ 28.0 – 30.0+ kg/m2\n\nFASE EN VUELO\n- Norma nutricional: cubrir el 100% de los requerimientos calóricos y de nutrientes calculados según edad, sexo, masa corporal (kg) y estatura (m)\n\nFase Post vuelo\n- Estado óptimo (bueno): retención > 95% de masa basal al aterrizar (IMC dentro de  +-1.0 kg/m2 del inicial).\n-Estado aceptable (precaución): retención entre 90% y 95% al aterrizar y recuperación del 95% – 97%\n- Estado crítico (alerta médica): retención < 90% al aterrizar (pérdida > 10%) o < 95% tras 45 – 60 días de rehabilitación.\n\n Norma de recuperación: evaluación y tratamiento nutricional dirigidos a retornar al valor basal previo a la misión.",
+        "tomado": true,
+        "tomadoPor": "Sandra",
+        "enProceso": true,
+        "procesoPor": "Sandra",
+        "listo": false,
+        "listoPor": null,
+        "done": false,
+        "createdBy": "Sandra",
+        "createdAt": "2026-11-14T20:50:49.859Z"
+      }
+    ],
+    "data-ritmo": [
+      {
+        "id": "t_1794690332135_9r1r",
+        "title": "ritmo cardiaco para adultos y atletas",
+        "text": "ritmo cardiaco para adultos y atletas",
+        "link": "https://medlineplus.gov/ency/article/003399.htm?utm_source",
+        "notes": "Children 10 years and older, and adults (including seniors): 60 to 100 beats per minute\nWell-trained athletes: 40 to 60 beats per minute",
+        "tomado": false,
+        "tomadoPor": null,
+        "enProceso": false,
+        "procesoPor": null,
+        "listo": false,
+        "listoPor": null,
+        "done": false,
+        "createdBy": "Foco (Poco)",
+        "createdAt": "2026-11-14T21:05:32.135Z"
+      }
+    ],
+    "data-presion": [
+      {
+        "id": "t_1794693825533_8dqr",
+        "title": "presion arterial 2 tipos",
+        "text": "presion arterial 2 tipos",
+        "link": "https://medlineplus.gov/spanish/pruebas-de-laboratorio/medicion-de-la-presion-arterial/?utm_source",
+        "notes": "Categoría de presión arterial\tPresión arterial sistólica\t\nPresión arterial diastólica\nNormal\tMenos de 120\ty\tMenos de 80\nElevada\t120 - 129\ty\tMenos de 80\nHipertensión grado 1\t130 - 139\tó\t80 - 89\nHipertensión grado 2\t140 o mayor\tó\t90 o mayor\nCrisis hipertensiva (presión arterial peligrosamente alta. Busque atención médica de inmediato)\tMayor de 180\ty\tMayor de 120",
+        "tomado": true,
+        "tomadoPor": "Foco (Poco)",
+        "enProceso": true,
+        "procesoPor": "Foco (Poco)",
+        "listo": true,
+        "listoPor": "Foco (Poco)",
+        "done": true,
+        "createdBy": "Foco (Poco)",
+        "createdAt": "2026-11-14T22:03:45.533Z"
+      }
+    ],
+    "ind-hidratacion": [
+      {
+        "id": "t_1794695093983_ez46",
+        "title": "TEST DE HIDRATACION",
+        "text": "TEST DE HIDRATACION",
+        "link": "https://www.hprc-online.org/nutrition/nutrition-fundamentals/how-accurately-assess-hydration-status-using-urine-color-charts",
+        "notes": "COLORIMETRIA PRUEBA EN BASE AL COLOR DE LA ORINA                                                                    Bien hidratado 1–3\nHipohidratado 4–6\nDeshidratado 7 o más",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-14T22:24:53.983Z"
+      },
+      {
+        "id": "t_1794695584169_0nua",
+        "title": "Estándares de Ingest",
+        "text": "Estándares de Ingest",
+        "link": "https://www.gssiweb.org/en/sports-science-exchange/article/urine-markers-for-hydration-monitoring--practical-assessment-and-interpretation",
+        "notes": "Ingesta Total (Hombres adultos)2.5 a 3.7 Litros / día\nIngesta Total (Mujeres adultas)2.0 a 2.7 Litros / día\nFórmula por Peso Corporal)30 a 35 ml por kg de peso\nOsmolalidad Plasmática (Sangre)275 – 295 mOsm/kg  Es el marcador fisiológico más estricto del cuerpo; valores > 295 indican deshidratación.",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-14T22:33:04.169Z"
+      }
+    ],
+    "ind-estres": [
+      {
+        "id": "t_1794697729809_safe",
+        "title": "Cortisol",
+        "text": "Cortisol",
+        "link": "https://medlineplus.gov/spanish/pruebas-de-laboratorio/prueba-de-cortisol/",
+        "notes": "Cortisol Sérico (Sangre) Rango Normal (Reposo / Bajo Estrés) Mañana (8:00 a.m.): 5 – 25 mcg/dL               Tarde (4:00 p.m.): 3 – 16 mcg/dL  Indicador de Estrés Agudo o Crónico> 25 mcg/dL en la mañana o pérdida del descenso nocturno.\nCortisol Salival    Rango Normal (Reposo / Bajo Estrés) Mañana: 0.10 – 1.50 mcg/dL\nNoche: < 0.15 mcg/dL        Indicador de Estrés Agudo o Crónico> 0.15 – 0.20 mcg/dL antes de dormir.",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-14T23:08:49.809Z"
+      },
+      {
+        "id": "t_1794697990888_n5zh",
+        "title": "Frecuencia Cardíaca",
+        "text": "Frecuencia Cardíaca",
+        "link": "https://www.frontiersin.org/journals/public-health/articles/10.3389/fpubh.2017.00258/full",
+        "notes": "Variabilidad de la Frecuencia Cardíaca (VFC / HRV - RMSSD)Rango Normal (Reposo / Bajo Estrés)Adulto sano: 30 – 100+ ms (varía fuertemente según la edad)\nIndicador de Estrés Agudo o Crónico< 20 – 30 ms (caída sostenida respecto a la línea base individual).",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-14T23:13:10.888Z"
+      }
+    ],
+    "ind-sueno": [
+      {
+        "id": "t_1794699829983_uktn",
+        "title": "HORAS",
+        "text": "HORAS",
+        "link": "https://www.ncbi.nlm.nih.gov/books/NBK526132/",
+        "notes": "Adultos (26–64 años)Rango Recomendado 7 a 9 horas No Recomendado< 6 h o > 10 h\nFase N1 (Sueño Ligero - Transición): Representa alrededor del 5% del tiempo total de sueño.\nFase N2 (Sueño Ligero Estable): Representa entre el 45% y el 55% del sueño total. Baja la temperatura corporal.                                                                  Fase N3 (Sueño Profundo / Ondas Lentas - SWS): Representa entre el 15% y el 25% del tiempo total (predomina en la primera mitad de la noche).           Fase REM (Movimientos Oculares Rápidos): Representa entre el 20% y el 25% del sueño total",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-14T23:43:49.983Z"
+      },
+      {
+        "id": "t_1794700368308_pdyn",
+        "title": "MEDIA",
+        "text": "MEDIA",
+        "link": "https://www.thensf.org/what-is-sleep-quality/",
+        "notes": "Frecuencia Cardíaca (FC)Dormido (Media General)   45 – 65 lpm (Caída del 10% al 20% respecto al estado despierto)\nVariabilidad de Frecuencia Cardíaca (VFC / RMSSD)40 – 80+ ms (Aumento del 15% al 40% sobre la media diurna)                                                            Frecuencia Respiratoria12 – 15 respiraciones/min (Caída de 1 a 3 rpm)\nMovimiento (Acelerómetro)< 1 movimiento cada 10 – 15 minutos (Inmovilidad sostenida)\nTemperatura Cutánea (Muñeca)34.5 °C – 35.5 °C (Sube ligeramente en la piel mientras baja la temperatura interna)",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-14T23:52:48.308Z"
+      }
+    ],
+    "mis-glucosa": [
+      {
+        "id": "t_1794703954649_6m3o",
+        "title": "Prueba / Momento de Medición--Rango Normal",
+        "text": "Prueba / Momento de Medición--Rango Normal",
+        "link": "https://medlineplus.gov/spanish/ency/article/003482.htm",
+        "notes": "Glucosa en Ayunas (mínimo 8 horas sin calorías)            70 – 99 mg/dL\nGlucosa Postprandial (2 horas) (Prueba de Tolerancia Oral con 75g de glucosa)< 140 mg/dL\nHemoglobina Glicosilada (HbA1c) (promedio de los últimos 2–3 meses)< 5.7 %\nGlucosa Aleatoria (a cualquier hora del día, con síntomas clásicos)70 – 139 mg/dL",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-15T00:52:34.649Z"
+      }
+    ],
+    "mis-oxigeno": [
+      {
+        "id": "t_1794706488240_uuhw",
+        "title": "Medias y Rangos Estándar en la Tierra",
+        "text": "Medias y Rangos Estándar en la Tierra",
+        "link": "https://www.americares.org/wp-content/uploads/globalassets/_mo/focus/ss/who-pulse-oximetry-training-manual2.pdf",
+        "notes": "Normal (Estándar saludable)\t95 % – 100 %\nAceptable / Límite inferior\t93 % – 94 %\nHipoxemia Leve\t91 % – 92 %              Requiere vigilancia médica; comienza a disminuir el suministro eficiente de oxígeno a los tejidos.\nHipoxemia Moderada\t86 % – 90 %              Señal de alerta clínica; generalmente requiere administración de oxígeno suplementario.",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-15T01:34:48.240Z"
+      },
+      {
+        "id": "t_1794706638790_hhvy",
+        "title": "Saturación de Oxígeno en el Espacio",
+        "text": "Saturación de Oxígeno en el Espacio",
+        "link": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-003-habitable-atmosphere.pdf",
+        "notes": "Atmósfera de la Estación Espacial (ISS): Se mantiene a una presión equivalente al nivel del mar (~101.3 kPa o 14.7 psi) con un 21% de oxígeno, por lo que la media de SpO2 de los astronautas en reposo se mantiene normal (96% – 99%). Sin embargo, durante el sueño puede haber ligeras caídas debido a la redistribución de fluidos hacia el tórax y el cuello, lo que altera levemente el patrón respiratorio.\n\nFuturas Naves Espaciales (Artemis / Marte) y Trajes de Caminata Espacial (EVA): Por razones de ingeniería y seguridad contra incendios, los hábitats de espacio profundo y los trajes espaciales operan a menor presión total (entre 30% y 55% de la presión terrestre) pero con una concentración de oxígeno mucho más alta (entre 32% y 100% de O2 puro).\n\nEfecto de hipoxia normobárica/hipobárica leve: En entornos de hábitat con presión reducida (como los 8.2 psi / 34% O2 planificados para futuras cápsulas)",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-15T01:37:18.790Z"
+      }
+    ],
+    "data-muscular": [
+      {
+        "id": "t_1794709591156_50k9",
+        "title": "Estándar de Masa Muscular Esquelética",
+        "text": "Estándar de Masa Muscular Esquelética",
+        "link": "https://www.nasa.gov/missions/station/iss-research/counteracting-bone-and-muscle-loss-in-microgravity/",
+        "notes": "Hombres (18 – 39 años)   Masa Muscular Absoluta Promedio (kg)28 – 36 kg   Índice de Masa Muscular Esquelética (IMM - Punto de corte saludable)≥ 8.50 kg/m² (por bioimpedancia)\n≥ 7.00 kg/m² (por DXA apendicular)\n\nMujeres (18 – 39 años)  Masa Muscular Absoluta Promedio (kg)18 – 24 kg          Índice de Masa Muscular Esquelética (IMM - Punto de corte saludable)  ≥ 5.75 kg/m² (por bioimpedancia)\n≥ 5.50 kg/m² (por DXA apendicular)",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-15T02:26:31.156Z"
+      },
+      {
+        "id": "t_1794709817212_30wn",
+        "title": "FORMULA",
+        "text": "FORMULA",
+        "link": "https://www.nasa.gov/reference/risk-of-reduced-cardiorespiratory-and-musculoskeletal-fitness/",
+        "notes": "IMM (kg/m}^2 =  Masa Muscular Esquelética /(kg)Estatura (m)^2\n\nAtrofia por descarga mecánica inmediata\nTasa de pérdida acelerada: Sin ejercicio intenso, los astronautas pueden perder hasta un 20% de su masa muscular en apenas 5 a 11 días en el espacio. En misiones de 4 a 6 meses con rutinas de ejercicio estándar, la pérdida promedio de fuerza y masa muscular se sitúa entre el 10% y el 12%\n\nTransformación del tipo de fibra muscular",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-15T02:30:17.212Z"
+      }
+    ],
+    "ind-alimentacion": [
+      {
+        "id": "t_1794715112974_ynrk",
+        "title": "calorias",
+        "text": "calorias",
+        "link": "https://ajcn.nutrition.org/article/S0002-9165(23)16698-6/abstract",
+        "notes": "Hombres (19 – 30 años)\t2,400 kcal / día\t2,600 – 2,800 kcal / día             Hombres (31 – 50 años)\t2,200 kcal / día\t2,400 – 2,600 kcal / día\n\nMujeres (19 – 30 años)\t1,800 – 2,000 kcal / día\t2,000 – 2,200 kcal / día      Mujeres (31 – 50 años)\t1,800 kcal / día\t2,000 kcal / día",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-15T03:58:32.974Z"
+      },
+      {
+        "id": "t_1794715578787_vl5m",
+        "title": "formulas",
+        "text": "formulas",
+        "link": "https://www.dietaryguidelines.gov/sites/default/files/2020-12/Dietary_Guidelines_for_Americans_2020-2025.pdf",
+        "notes": "Carbohidratos: 45% – 65% (4 kcal por gramo).\nGrasas (Lípidos): 20% – 35% (9 kcal por gramo).\nProteínas: 10% – 35% (4 kcal por gramo; estándar clínico mínimo de 0.8 g por kg de peso, subiendo a 1.2 – 2.0 g/kg en personas activas).\n{TMB} = (10 \\times \\Peso en kg) + (6.25 \\times \\Estatura en cm) - (5 \\times \\Edad en años) + 5\n\n{TMB} = (10 \\times \\Peso en kg}) + (6.25 \\times \\Estatura en cm) - (5 \\times \\Edad en años) - 161",
+        "tomado": true,
+        "tomadoPor": "Steve",
+        "enProceso": true,
+        "procesoPor": "Steve",
+        "listo": true,
+        "listoPor": "Steve",
+        "done": true,
+        "createdBy": "Steve",
+        "createdAt": "2026-11-15T04:06:18.787Z"
+      }
+    ],
+    "res-mot-vista": [
+      {
+        "id": "t_1794716572153_skek",
+        "title": "Evaluaciones Visuales",
+        "text": "Evaluaciones Visuales",
+        "link": "https://www.nasa.gov/wp-content/uploads/2024/02/ochmo-mtb-001-sans.pdf?emrc=d4c581",
+        "notes": "Para misiones de aproximadamente seis meses, NASA contempla evaluaciones en distintos momentos:\n\nMomento\t          Evaluaciones\nAntes del vuelo\t  Examen oftalmológico completo.\nDía 30\t      Evaluación visual y ocular.\nDía 90\t       Seguimiento visual y ocular.\n30 días antes del regreso\t Nueva evaluación.\nDespués del vuelo\t         Examen completo para identificar cambios.",
+        "tomado": false,
+        "tomadoPor": null,
+        "enProceso": false,
+        "procesoPor": null,
+        "listo": false,
+        "listoPor": null,
+        "done": false,
+        "createdBy": "Sandra",
+        "createdAt": "2026-11-15T04:22:52.153Z",
+        "archived": true,
+        "archiveReason": "No aplica a la fase actual de la misión",
+        "archivedBy": "Sandra",
+        "archivedAt": "2026-11-15T04:25:49.557Z"
+      }
+    ],
+    "mis-examenes": [
+      {
+        "id": "t_1794716655972_fwfb",
+        "title": "Exámenes de la vista",
+        "text": "Exámenes de la vista",
+        "link": "https://www.nasa.gov/wp-content/uploads/2024/02/ochmo-mtb-001-sans.pdf?emrc=d4c581",
+        "notes": "",
+        "tomado": true,
+        "tomadoPor": "Sandra",
+        "enProceso": false,
+        "procesoPor": null,
+        "listo": false,
+        "listoPor": null,
+        "done": false,
+        "createdBy": "Sandra",
+        "createdAt": "2026-11-15T04:24:15.972Z"
+      },
+      {
+        "id": "t_1794716967282_qvlx",
+        "title": "Frecuencia de los exámenes en las misiones",
+        "text": "Frecuencia de los exámenes en las misiones",
+        "link": "https://www.nasa.gov/wp-content/uploads/2024/02/ochmo-mtb-001-sans.pdf?emrc=d4c581",
+        "notes": "Para misiones de aproximadamente seis meses, NASA contempla evaluaciones en distintos momentos:\n\nMomento\t        Evaluaciones\nAntes del vuelo\tExamen oftalmológico completo.\nDía 30\t         Evaluación visual y ocular.\nDía 90\t           Seguimiento visual y ocular.\n30 días antes del regreso\tNueva evaluación.\nDespués del vuelo\t         Examen completo para identificar cambios.",
+        "tomado": false,
+        "tomadoPor": null,
+        "enProceso": false,
+        "procesoPor": null,
+        "listo": false,
+        "listoPor": null,
+        "done": false,
+        "createdBy": "Sandra",
+        "createdAt": "2026-11-15T04:29:27.282Z"
+      },
+      {
+        "id": "t_1794717816012_sxbl",
+        "title": "Pruebas de la vista que realizan en el ISS",
+        "text": "Pruebas de la vista que realizan en el ISS",
+        "link": "https://www.nasa.gov/wp-content/uploads/2024/02/ochmo-mtb-001-sans.pdf?emrc=d4c581",
+        "notes": "Pruebas visuales que realizan los astronautas en la ISS\n1. Agudeza visual\n- Características: El astronauta observa una cartilla o pantalla con letras, números o símbolos de diferentes tamaños. Debe identificar los caracteres, evaluando cada ojo por separado.\n- Evalúa: La capacidad del sistema visual para distinguir detalles y reconocer objetos a diferentes distancias.\n\n2. Rejilla de Amsler\n- Características: Se presenta una cuadrícula con líneas horizontales y verticales y un punto central. El astronauta debe fijar la mirada en el punto e identificar si observa líneas onduladas, distorsionadas, borrosas o ausentes.\n- Evalúa: La visión central y posibles alteraciones en la región macular de la retina.\n\n3. Cuestionario de síntomas visuales\n- Características: El astronauta responde preguntas sobre cambios en su percepción visual, como visión borrosa, dificultad para enfocar, manchas, destellos luminosos o visión doble.\n- Evalúa: La presencia y evolución de síntomas visuales durante la misión espacial.\n\n4. Fotografía del fondo de ojo (Fundoscopia)\n- Características: Se utiliza un instrumento óptico para observar y obtener imágenes de las estructuras internas del ojo, especialmente la retina y el nervio óptico.\n- Evalúa: Alteraciones como edema del disco óptico, pliegues retinianos y cambios estructurales asociados al síndrome SANS.\n\n5. Tomografía de coherencia óptica (OCT)\n- Características: Se utiliza un equipo que emite luz para obtener imágenes en cortes transversales de las estructuras oculares, sin necesidad de realizar procedimientos invasivos.\n-Evalúa: El grosor de las capas de la retina, la coroides y las características estructurales del nervio óptico.",
+        "tomado": false,
+        "tomadoPor": null,
+        "enProceso": false,
+        "procesoPor": null,
+        "listo": false,
+        "listoPor": null,
+        "done": false,
+        "createdBy": "Sandra",
+        "createdAt": "2026-11-15T04:43:36.013Z"
+      }
+    ]
+  },
+  "mis-tiempo-mision": true,
+  "mis-tiempo-trabajo": true,
+  "mis-ejercicio": true,
+  "customSections": {
+    "sec_1794671751237_2fez": {
+      "id": "sec_1794671751237_2fez",
+      "title": "Base de Datos",
+      "tab": "devs",
+      "createdBy": "Carlos",
+      "createdAt": "2026-11-14T15:55:51.237Z"
+    },
+    "sec_1794671783762_ch2u": {
+      "id": "sec_1794671783762_ch2u",
+      "title": "sssssss",
+      "tab": "devs",
+      "createdBy": "Carlos",
+      "createdAt": "2026-11-14T15:56:23.762Z"
+    }
+  },
+  "customTasks": {
+    "cust_1794671759412_sfbk": {
+      "id": "cust_1794671759412_sfbk",
+      "title": "Base de datos",
+      "section": "sec_1794671751237_2fez",
+      "createdBy": "Carlos",
+      "createdAt": "2026-11-14T15:55:59.412Z"
+    },
+    "cust_1794671787682_faev": {
+      "id": "cust_1794671787682_faev",
+      "title": "ssssss",
+      "section": "sec_1794671783762_ch2u",
+      "createdBy": "Carlos",
+      "createdAt": "2026-11-14T15:56:27.682Z"
+    },
+    "cust_1794671727969_lxcu": {
+      "id": "cust_1794671727969_lxcu",
+      "title": "Primera Parte",
+      "section": "flow",
+      "createdBy": "Carlos",
+      "createdAt": "2026-11-14T15:55:27.970Z"
+    }
+  },
+  "mis-temp": true,
+  "ind-animo": true,
+  "ind-estres": true,
+  "ind-soledad": true,
+  "ind-motivacion": true,
+  "mis-oscultar": true,
+  "data-osea": true,
+  "data-imc": true,
+  "res-radiacion": true,
+  "ind-hidratacion": true,
+  "ind-sueno": true,
+  "data-ritmo": true,
+  "data-presion": true,
+  "mis-glucosa": true,
+  "mis-oxigeno": true,
+  "mis-examenes": true
+}

@@ -40,7 +40,7 @@
 * **Python 3.13 + FastAPI + Pydantic v2 + Uvicorn** `[núcleo]`
   * API REST tipada con generación automática de especificación OpenAPI; arquitectura modular con un archivo router por módulo (`backend/app/routers/<modulo>.py`).
   * **Matriz Oficial de Puertos en Desarrollo Local:**
-    * **`Puerto 8000`:** Reservado para la Torre de Control interna (`miWork/server.py`).
+    * **`Puerto 8000`:** Reservado para la Torre de Control interna (`docs/miWork/server.py`).
     * **`Puerto 8080`:** Servidor FastAPI + SSE (`backend/app/main.py`) para evitar colisiones de enlace (`[Errno 48] Address already in use`).
     * **`Puerto 3000`:** Frontend Nuxt 4 en modo desarrollo (`frontend/`).
   * **Política de CORS para Red Local:** `CORSMiddleware` configurado con expresión regular (`allow_origin_regex = r"^https?://(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$"`) para permitir conexiones seguras desde cualquier cliente LAN/Wi-Fi en cabina.
