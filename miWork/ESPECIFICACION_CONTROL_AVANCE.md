@@ -208,6 +208,31 @@ Diseñado para la gestión ágil del conocimiento y la interacción con modelos 
 
 ---
 
+### 3.10 Tareas Marcables en Modo Vista y Comentarios Plegables en Línea (Opción B)
+
+#### A. Tareas Marcables en Vista Previa (Interactive Task Checklists)
+* **Objetivo:** Permitir marcar o desmarcar tareas directamente desde el modo de lectura/vista previa (`👁️ Previa` o `◫ Dividido`) sin tener que pasar al modo de edición de texto.
+* **Mecánica:**
+  * Las casillas de verificación `- [ ]` y `- [x]` se renderizan interactivas (sin el atributo restrictivo `disabled`).
+  * Al hacer clic en cualquier casilla de la vista previa:
+    1. La casilla cambia visualmente de estado con animación suave y el texto de la tarea se tacha de forma inmediata.
+    2. El sistema localiza la tarea correspondiente en el código fuente Markdown y conmuta la marca entre `- [ ]` y `- [x]`.
+    3. Se ejecuta automáticamente el guardado persistente (`saveActiveColabDoc()`), actualizando el archivo físico en `docs/miWork/docs/` y sincronizando el estado en tiempo real con el equipo.
+
+#### B. Sistema de Comentarios Plegables en Línea (Opción B: Burbujas Directas bajo el Texto)
+* **Objetivo:** Permitir al equipo debatir, plantear dudas o dejar observaciones y retroalimentación técnica sobre párrafos, tareas o secciones específicas del documento sin alterar el texto del prompt ni romper el formato para la IA.
+* **Arquitectura de Datos Separada (Doble Capa):**
+  * El archivo `.md` se mantiene 100% limpio (código Markdown puro listo para copiar a ChatGPT, Claude o Gemini sin comentarios incrustados que confundan al modelo).
+  * Los comentarios se almacenan en `state.json` bajo la clave `docComments[docId][blockId]`.
+* **Mecánica de Uso:**
+  1. **Disparador contextual:** Al pasar el cursor sobre cualquier bloque (párrafo, título, cita o tarea) en la vista previa, aparece a la derecha un botón discreto: `💬 Comentar` (o si ya hay comentarios, una insignia activa `💬 X comentarios`).
+  2. **Tarjeta de Discusión Desplegable:** Al hacer clic, se abre una tarjeta plegable justo debajo del bloque de texto:
+     * **Historial de mensajes estilo chat:** Muestra los comentarios ordenados cronológicamente con el nombre del integrante, su avatar con color oficial (*Wilson*, *Carlos*, *Steve*, *Foco*, *Sandra*) y la fecha/hora relativa.
+     * **Estado de resolución:** Cada hilo cuenta con un botón `✓ Marcar como Resuelto` para archivar observaciones ya acordadas.
+     * **Caja de respuesta rápida:** Campo para redactar y enviar comentarios con la tecla `Enter` o el botón `Enviar`.
+
+---
+
 ## 4. Persistencia y Seguridad de Datos (Mecanismo Multinivel)
 
 Para garantizar que ningún dato se pierda ante caídas de red o reinicios de computadora:
@@ -290,6 +315,19 @@ El archivo `state.json` utiliza una estructura JSON limpia y modular:
       "content": "# Instrucciones Operativas del Asistente IA\n...",
       "updatedBy": "Carlos",
       "updatedAt": "2026-11-14T16:07:14.225Z"
+    }
+  },
+  "docComments": {
+    "doc_instrucciones_agente_ai": {
+      "block_3": [
+        {
+          "id": "comm_1794689000_a1b2",
+          "author": "Steve",
+          "text": "Verifiquemos si la pérdida ósea del 6.2% en pelvis requiere citar la tabla 2 de Nature.",
+          "createdAt": "2026-11-15T10:45:00.000Z",
+          "resolved": false
+        }
+      ]
     }
   }
 }

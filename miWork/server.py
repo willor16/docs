@@ -35,6 +35,9 @@ def load_state():
     if "markdownDocs" not in state or not isinstance(state["markdownDocs"], dict):
         state["markdownDocs"] = {}
 
+    if "docComments" not in state or not isinstance(state["docComments"], dict):
+        state["docComments"] = {}
+
     # 1. Deduplicar y normalizar documentos Markdown existentes en el estado
     clean_docs = {}
     for k, v in list(state["markdownDocs"].items()):
@@ -283,6 +286,51 @@ class SyncHandler(http.server.SimpleHTTPRequestHandler):
                                         os.remove(f_path)
                                 except Exception:
                                     pass
+                    elif payload.get("action") == "save_doc_comment":
+                        doc_id = str(payload.get("docId", ""))
+                        block_id = str(payload.get("blockId", ""))
+                        comm_data = payload.get("comment", {})
+                        if "docComments" not in state or not isinstance(state["docComments"], dict):
+                            state["docComments"] = {}
+                        if doc_id not in state["docComments"] or not isinstance(state["docComments"][doc_id], dict):
+                            state["docComments"][doc_id] = {}
+                        if block_id not in state["docComments"][doc_id] or not isinstance(state["docComments"][doc_id][block_id], list):
+                            state["docComments"][doc_id][block_id] = []
+
+                        comm_id = comm_data.get("id")
+                        found = False
+                        for idx, c in enumerate(state["docComments"][doc_id][block_id]):
+                            if isinstance(c, dict) and c.get("id") == comm_id:
+                                state["docComments"][doc_id][block_id][idx] = comm_data
+                                found = True
+                                break
+                        if not found and comm_data:
+                            state["docComments"][doc_id][block_id].append(comm_data)
+                    elif payload.get("action") == "resolve_doc_comment":
+                        doc_id = str(payload.get("docId", ""))
+                        block_id = str(payload.get("blockId", ""))
+                        comm_id = str(payload.get("commentId", ""))
+                        resolved = bool(payload.get("resolved", True))
+                        if "docComments" in state and isinstance(state["docComments"], dict):
+                            if doc_id in state["docComments"] and isinstance(state["docComments"][doc_id], dict):
+                                if block_id in state["docComments"][doc_id] and isinstance(state["docComments"][doc_id][block_id], list):
+                                    for c in state["docComments"][doc_id][block_id]:
+                                        if isinstance(c, dict) and c.get("id") == comm_id:
+                                            c["resolved"] = resolved
+                                            break
+                    elif payload.get("action") == "delete_doc_comment":
+                        doc_id = str(payload.get("docId", ""))
+                        block_id = str(payload.get("blockId", ""))
+                        comm_id = str(payload.get("commentId", ""))
+                        if "docComments" in state and isinstance(state["docComments"], dict):
+                            if doc_id in state["docComments"] and isinstance(state["docComments"][doc_id], dict):
+                                if block_id in state["docComments"][doc_id] and isinstance(state["docComments"][doc_id][block_id], list):
+                                    state["docComments"][doc_id][block_id] = [
+                                        c for c in state["docComments"][doc_id][block_id]
+                                        if isinstance(c, dict) and c.get("id") != comm_id
+                                    ]
+                                    if len(state["docComments"][doc_id][block_id]) == 0:
+                                        state["docComments"][doc_id].pop(block_id, None)
                     elif payload.get("action") == "sync_all":
                         if isinstance(payload.get("state"), dict):
                             state = payload["state"]
