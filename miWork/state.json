@@ -21,13 +21,6 @@
       "updatedBy": "Sistema",
       "updatedAt": 1794682201.5847008
     },
-    "doc_reglas_de_diseño": {
-      "id": "doc_reglas_de_diseño",
-      "title": "reglas de diseño.md",
-      "content": "# Estándar Global de Diseño UI/UX y Guía Maestra de Construcción (`Scan Space · ARES VII`)\n\n> **Propósito de este Documento:** Ser la **única fuente de verdad de diseño e implementación** para cualquier desarrollador del equipo. Define qué reglas visuales son obligatorias, la paleta exacta de 6 colores, el uso estricto del idioma inglés sin jerga técnica, y cómo se construye cada módulo del stack **[núcleo]** y **[extra]** cumpliendo la regla **100% a bordo y sin internet (RNF 1)**.\n>\n> **Diseño Maestro en Figma (Fuente Oficial ante Cualquier Duda Visual, Medidas o Exportación de SVGs):**\n> - **Figma Oficial del Proyecto:** [SpaceScan — Figma Design (`node-id=7382-2`)](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1) *(Todo desarrollador debe guiarse directamente de este archivo de Figma ante cualquier detalle de espaciado, proporción, iconografía o estados visuales).*\n> - Respaldo local en el repositorio (`16` pantallas `1568 × 940`): [SPACESCAN_FIGMA_COMPLETO.svg](../../diseno_ui_figma/SPACESCAN_FIGMA_COMPLETO.svg) · [SPACESCAN_FIGMA_COMPLETO.png](../../diseno_ui_figma/SPACESCAN_FIGMA_COMPLETO.png) · [`diseno_ui_figma/pantallas_svg/`](../../diseno_ui_figma/pantallas_svg/)\n\n---\n\n## 0. Análisis de Viabilidad y Decisiones Técnicas Clave del Stack\n\nPara mantener coherencia total entre todas las piezas solicitadas (**Nuxt 4 + Tailwind CSS 4 + Reka UI + ECharts + Python 3.13 + FastAPI + SQLite 3 STRICT**):\n\n1. **Arquitectura Unificada de Borde (Un Solo Proceso, Un Solo Puerto, Cero Nube — `RNF 1`):**\n   - `Nuxt 4` compila en modo estático (`ssr: false`) y `FastAPI` sirve tanto los archivos estáticos del SPA como la API REST y el canal `SSE` desde un único puerto local, sin depender de servidores externos, CDNs ni ORM (`backend/db/schema.sql` es la única verdad con `sqlite3` parametrizado).\n2. **Conciliación entre Regla *\"Solo Inglés en UI\"* y `@nuxtjs/i18n` (Premio *Global Connection*):**\n   - Toda la interfaz debe mostrarse **100% en inglés (`en`)**, sin mezclar español/inglés en ningún componente. Si se integra `@nuxtjs/i18n` para cubrir *Global Connection*, se fija `defaultLocale: 'en'` centralizando todas las cadenas en `app/locales/en.json`, manteniendo la experiencia visual de cabina estrictamente en inglés.\n3. **Fluidez de `Apache ECharts` en Ondas de Tiempo Real (`ECG` y Fonocardiograma):**\n   - Para evitar carga excesiva de CPU en hardware económico o desconectado, `vue-echarts` debe usar **`CanvasRenderer`**, desactivar animaciones (`animation: false`) en ondas continuas y aplicar muestreo `lttb` al refrescar trazos provenientes de `SSE` o `Web Audio API`.\n\n---\n\n## 1. Las 5 Leyes Inquebrantables de Diseño y Producto\n\nCualquier componente o pantalla nueva que viole una sola de estas 5 leyes debe rechazarse en revisión de código:\n\n1. **RNF 1 — Cero Red Exterior en Tiempo de Ejecución (`100% Onboard & Air-Gapped`):**\n   - Prohibido usar `<link href=\"https://fonts.googleapis.com...\">`, CDNs (`unpkg`, `jsdelivr`), iconos remotos de Iconify o llamadas a APIs en la nube (`OpenAI`, `Gemini`, `NASA API`) mientras corre la app. Fuentes `.woff2`, iconos SVG, datasets `OSDR/DONKI`, modelos `.onnx` y pesos de `Ollama` viven **dentro del contenedor/disco local**.\n2. **Idioma 100% Inglés Puro y Cero Jerga Tecnológica en Pantalla:**\n   - **Todo texto visible va en inglés claro y humano** (`Sign In`, `Sleep Score`, `Right Eye Elevated`, `Save Lung Recording`).\n   - **Prohibido mostrar nombres de tecnologías, formatos o protocolos internos en la UI:** nunca escribir en pantalla palabras como `SQLite`, `JSON`, `FHIR`, `HL7`, `Kiwix`, `ZIM`, `FTS5`, `WAL`, `Offline`, `Break-Glass`, `DTN`, `OSDR`, `DONKI`, `ONNX`, `Ollama`, `Nuxt` o `Python`. Esos conceptos operan bajo el capó; el astronauta solo ve información clínica y operativa limpia.\n3. **Separación Estricta entre Vistas de Resultados y Módulo de Captura (`Capture`):**\n   - Las pantallas de monitoreo clínico (`Profile`, `Sleep`, `Vision`, `Auscultation`, `Crew Overview`, `Crew Streaks`) son **100% de solo lectura (Solo Resultados)**: cero inputs, cero selectores de ánimo y cero botones `+ Log` incrustados.\n   - Toda entrada manual, grabación de audio cardíaco/pulmonar de `30 s` o prueba psicomotriz vive **exclusivamente** dentro del módulo **`Capture`** dividido en sus 4 sub-pestañas (`Auscultation Audio · Physical & Labs · Vision & Ocular · Psych, Motor & Sleep`).\n4. **Jerarquía de Navegación en 2 Niveles (`Profile` al Centro · `Notifications` Solo en Header):**\n   - **Nivel 1 Público (sin PIN):** `Sign In` (`01`), `Crew Overview` (`02`) y `Crew Streaks` (`03`) comparten la misma barra inferior pública de 3 pestañas (`Sign In · Crew Overview · Crew Streaks`). En `Sign In`, el acceso personal es **solo por PIN de 4 dígitos** (sin correo ni contraseña) y existen dos botones externos directos a las vistas públicas.\n   - **Nivel 2 Autenticado (tras PIN):** Barra inferior trapezoidal **simétrica de 7 módulos** con **`Profile` elevado exactamente al centro**:\n     `1 Vision · 2 Sleep · 3 Auscultation · [4 PROFILE — Principal Central] · 5 Capture · 6 Guide · 7 Comms`.\n   - **`Notifications (N)` nunca va en el menú inferior:** vive **únicamente en el header superior** de las vistas autenticadas.\n5. **Densidad Controlada (Cero Saturación Visual):**\n   - Máximo `2` o `3` contenedores `HudWindow` por pantalla, márgenes exteriores de `28 px`, separación entre ventanas de `18 px`, cero pies de página (*footers*) informativos y cero textos explicativos redundantes.\n\n---\n\n## 2. Paleta Oficial de 6 Colores y Tokens Globales (`assets/css/tokens.css`)\n\nNingún desarrollador debe escribir códigos hexadecimales sueltos en componentes Vue. Todo color se consume desde variables CSS definidas en `frontend/app/assets/css/tokens.css` e integradas en **Tailwind CSS 4**.\n\n### 2.1 Tabla Maestra de la Paleta Oficial\n\n| # | Rol Semántico | Hex Oficial | Variable CSS | Regla de Uso Obligatoria |\n| :-: | :--- | :---: | :--- | :--- |\n| **1** | **Fondo Principal** | `#001524` | `--color-bg-base` | Fondo oceánico profundo de toda la aplicación (base del degradado multicapa). |\n| **2** | **Tarjetas y Botones** | `#15616D` | `--color-surface-card` | Color único para tarjetas *smoked-glass*, cabeceras de ventana, botones y halo radial inferior. |\n| **3** | **Texto e Iconos** | `#FFECD1` | `--color-text-primary` | Color único de tipografía, cifras tabulares e iconografía principal (`15.6:1` AAA sobre `#001524`). |\n| **4** | **Estado OK / Nominal** | `#2AEF4B` | `--color-status-ok` | Valores óptimos, ondas sanas (`ECG`, fonocardiograma `S1/S2`, `CO₂`), sueño `Deep` y metas cumplidas. |\n| **5** | **Selección de Menú / Guías / Pastillas / Warning** | `#000C5C` *(baja opacidad)* | `--color-menu-select` / `--color-status-warn` | **1)** Selección activa exclusiva en menús y filtros (`30%–52%` opacidad). **2)** Líneas guía y bandas meta en gráficas. **3)** Pastillas pequeñas de referencia (`OPTIMAL`, `Positive`, `Low`). **4)** Nivel *Warning* intermedio. |\n| **6** | **Estado Crítico / Alerta** | `#D5110B` | `--color-status-critical` | Desviaciones críticas fuera de umbral, despertares (`Awake`), avisos urgentes y modo alerta global. |\n\n### 2.2 Implementación Exacta en `frontend/app/assets/css/tokens.css` (Tailwind CSS 4 + Modo Alerta)\n\nCambiar toda la cabina a **Modo Alerta Rojo** (Premio *Art & Technology*) no requiere condicionales en los componentes: basta alternar `data-cabin-mode=\"critical\"` en `<html>` para conmutar las variables del resplandor de horizonte y bordes.\n\n```css\n/* frontend/app/assets/css/tokens.css */\n@import \"tailwindcss\";\n\n:root {\n  /* === 6 COLORES OFICIALES === */\n  --color-bg-base: #001524;\n  --color-surface-card: #15616D;\n  --color-text-primary: #FFECD1;\n  --color-status-ok: #2AEF4B;\n  --color-navy-accent: #000C5C;\n  --color-status-critical: #D5110B;\n\n  /* === DERIVADOS TONALES DE SOPORTE (MISMA FAMILIA CROMÁTICA) === */\n  --color-bg-top: #00101C;\n  --color-bg-bottom: #062838;\n  --color-surface-inset: rgba(4, 30, 46, 0.72);     /* #041E2E para cajas de gráficas e inputs */\n  --color-border-card: rgba(21, 97, 109, 0.78);\n  --color-border-hi: #25899B;\n  --color-rem-accent: #2994A6;                      /* Diferenciación de fase REM derivada de #15616D */\n  --color-navy-edge: #263BB0;                       /* Filete de 1px (232°) para legibilidad de #000C5C */\n  --color-text-secondary: #F2DEC0;\n  --color-text-muted: #C8B69C;\n  --color-text-dim: #968976;\n\n  /* === SUPERFICIES DINÁMICAS (CAMBIAN AUTOMÁTICAMENTE EN MODO ALERTA) === */\n  --horizon-glow-core: rgba(21, 97, 109, 0.86);\n  --horizon-glow-mid: rgba(12, 67, 80, 0.58);\n  --upper-glow: rgba(21, 97, 109, 0.34);\n  --window-frame-stroke: var(--color-border-card);\n}\n\n/* MODO ALERTA CRÍTICA: se activa con document.documentElement.dataset.cabinMode = 'critical' */\n:root[data-cabin-mode=\"critical\"] {\n  --horizon-glow-core: rgba(122, 22, 18, 0.88);\n  --horizon-glow-mid: rgba(61, 18, 24, 0.60);\n  --upper-glow: rgba(213, 17, 11, 0.26);\n  --window-frame-stroke: rgba(213, 17, 11, 0.85);\n}\n\n@theme {\n  --color-cabin-bg: var(--color-bg-base);\n  --color-cabin-card: var(--color-surface-card);\n  --color-cabin-inset: var(--color-surface-inset);\n  --color-cabin-text: var(--color-text-primary);\n  --color-cabin-ice: var(--color-text-secondary);\n  --color-cabin-muted: var(--color-text-muted);\n  --color-cabin-ok: var(--color-status-ok);\n  --color-cabin-navy: var(--color-navy-accent);\n  --color-cabin-navy-edge: var(--color-navy-edge);\n  --color-cabin-crit: var(--color-status-critical);\n\n  --font-sans: \"Inter\", system-ui, sans-serif;\n  --font-mono: \"JetBrains Mono\", monospace;\n}\n\n/* Lienzo global con el degradado multicapa exacto del Figma */\n.cockpit-canvas {\n  background-color: var(--color-bg-base);\n  background-image:\n    radial-gradient(66% 52% at 50% 86%, var(--horizon-glow-core) 0%, var(--horizon-glow-mid) 38%, rgba(3, 31, 47, 0.28) 74%, transparent 100%),\n    radial-gradient(55% 32% at 50% 12%, var(--upper-glow) 0%, transparent 100%),\n    linear-gradient(180deg, var(--color-bg-top) 0%, var(--color-bg-base) 52%, var(--color-bg-bottom) 100%);\n  color: var(--color-text-primary);\n  font-family: var(--font-sans);\n  font-variant-numeric: tabular-nums;\n}\n\n/* Selección exclusiva de menús, sub-pestañas y filtros (#000C5C con baja opacidad) */\n.menu-item-active {\n  background: linear-gradient(180deg, rgba(0, 12, 92, 0.30) 0%, rgba(0, 12, 92, 0.52) 100%);\n  border: 1.3px solid rgba(38, 59, 176, 0.82);\n}\n```\n\n---\n\n## 3. Reglas Tipográficas, Iconográficas y Geométricas\n\n1. **Fuentes Locales (`@nuxt/fonts` — `[núcleo]`):**\n   - Colocar los archivos `.woff2` en `frontend/public/fonts/` (`Inter-Regular.woff2`, `Inter-SemiBold.woff2`, `Inter-Bold.woff2`, `JetBrainsMono-Medium.woff2`, `JetBrainsMono-Bold.woff2`).\n   - Configurar `@nuxt/fonts` con `provider: 'local'` para cero descargas externas.\n   - **Uso:** `Inter` para títulos, etiquetas clínicas y navegación; `JetBrains Mono` (`tabular-nums`) obligatorio en relojes `UTC`, duraciones (`7h 12m`), intervalos (`22:54–23:36`), ejes numéricos y cronómetros (`00:18 / 00:30 SEC`).\n2. **Iconos Locales (`@nuxt/icon` — `[núcleo]`):**\n   - Guardar los iconos vectoriales del Figma en `frontend/app/assets/icons/spacescan/` (`rocket.svg`, `sans.svg`, `moon.svg`, `stethoscope.svg`, `profile.svg`, `capture.svg`, `wiki.svg`, `earth.svg`, `bell.svg`, `mic.svg`, `lock.svg`, `flame.svg`, `vitruvian.svg`, `reticle.svg`, `kit.svg`, `shield.svg`).\n   - Registrar colección personalizada `spacescan` en `nuxt.config.ts` (`clientBundle: { scan: true }`) para empaquetarlos dentro del bundle estático.\n3. **Proporciones de Pantalla (`1568 × 940` Escalable):**\n   - **Top Header (`TopTelemetryBar.vue`):** altura fija `56 px`, fondo `rgba(0, 21, 36, 0.86)`, reloj `MISSION CLOCK`, botón `Notifications (N)` (`x=1166` relativo / alineado a la derecha antes del estado de cabina) y pastilla global de estado (`CABIN NOMINAL` / `SCORE 84 · OPTIMAL`).\n   - **Sub-barra de Pestañas o Filtros (`36 px` de alto):** usada solo en `Profile` (3 pestañas), `Sleep` (4 filtros de tiempo), `Capture` (4 categorías) y `Notifications` (3 filtros).\n   - **Bottom Dock Autenticado (`BottomCockpitDock.vue`, `72 px` de alto):**\n     - Izquierda: tarjeta de sesión activa (`ID·01 · E. VARGAS`).\n     - Centro trapezoidal simétrico (`7` ranuras): `1 Vision` (`138 px`), `2 Sleep` (`138 px`), `3 Auscultation` (`138 px`), **`4 Profile` (`192 px`, elevado `+8 px` por encima del trapecio en el centro exacto)**, `5 Capture` (`138 px`), `6 Guide` (`138 px`), `7 Comms` (`138 px`).\n     - Derecha: botón `Sign Out` en `#15616D`.\n\n---\n\n## 4. Cómo Construir Cada Componente y Tecnología (Con Ejemplos Reales)\n\n### 4.1 Contenedor Universal `HudWindow.vue` + `Reka UI` (`[núcleo]`)\n\nTodo módulo visual va envuelto en `<HudWindow>` y usa primitivas sin estilo de **`reka-ui`** (`TabsRoot`, `DialogRoot`, `SelectRoot`) para accesibilidad por teclado sin romper el diseño del Figma:\n\n```vue\n<!-- frontend/app/components/shell/HudWindow.vue -->\n<script setup lang=\"ts\">\nwithDefaults(defineProps<{\n  title?: string\n  subtitle?: string\n  tagText?: string\n  tagTone?: 'reference' | 'warn' | 'critical'\n  icon?: string\n}>(), {\n  tagTone: 'reference',\n})\n</script>\n\n<template>\n  <section\n    class=\"relative rounded-[6px] bg-cabin-card/28 border flex flex-col overflow-hidden\"\n    :style=\"{ borderColor: 'var(--window-frame-stroke)' }\"\n  >\n    <!-- Esquinas angulares de precisión de 8px (#FFECD1 al 44%) -->\n    <span class=\"pointer-events-none absolute top-0 left-0 w-2 h-2 border-t-[1.4px] border-l-[1.4px] border-cabin-text/45\" />\n    <span class=\"pointer-events-none absolute top-0 right-0 w-2 h-2 border-t-[1.4px] border-r-[1.4px] border-cabin-text/45\" />\n    <span class=\"pointer-events-none absolute bottom-0 left-0 w-2 h-2 border-b-[1.4px] border-l-[1.4px] border-cabin-text/45\" />\n    <span class=\"pointer-events-none absolute bottom-0 right-0 w-2 h-2 border-b-[1.4px] border-r-[1.4px] border-cabin-text/45\" />\n\n    <header\n      v-if=\"title\"\n      class=\"px-4 py-2.5 bg-cabin-card/58 border-b border-cabin-text/18 flex items-center justify-between gap-3\"\n    >\n      <div class=\"flex items-center gap-2.5\">\n        <div\n          v-if=\"icon\"\n          class=\"w-[22px] h-[22px] rounded-[4px] bg-[#062534]/90 border border-[#25899B]/70 flex items-center justify-center\"\n        >\n          <Icon :name=\"`spacescan:${icon}`\" class=\"w-3.5 h-3.5 text-cabin-text\" />\n        </div>\n        <div>\n          <h2 class=\"text-[12.5px] font-bold tracking-[0.03em] uppercase text-cabin-text\">{{ title }}</h2>\n          <p v-if=\"subtitle\" class=\"text-[10.5px] text-cabin-muted\">{{ subtitle }}</p>\n        </div>\n      </div>\n\n      <!-- Pastilla pequeña de referencia siempre en #000C5C translúcido salvo alerta crítica -->\n      <span\n        v-if=\"tagText\"\n        class=\"px-3 h-[22px] rounded-full text-[9.8px] font-semibold tracking-[0.03em] inline-flex items-center gap-1.5 border\"\n        :class=\"{\n          'bg-cabin-navy/42 border-cabin-navy-edge/70 text-cabin-text': tagTone === 'reference',\n          'bg-cabin-navy/55 border-cabin-navy-edge/90 text-cabin-text': tagTone === 'warn',\n          'bg-cabin-crit/25 border-cabin-crit/85 text-cabin-text': tagTone === 'critical',\n        }\"\n      >\n        <i v-if=\"tagTone === 'warn'\" class=\"w-1.5 h-1.5 rounded-full bg-cabin-navy-edge\" />\n        {{ tagText }}\n      </span>\n    </header>\n\n    <div class=\"p-5 flex-1\">\n      <slot />\n    </div>\n  </section>\n</template>\n```\n\n**Ejemplo de Pestañas con `Reka UI` (`CaptureSubnavBar.vue` o `SleepTimeFilterBar.vue`):**\n```vue\n<script setup lang=\"ts\">\nimport { TabsList, TabsRoot, TabsTrigger } from 'reka-ui'\n\nconst activeTab = defineModel<string>({ default: 'auscultation' })\nconst tabs = [\n  { id: 'auscultation', label: 'Auscultation Audio' },\n  { id: 'physical', label: 'Physical & Labs' },\n  { id: 'vision', label: 'Vision & Ocular' },\n  { id: 'psych-sleep', label: 'Psych, Motor & Sleep' },\n]\n</script>\n\n<template>\n  <TabsRoot v-model=\"activeTab\">\n    <TabsList class=\"flex items-center gap-2\">\n      <TabsTrigger\n        v-for=\"tab in tabs\"\n        :key=\"tab.id\"\n        :value=\"tab.id\"\n        class=\"relative h-9 px-6 rounded-[4px] text-[11.2px] transition-colors bg-cabin-inset border border-cabin-card/60 text-cabin-text/80 data-[state=active]:menu-item-active data-[state=active]:font-extrabold data-[state=active]:text-cabin-text\"\n      >\n        {{ tab.label }}\n      </TabsTrigger>\n    </TabsList>\n  </TabsRoot>\n</template>\n```\n\n---\n\n### 4.2 Tema Holográfico Propio en `Apache ECharts` (`vue-echarts` — `[núcleo]`)\n\nTodas las gráficas de la aplicación (arcos `Sleep Score` / `Crew Score`, curva bilateral `Vision`, tendencia `CO₂`, ondas `ECG`/fonocardiograma y **gráfica de barra de cintas de fases de sueño**) deben usar el tema registrado `'spacescan-hud'` para garantizar que las líneas guía sean `#000C5C` / `#263BB0`, las etiquetas `#C8B69C` y los trazos `#2AEF4B` / `#D5110B`:\n\n```ts\n// frontend/app/plugins/echarts.client.ts\nimport { registerTheme, use } from 'echarts/core'\nimport { CanvasRenderer } from 'echarts/renderers'\nimport { BarChart, CustomChart, GaugeChart, LineChart } from 'echarts/charts'\nimport { GridComponent, MarkAreaComponent, MarkLineComponent, TooltipComponent } from 'echarts/components'\n\nexport default defineNuxtPlugin(() => {\n  use([CanvasRenderer, LineChart, BarChart, GaugeChart, CustomChart, GridComponent, TooltipComponent, MarkLineComponent, MarkAreaComponent])\n\n  registerTheme('spacescan-hud', {\n    backgroundColor: 'rgba(4, 30, 46, 0.72)', // #041E2E inset\n    textStyle: {\n      fontFamily: \"'JetBrains Mono', monospace\",\n      color: '#FFECD1',\n    },\n    color: ['#2AEF4B', '#2994A6', '#263BB0', '#D5110B'],\n    categoryAxis: {\n      axisLine: { lineStyle: { color: '#15616D' } },\n      axisLabel: { color: '#C8B69C', fontSize: 10 },\n      splitLine: { show: true, lineStyle: { color: 'rgba(38, 59, 176, 0.42)', width: 1 } }, // Guía #000C5C legible\n    },\n    valueAxis: {\n      axisLine: { show: false },\n      axisLabel: { color: '#C8B69C', fontSize: 10 },\n      splitLine: { show: true, lineStyle: { color: 'rgba(38, 59, 176, 0.42)', width: 1 } },\n    },\n    tooltip: {\n      backgroundColor: '#041E2E',\n      borderColor: '#25899B',\n      textStyle: { color: '#FFECD1', fontSize: 11 },\n    },\n  })\n})\n```\n\n- **Cómo construir la Gráfica de Barra de Cintas de Sueño (`07_Sleep_Monitor.svg`):** Usar `type: 'custom'` en ECharts (`renderItem` dibuja un `rect` redondeado `[startUtcMin, endUtcMin, stageIndex]` con `#D5110B` para `Awake`, `#2994A6` para `REM`, `#263BB0` para `Light` y `#2AEF4B` para `Deep`, más la pista continua inferior en `stageIndex = 0`).\n- **Cómo construir Ondas `ECG` y Fonocardiograma (`06`, `09`, `10`):** Serie `type: 'line'`, `showSymbol: false`, `animation: false`, `sampling: 'lttb'`, `lineStyle: { color: '#2AEF4B', width: 2 }`.\n\n---\n\n### 4.3 Hologramas SVG del Figma + Escaneo CSS (`[núcleo]`) y 3D (`[extra]`)\n\nExtraer los vectores limpios del cuerpo y órganos (`astronaut_body.svg`, `heart.svg`, `lungs.svg`, `brain.svg`) desde `diseno_ui_figma/pantallas_svg/` hacia `frontend/app/components/telemetry/SpaceScanHologram.vue` y aplicar brilho + línea de barrido puramente con CSS:\n\n```css\n/* Brillo holográfico y línea de escaneo vertical sin dependencias externas */\n.hologram-shell {\n  filter: drop-shadow(0 0 12px rgba(42, 239, 75, 0.22));\n}\n.hologram-scanline::after {\n  content: \"\";\n  position: absolute;\n  inset-inline: 12%;\n  height: 2px;\n  background: linear-gradient(90deg, transparent, rgba(42, 239, 75, 0.65), transparent);\n  animation: scan-sweep 4.5s ease-in-out infinite;\n}\n@keyframes scan-sweep {\n  0%, 100% { top: 10%; opacity: 0.25; }\n  50% { top: 88%; opacity: 0.85; }\n}\n```\n> **[extra]:** Si sobra tiempo, envolver transiciones de entrada de tarjetas con `motion-v` (`<Motion :initial=\"{ opacity: 0, y: 6 }\" :animate=\"{ opacity: 1, y: 0 }\">`) y habilitar una vista opcional 3D en `04_Profile_Personal_Data` con `TresJS` cargando un `.glb` local desde `public/models/astronaut.glb`.\n\n---\n\n### 4.4 Grabación de Auscultación Cardíaca y Pulmonar de 30 s (`Web Audio API` + `MediaRecorder` — `[núcleo]`)\n\nPara la pantalla `10_Capture_Auscultation.svg`, el composable mide primero el ruido de cabina (`< 55 dBA`), captura exactamente `30 s` por foco anatómico (`aortic | pulmonic | tricuspid | mitral | upper_left | upper_right | lower_left | lower_right`) y calcula el hash `SHA-256` local antes de enviar el archivo al backend:\n\n```ts\n// frontend/app/composables/useAuscultationRecorder.ts\nexport function useAuscultationRecorder() {\n  const cabinDba = ref(48)\n  const secondsElapsed = ref(0)\n  const isRecording = ref(false)\n  const waveform = shallowRef<number[]>([])\n\n  async function recordThirtySeconds(site: string): Promise<{ blob: Blob; sha256: string; site: string }> {\n    const stream = await navigator.mediaDevices.getUserMedia({\n      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }, // Crudo para fonocardiograma\n    })\n    const ctx = new AudioContext()\n    const source = ctx.createMediaStreamSource(stream)\n    const analyser = ctx.createAnalyser()\n    analyser.fftSize = 512\n    source.connect(analyser)\n\n    const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })\n    const chunks: BlobPart[] = []\n    recorder.ondataavailable = e => chunks.push(e.data)\n\n    isRecording.value = true\n    secondsElapsed.value = 0\n\n    return new Promise((resolve) => {\n      const timer = setInterval(() => {\n        secondsElapsed.value += 1\n        if (secondsElapsed.value >= 30) recorder.stop()\n      }, 1000)\n\n      recorder.onstop = async () => {\n        clearInterval(timer)\n        isRecording.value = false\n        stream.getTracks().forEach(t => t.stop())\n        await ctx.close()\n\n        const blob = new Blob(chunks, { type: 'audio/webm' })\n        const buf = await blob.arrayBuffer()\n        const hashBuf = await crypto.subtle.digest('SHA-256', buf)\n        const sha256 = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('')\n        resolve({ blob, sha256, site })\n      }\n\n      recorder.start(250)\n    })\n  }\n\n  return { cabinDba, secondsElapsed, isRecording, waveform, recordThirtySeconds }\n}\n```\n\n---\n\n### 4.5 Validación con `Zod` + Tipos Generados con `openapi-typescript` (`[núcleo]`)\n\n1. **Contrato Único Backend $\\rightarrow$ Frontend:** Cada vez que cambia un modelo Pydantic en FastAPI, ejecutar:\n   ```bash\n   npx openapi-typescript http://127.0.0.1:8000/openapi.json -o frontend/app/types/api.d.ts\n   ```\n2. **Validación Pre-envío en `Capture` (`11`, `12`, `13`) con mensajes 100% en inglés:**\n   ```ts\n   // frontend/app/schemas/capture.ts\n   import { z } from 'zod'\n\n   export const ocularCaptureSchema = z.object({\n     missionStage: z.enum(['LAUNCH', 'MISSION', 'RETURN']),\n     leftOpticSheathMm: z.number().min(3.0, 'Minimum 3.0 mm').max(9.0, 'Maximum 9.0 mm'),\n     rightOpticSheathMm: z.number().min(3.0, 'Minimum 3.0 mm').max(9.0, 'Maximum 9.0 mm'),\n     leftIopMmhg: z.number().min(8).max(35),\n     rightIopMmhg: z.number().min(8).max(35),\n     retinalThicknessUm: z.number().min(70).max(160),\n     visualAcuity: z.string().regex(/^20\\/\\d{2}$/, 'Use Snellen format, e.g. 20/20'),\n   })\n   ```\n\n---\n\n## 5. Construcción del Backend (`Python 3.13 + FastAPI`) y Base de Datos (`SQLite 3 STRICT`)\n\n### 5.1 Esquema Único `backend/db/schema.sql` (`WAL` + `STRICT` + `Append-Only` + `FTS5` + `JSON1`)\n\n`backend/db/schema.sql` es la **única fuente de verdad** de datos (sin ORM). Incluye la etapa narrativa (`LAUNCH`, `MISSION`, `RETURN`) en cada medición para cubrir *Best Storytelling*, `metric_catalog` con rangos científicos para *Best Use of Science*, inmutabilidad *append-only* en `measurements` (RNF 5) y ruta + `SHA-256` para grabaciones de auscultación:\n\n```sql\n-- backend/db/schema.sql\nPRAGMA journal_mode = WAL;\nPRAGMA foreign_keys = ON;\nPRAGMA synchronous = NORMAL;\n\nCREATE TABLE IF NOT EXISTS crew_members (\n  id TEXT PRIMARY KEY,\n  code TEXT NOT NULL UNIQUE,           -- Ej: 'ID·01'\n  full_name TEXT NOT NULL,             -- Ej: 'Elena Vargas'\n  role TEXT NOT NULL,                  -- Ej: 'Commander'\n  pin_hash TEXT NOT NULL,              -- Argon2id hash del PIN de 4 dígitos\n  failed_attempts INTEGER NOT NULL DEFAULT 0,\n  locked_until_utc TEXT\n) STRICT;\n\nCREATE TABLE IF NOT EXISTS metric_catalog (\n  metric_key TEXT PRIMARY KEY,         -- Ej: 'optic_sheath_right_mm', 'sleep_total_min'\n  display_name_en TEXT NOT NULL,\n  unit TEXT NOT NULL,\n  nominal_min REAL NOT NULL,\n  nominal_max REAL NOT NULL,\n  critical_threshold REAL,\n  clinical_reference TEXT NOT NULL     -- Fuente científica (usada en backend/reportes, no jerga en UI)\n) STRICT;\n\nCREATE TABLE IF NOT EXISTS measurements (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  crew_id TEXT NOT NULL REFERENCES crew_members(id),\n  metric_key TEXT NOT NULL REFERENCES metric_catalog(metric_key),\n  mission_stage TEXT NOT NULL CHECK (mission_stage IN ('LAUNCH', 'MISSION', 'RETURN')),\n  recorded_at_utc TEXT NOT NULL,\n  value_num REAL,\n  payload_json TEXT NOT NULL DEFAULT '{}' CHECK (json_valid(payload_json))\n) STRICT;\n\n-- RNF 5: Inmutabilidad biomédica (Append-Only en measurements)\nCREATE TRIGGER IF NOT EXISTS trg_measurements_no_update\nBEFORE UPDATE ON measurements\nBEGIN\n  SELECT RAISE(ABORT, 'Measurements table is append-only');\nEND;\n\nCREATE TRIGGER IF NOT EXISTS trg_measurements_no_delete\nBEFORE DELETE ON measurements\nBEGIN\n  SELECT RAISE(ABORT, 'Measurements table is append-only');\nEND;\n\n-- Audio de auscultación en disco: en SQLite solo metadatos, ruta relativa y SHA-256\nCREATE TABLE IF NOT EXISTS auscultation_recordings (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  crew_id TEXT NOT NULL REFERENCES crew_members(id),\n  organ_type TEXT NOT NULL CHECK (organ_type IN ('CARDIAC', 'PULMONARY')),\n  anatomical_site TEXT NOT NULL,       -- 'mitral', 'upper_right', etc.\n  duration_sec INTEGER NOT NULL CHECK (duration_sec <= 30),\n  cabin_noise_dba REAL NOT NULL,\n  file_rel_path TEXT NOT NULL UNIQUE,  -- Ej: 'audio/ID01_cardiac_mitral_20261114.webm'\n  sha256_hex TEXT NOT NULL,\n  recorded_at_utc TEXT NOT NULL\n) STRICT;\n\n-- Wiki médica local con búsqueda instantánea sin internet (FTS5)\nCREATE TABLE IF NOT EXISTS wiki_articles (\n  id TEXT PRIMARY KEY,\n  category_en TEXT NOT NULL,\n  title_en TEXT NOT NULL,\n  drawer_code TEXT NOT NULL,           -- Ej: 'DRAWER B2'\n  steps_json TEXT NOT NULL CHECK (json_valid(steps_json)),\n  escalation_en TEXT NOT NULL\n) STRICT;\n\nCREATE VIRTUAL TABLE IF NOT EXISTS wiki_articles_fts USING fts5(\n  title_en,\n  category_en,\n  steps_json,\n  content='wiki_articles',\n  content_rowid='rowid'\n);\n\n-- Cola Store-and-Forward hacia Tierra con latencia simulada (APScheduler)\nCREATE TABLE IF NOT EXISTS ground_outbox (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  bundle_json TEXT NOT NULL CHECK (json_valid(bundle_json)),\n  created_at_utc TEXT NOT NULL,\n  deliver_after_utc TEXT NOT NULL,     -- +12 min (Marte/Tránsito) calculado al encolar\n  status TEXT NOT NULL CHECK (status IN ('QUEUED', 'IN_TRANSIT', 'DELIVERED'))\n) STRICT;\n```\n\n### 5.2 Patrón del Backend (`FastAPI` + `sqlite3` Parametrizado + `SSE` + Build Estático en Un Solo Puerto)\n\n```python\n# backend/app/main.py\nimport asyncio\nimport json\nimport sqlite3\nfrom contextlib import asynccontextmanager\nfrom pathlib import Path\nfrom apscheduler.schedulers.asyncio import AsyncIOScheduler\nfrom fastapi import FastAPI\nfrom fastapi.responses import StreamingResponse\nfrom fastapi.staticfiles import StaticFiles\n\nDB_PATH = Path(__file__).resolve().parents[1] / \"db\" / \"spacescan.db\"\nSCHEMA_PATH = Path(__file__).resolve().parents[1] / \"db\" / \"schema.sql\"\nSTATIC_SPA_DIR = Path(__file__).resolve().parents[2] / \"frontend\" / \".output\" / \"public\"\n\ndef get_db() -> sqlite3.Connection:\n    conn = sqlite3.connect(DB_PATH, check_same_thread=False)\n    conn.row_factory = sqlite3.Row\n    conn.execute(\"PRAGMA foreign_keys = ON;\")\n    return conn\n\n@asynccontextmanager\nasync def lifespan(app: FastAPI):\n    with get_db() as conn:\n        conn.executescript(SCHEMA_PATH.read_text(encoding=\"utf-8\"))\n    scheduler = AsyncIOScheduler()\n    # Procesa cada 15 s la cola store-and-forward hacia Houston respetando Quiet Hours (22:00-06:00 UTC)\n    scheduler.start()\n    yield\n    scheduler.shutdown()\n\napp = FastAPI(title=\"Scan Space Onboard API\", version=\"1.0.0\", lifespan=lifespan)\n\n# Server-Sent Events (SSE): telemetría y alertas en vivo sin complejidad de WebSocket\n@app.get(\"/api/v1/stream/telemetry\")\nasync def stream_telemetry(crew_id: str = \"ID·01\"):\n    async def event_generator():\n        while True:\n            with get_db() as conn:\n                rows = conn.execute(\n                    \"\"\"\n                    SELECT metric_key, value_num, recorded_at_utc\n                    FROM measurements\n                    WHERE crew_id = ?\n                    ORDER BY id DESC LIMIT 8\n                    \"\"\",\n                    (crew_id,),  # SIEMPRE consulta parametrizada (?)\n                ).fetchall()\n            payload = json.dumps([dict(r) for r in rows])\n            yield f\"event: vitals\\ndata: {payload}\\n\\n\"\n            await asyncio.sleep(1.0)\n\n    return StreamingResponse(event_generator(), media_type=\"text/event-stream\")\n\n# En producción a bordo: el mismo FastAPI sirve el SPA estático de Nuxt 4 en un solo puerto\nif STATIC_SPA_DIR.exists():\n    app.mount(\"/\", StaticFiles(directory=STATIC_SPA_DIR, html=True), name=\"spa\")\n```\n\n### 5.3 Separación Pre-Despegue vs. En Vuelo (`seed.py` + `ONNX Runtime` + `Ollama`)\n\n- **Antes del despegue (`uv run python backend/db/seed.py`):** Usa `httpx` para descargar series reales de **NASA OSDR / GeneLab** y eventos solares de **DONKI**, guardándolos en `backend/db/seed_snapshots/` y poblando `spacescan.db`. Si en una demo no hay internet, `seed.py` lee los snapshots locales incluidos en el repositorio.\n- **Durante la misión (100% sin red):**\n  - Clasificación automática de fonocardiograma (`S1/S2` normal vs. artefacto/soplo) o riesgo de fatiga con **`onnxruntime`** en CPU cargando `backend/models/auscultation_clf.onnx`.\n  - Recomendación preventiva de 3 pasos en `16_Notifications_Header` generada localmente con **`Ollama`** citando artículos de `wiki_articles_fts` (con *fallback* determinista instantáneo si el equipo no tiene `Ollama` activo).\n\n---\n\n## 6. Mapeo Global de las 16 Pantallas Figma para el Equipo\n\n| Sección | Pantalla SVG | Ruta Nuxt 4 | Rol de Datos | Componentes Clave |\n| :--- | :--- | :--- | :---: | :--- |\n| **1. Pública** | [01_Sign_In.svg](../../diseno_ui_figma/pantallas_svg/01_Sign_In.svg) | `/login` | Auth PIN | `PinPad4Digits` + 2 botones públicos + `PublicHierarchyBar` |\n| **1. Pública** | [02_Crew_Overview.svg](../../diseno_ui_figma/pantallas_svg/02_Crew_Overview.svg) | `/crew-overview` | **Solo Resultados** | 4 tarjetas de tripulantes + `ECharts` Gauge `84/100` |\n| **1. Pública** | [03_Crew_Streaks.svg](../../diseno_ui_figma/pantallas_svg/03_Crew_Streaks.svg) | `/crew-streaks` | **Solo Resultados** | Rachas activas de los 4 tripulantes + escudo `EVA` |\n| **2. Resultados** | [04_Profile_Personal_Data.svg](../../diseno_ui_figma/pantallas_svg/04_Profile_Personal_Data.svg) | `/profile/personal` | **Solo Resultados** | `Profile` en Slot 4 Central + `SpaceScanHologram` |\n| **2. Resultados** | [05_Profile_Psychological.svg](../../diseno_ui_figma/pantallas_svg/05_Profile_Psychological.svg) | `/profile/psychological` | **Solo Resultados** | Curva ECharts 14 días (`Mood`/`Calmness`) + resultados `268 ms` |\n| **2. Resultados** | [06_Profile_Physical.svg](../../diseno_ui_figma/pantallas_svg/06_Profile_Physical.svg) | `/profile/physical` | **Solo Resultados** | 6 barras clínicas + `ECharts` `ECG` en vivo + 4 labs |\n| **2. Resultados** | [07_Sleep_Monitor.svg](../../diseno_ui_figma/pantallas_svg/07_Sleep_Monitor.svg) | `/sleep` | **Solo Resultados** | `SleepTimeFilterBar` + Score `84` + **Barra de Cintas ECharts** + Lapsos |\n| **2. Resultados** | [08_Vision_Exam.svg](../../diseno_ui_figma/pantallas_svg/08_Vision_Exam.svg) | `/vision` | **Solo Resultados** | Arcos Ojo Izq/Der + Curva bilateral `ONSD` + 3 pasos |\n| **2. Resultados** | [09_Auscultation_Results.svg](../../diseno_ui_figma/pantallas_svg/09_Auscultation_Results.svg) | `/auscultation` | **Solo Resultados** | Fonocardiograma `S1/S2` + envolvente pulmonar + `CO₂` 24 h |\n| **3. Captura** | [10_Capture_Auscultation.svg](../../diseno_ui_figma/pantallas_svg/10_Capture_Auscultation.svg) | `/capture/auscultation` | **Entrada Audio** | `useAuscultationRecorder` (`30 s` cardíaco y pulmonar + `dBA`) |\n| **3. Captura** | [11_Capture_Physical_Labs.svg](../../diseno_ui_figma/pantallas_svg/11_Capture_Physical_Labs.svg) | `/capture/physical` | **Entrada Datos** | Formulario validado con `Zod` para signos, hábitos y tiras |\n| **3. Captura** | [12_Capture_Vision_Ocular.svg](../../diseno_ui_figma/pantallas_svg/12_Capture_Vision_Ocular.svg) | `/capture/vision` | **Entrada Datos** | Formulario ocular `Zod` + guía visual axial `3.0 mm` |\n| **3. Captura** | [13_Capture_Psych_Sleep.svg](../../diseno_ui_figma/pantallas_svg/13_Capture_Psych_Sleep.svg) | `/capture/psych-sleep` | **Entrada Datos** | Escalas `1–5` + ventana `UTC` de sueño + arena interactiva `2 min` |\n| **4. Soporte** | [14_Medical_Guide.svg](../../diseno_ui_figma/pantallas_svg/14_Medical_Guide.svg) | `/guide` | Consulta `FTS5` | Buscador médico instantáneo + localizador `Drawer B2` |\n| **4. Soporte** | [15_Mission_Control.svg](../../diseno_ui_figma/pantallas_svg/15_Mission_Control.svg) | `/comms` | Cola `DTN` | Mensajes `Flight Surgeon` (`+12 min`) + clima solar `DONKI` |\n| **4. Header** | [16_Notifications_Header.svg](../../diseno_ui_figma/pantallas_svg/16_Notifications_Header.svg) | `/notifications` | **Solo Header** | Avisos y plan preventivo (abierta únicamente desde la campana del header) |\n\n---\n\n## 7. Matriz de Trazabilidad Tecnológica por Categoría de Premio\n\nCada pieza del stack **[núcleo]** y **[extra]** sostiene directamente una categoría de evaluación:\n\n| # | Premio | Cómo se Construye en el Proyecto |\n| :-: | :--- | :--- |\n| **1** | **Best Use of Data** | `seed.py` + `httpx` pre-despegue con series reales de **OSDR/GeneLab** y **DONKI** persistidas en `SQLite`; visualización limpia en `Apache ECharts` y exportación estándar `JSON1`. |\n| **2** | **Best Use of Science** | Tabla `metric_catalog` con rangos y fuente científica, cálculo de *z-score* contra línea base personal del tripulante y modelo local que cita artículos de `wiki_articles`. |\n| **3** | **Best Use of Technology** | Inferencia acústica/biométrica con **ONNX Runtime** en CPU + orientación preventiva local con **Ollama**, `100%` sin red. |\n| **4** | **Best Storytelling** | Columna `mission_stage` (`LAUNCH` / `MISSION` / `RETURN`) en cada medición + gráficas longitudinales comparativas + simulador de sensores Python en vivo para la demo. |\n| **5** | **Best Mission Concept** | `SQLite 3` en un único archivo (`WAL` + `STRICT`), cola *store-and-forward* tipo `DTN` con `APScheduler` e inferencia ligera en CPU desde un solo puerto. |\n| **6** | **Galactic Impact** | `@vite-pwa/nuxt` **[extra]** + `Docker`: la misma plataforma sirve para telemedicina autónoma fuera de órbita y en zonas aisladas en Tierra. |\n| **7** | **Global Connection** | `@nuxtjs/i18n` configurado con `en` por defecto (100% inglés en UI sin mezclas), repositorio público bajo **Licencia MIT**, contrato `OpenAPI` y paquetes `JSON1`. |\n| **8** | **Local Impact** | Operación completa sin internet y sobre hardware económico (laptops/tablets de bajo consumo) aplicable en clínicas rurales. |\n| **9** | **Most Inspirational** | Tablero público `Crew Streaks` (`03`), check-in conductual y arena interactiva de reacción psicomotriz de `2 min` (`13`) en Vue + `motion-v` **[extra]**. |\n| **10** | **Art & Technology** | Variables CSS fieles al [Figma Oficial (`node-id=7382-2`)](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1), hologramas SVG con barrido CSS (`TresJS` **[extra]**), tema propio `'spacescan-hud'` en ECharts y conmutación instantánea a Modo Alerta. |\n\n---\n\n## 8. Checklist Obligatorio de Definición de Hecho (*Definition of Done*)\n\nAntes de fusionar cualquier rama a `main`, el desarrollador debe verificar:\n\n- [ ] **Fidelidad contra el Figma Oficial:** Comparar visualmente la vista contra [SpaceScan en Figma (`node-id=7382-2`)](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1) verificando proporciones, márgenes, dock de `7` módulos con `Profile` al centro y `Notifications` solo en el header.\n- [ ] **Prueba en Modo Avión (`RNF 1`):** Abrir DevTools $\\rightarrow$ pestaña *Network* con Wi-Fi/Ethernet apagado: `0` peticiones fallidas a dominios externos; fuentes `.woff2`, iconos locales y gráficas ECharts cargan al `100%`.\n- [ ] **Auditoría de Idioma y Limpieza:** `100%` de las etiquetas visibles están en inglés; `0` menciones a `SQLite`, `JSON`, `FHIR`, `Offline`, `Break-Glass` o tecnologías internas en la interfaz.\n- [ ] **Fidelidad Cromática:** Solo existen variables de `tokens.css` (`#001524`, `#15616D`, `#FFECD1`, `#2AEF4B`, `#000C5C`, `#D5110B`); los ítems activos del menú y líneas guía usan `#000C5C` translúcido.\n- [ ] **Separación Resultados vs. Captura:** Ninguna pantalla de `Profile`, `Sleep`, `Vision` o `Auscultation` contiene botones de registro; todo formulario pasa por `Zod` dentro de `/capture/*`.\n- [ ] **Calidad, Contrato Tipado y Pruebas:** `uv run ruff check .`, `uv run pytest`, `npx openapi-typescript`, `pnpm lint` (`@nuxt/eslint`), `pnpm test` (`Vitest`) y, si aplica **[extra]**, flujo E2E en `Playwright` pasan con `0` errores.\n",
-      "updatedBy": "Carlos",
-      "updatedAt": "2026-11-14T19:22:56.656Z"
-    },
     "doc_divicion_del_trabajo": {
       "id": "doc_divicion_del_trabajo",
       "title": "divicion del trabajo.md",
@@ -162,8 +155,8 @@
       "tomadoPor": "Foco (Poco)",
       "proceso": true,
       "procesoPor": "Foco (Poco)",
-      "listo": false,
-      "listoPor": null
+      "listo": true,
+      "listoPor": "Foco (Poco)"
     },
     "data-imc": {
       "tomado": true,
@@ -212,14 +205,30 @@
       "procesoPor": "Foco (Poco)",
       "listo": false,
       "listoPor": null
+    },
+    "res-mot-vista": {
+      "tomado": true,
+      "tomadoPor": "Sandra",
+      "proceso": true,
+      "procesoPor": "Sandra",
+      "listo": false,
+      "listoPor": null
+    },
+    "mis-examenes": {
+      "tomado": true,
+      "tomadoPor": "Sandra",
+      "proceso": true,
+      "procesoPor": "Sandra",
+      "listo": false,
+      "listoPor": null
     }
   },
-  "data-hora": true,
-  "data-edad": true,
-  "data-sexo": true,
-  "data-peso": true,
+  "data-hora": false,
+  "data-edad": false,
+  "data-sexo": false,
+  "data-peso": false,
   "data-muscular": true,
-  "data-altura": true,
+  "data-altura": false,
   "phase-antes": false,
   "orders": {
     "obj1-fases": [
@@ -238,34 +247,6 @@
   "phase-durante": false,
   "phase-despegue": false,
   "archived": {
-    "cust_1794668361463_ie8m": {
-      "title": "aaaa",
-      "reason": "Sin motivo especificado",
-      "by": "Steve",
-      "date": "2026-11-14T19:12:17.717Z",
-      "section": "card-sec-obj1"
-    },
-    "cust_1794668375663_lsxy": {
-      "title": "aaa",
-      "reason": "Sin motivo especificado",
-      "by": "Steve",
-      "date": "2026-11-14T19:12:22.245Z",
-      "section": "card-sec-obj1"
-    },
-    "cust_1794670056723_ywzg": {
-      "title": "rrrr",
-      "reason": "Sin motivo especificado",
-      "by": "Carlos",
-      "date": "2026-11-14T19:15:12.660Z",
-      "section": "card-sec-flow"
-    },
-    "cust_1794667251820_9wi7": {
-      "title": "algo",
-      "reason": "no aplica",
-      "by": "Foco (Poco)",
-      "date": "2026-11-14T19:30:44.047Z",
-      "section": "card-sec-obj1"
-    },
     "mis-int": {
       "title": "Tiempo de trabajo (interior)",
       "reason": "nA",
@@ -368,7 +349,8 @@
         "listoPor": "Foco (Poco)",
         "done": true,
         "createdBy": "Foco (Poco)",
-        "createdAt": "2026-11-14T19:27:59.194Z"
+        "createdAt": "2026-11-14T19:27:59.194Z",
+        "enProcesoPor": "Foco (Poco)"
       }
     ],
     "data-osea": [
@@ -436,7 +418,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-14T14:35:44.348Z"
+        "createdAt": "2026-11-14T14:35:44.348Z",
+        "enProcesoPor": "Steve"
       },
       {
         "id": "t_1794668143547_sj6f",
@@ -452,7 +435,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-14T14:55:43.547Z"
+        "createdAt": "2026-11-14T14:55:43.547Z",
+        "enProcesoPor": "Steve"
       },
       {
         "id": "t_1794694674992_jb8j",
@@ -468,51 +452,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-14T22:17:54.992Z"
-      }
-    ],
-    "phase-antes": [
-      {
-        "id": "t_1794666784006_1w9r",
-        "title": "algo",
-        "text": "algo",
-        "link": "",
-        "notes": "",
-        "tomado": false,
-        "tomadoPor": null,
-        "enProceso": false,
-        "procesoPor": null,
-        "listo": false,
-        "listoPor": null,
-        "done": false,
-        "createdBy": "Wilson",
-        "createdAt": "2026-11-14T14:33:04.006Z",
-        "archived": true,
-        "archiveReason": "Medición no viable en vuelo espacial por equipo a bordo",
-        "archivedBy": "Wilson",
-        "archivedAt": "2026-11-14T14:33:18.670Z"
-      }
-    ],
-    "cust_1794667251820_9wi7": [
-      {
-        "id": "t_1794667286006_chht",
-        "title": "algodd",
-        "text": "algodd",
-        "link": "",
-        "notes": "",
-        "tomado": false,
-        "tomadoPor": null,
-        "enProceso": false,
-        "procesoPor": null,
-        "listo": false,
-        "listoPor": null,
-        "done": false,
-        "createdBy": "Wilson",
-        "createdAt": "2026-11-14T14:41:26.006Z",
-        "archived": true,
-        "archiveReason": "d",
-        "archivedBy": "Wilson",
-        "archivedAt": "2026-11-14T14:41:37.069Z"
+        "createdAt": "2026-11-14T22:17:54.992Z",
+        "enProcesoPor": "Steve"
       }
     ],
     "mis-ejercicio": [
@@ -530,7 +471,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Sandra",
-        "createdAt": "2026-11-14T20:00:32.906Z"
+        "createdAt": "2026-11-14T20:00:32.906Z",
+        "enProcesoPor": "Sandra"
       }
     ],
     "mis-temp": [
@@ -548,7 +490,8 @@
         "listoPor": "Foco (Poco)",
         "done": true,
         "createdBy": "Foco (Poco)",
-        "createdAt": "2026-11-14T20:01:40.964Z"
+        "createdAt": "2026-11-14T20:01:40.964Z",
+        "enProcesoPor": "Foco (Poco)"
       }
     ],
     "data-imc": [
@@ -566,7 +509,8 @@
         "listoPor": null,
         "done": false,
         "createdBy": "Sandra",
-        "createdAt": "2026-11-14T20:50:49.859Z"
+        "createdAt": "2026-11-14T20:50:49.859Z",
+        "enProcesoPor": "Sandra"
       }
     ],
     "data-ritmo": [
@@ -602,7 +546,8 @@
         "listoPor": "Foco (Poco)",
         "done": true,
         "createdBy": "Foco (Poco)",
-        "createdAt": "2026-11-14T22:03:45.533Z"
+        "createdAt": "2026-11-14T22:03:45.533Z",
+        "enProcesoPor": "Foco (Poco)"
       }
     ],
     "ind-hidratacion": [
@@ -620,7 +565,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-14T22:24:53.983Z"
+        "createdAt": "2026-11-14T22:24:53.983Z",
+        "enProcesoPor": "Steve"
       },
       {
         "id": "t_1794695584169_0nua",
@@ -636,7 +582,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-14T22:33:04.169Z"
+        "createdAt": "2026-11-14T22:33:04.169Z",
+        "enProcesoPor": "Steve"
       }
     ],
     "ind-estres": [
@@ -654,7 +601,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-14T23:08:49.809Z"
+        "createdAt": "2026-11-14T23:08:49.809Z",
+        "enProcesoPor": "Steve"
       },
       {
         "id": "t_1794697990888_n5zh",
@@ -670,7 +618,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-14T23:13:10.888Z"
+        "createdAt": "2026-11-14T23:13:10.888Z",
+        "enProcesoPor": "Steve"
       }
     ],
     "ind-sueno": [
@@ -688,7 +637,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-14T23:43:49.983Z"
+        "createdAt": "2026-11-14T23:43:49.983Z",
+        "enProcesoPor": "Steve"
       },
       {
         "id": "t_1794700368308_pdyn",
@@ -704,7 +654,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-14T23:52:48.308Z"
+        "createdAt": "2026-11-14T23:52:48.308Z",
+        "enProcesoPor": "Steve"
       }
     ],
     "mis-glucosa": [
@@ -722,7 +673,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-15T00:52:34.649Z"
+        "createdAt": "2026-11-15T00:52:34.649Z",
+        "enProcesoPor": "Steve"
       }
     ],
     "mis-oxigeno": [
@@ -740,7 +692,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-15T01:34:48.240Z"
+        "createdAt": "2026-11-15T01:34:48.240Z",
+        "enProcesoPor": "Steve"
       },
       {
         "id": "t_1794706638790_hhvy",
@@ -756,7 +709,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-15T01:37:18.790Z"
+        "createdAt": "2026-11-15T01:37:18.790Z",
+        "enProcesoPor": "Steve"
       }
     ],
     "data-muscular": [
@@ -774,7 +728,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-15T02:26:31.156Z"
+        "createdAt": "2026-11-15T02:26:31.156Z",
+        "enProcesoPor": "Steve"
       },
       {
         "id": "t_1794709817212_30wn",
@@ -790,7 +745,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-15T02:30:17.212Z"
+        "createdAt": "2026-11-15T02:30:17.212Z",
+        "enProcesoPor": "Steve"
       }
     ],
     "ind-alimentacion": [
@@ -808,7 +764,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-15T03:58:32.974Z"
+        "createdAt": "2026-11-15T03:58:32.974Z",
+        "enProcesoPor": "Steve"
       },
       {
         "id": "t_1794715578787_vl5m",
@@ -824,7 +781,8 @@
         "listoPor": "Steve",
         "done": true,
         "createdBy": "Steve",
-        "createdAt": "2026-11-15T04:06:18.787Z"
+        "createdAt": "2026-11-15T04:06:18.787Z",
+        "enProcesoPor": "Steve"
       }
     ],
     "res-mot-vista": [
@@ -900,48 +858,11 @@
       }
     ]
   },
-  "mis-tiempo-mision": true,
-  "mis-tiempo-trabajo": true,
+  "mis-tiempo-mision": false,
+  "mis-tiempo-trabajo": false,
   "mis-ejercicio": true,
-  "customSections": {
-    "sec_1794671751237_2fez": {
-      "id": "sec_1794671751237_2fez",
-      "title": "Base de Datos",
-      "tab": "devs",
-      "createdBy": "Carlos",
-      "createdAt": "2026-11-14T15:55:51.237Z"
-    },
-    "sec_1794671783762_ch2u": {
-      "id": "sec_1794671783762_ch2u",
-      "title": "sssssss",
-      "tab": "devs",
-      "createdBy": "Carlos",
-      "createdAt": "2026-11-14T15:56:23.762Z"
-    }
-  },
-  "customTasks": {
-    "cust_1794671759412_sfbk": {
-      "id": "cust_1794671759412_sfbk",
-      "title": "Base de datos",
-      "section": "sec_1794671751237_2fez",
-      "createdBy": "Carlos",
-      "createdAt": "2026-11-14T15:55:59.412Z"
-    },
-    "cust_1794671787682_faev": {
-      "id": "cust_1794671787682_faev",
-      "title": "ssssss",
-      "section": "sec_1794671783762_ch2u",
-      "createdBy": "Carlos",
-      "createdAt": "2026-11-14T15:56:27.682Z"
-    },
-    "cust_1794671727969_lxcu": {
-      "id": "cust_1794671727969_lxcu",
-      "title": "Primera Parte",
-      "section": "flow",
-      "createdBy": "Carlos",
-      "createdAt": "2026-11-14T15:55:27.970Z"
-    }
-  },
+  "customSections": {},
+  "customTasks": {},
   "mis-temp": true,
   "ind-animo": true,
   "ind-estres": true,

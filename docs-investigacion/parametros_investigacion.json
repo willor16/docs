@@ -1,0 +1,311 @@
+{
+  "source": "docs/miWork/state.json",
+  "extracted_at": "2026-11-15",
+  "parameters": [
+    {
+      "miwork_id": "data-osea",
+      "label": "Densidad Ósea",
+      "domain": "antropometria_composicion",
+      "responsible": "Steve",
+      "status": "listo",
+      "sources": [
+        "https://www.nasa.gov/reference/risk-of-reduced-cardiorespiratory-and-musculoskeletal-fitness/",
+        "https://www.nature.com/articles/s41526-020-0103-2"
+      ],
+      "findings": {
+        "microgravity_bone_loss_gt_28d": {
+          "skull_neck_pct": 2.2,
+          "thorax_upper_limbs_pct": -0.7,
+          "pelvis_lumbar_spine_pct": -6.2,
+          "lower_limbs_pct": -5.4
+        }
+      }
+    },
+    {
+      "miwork_id": "data-muscular",
+      "label": "Masa Muscular",
+      "domain": "antropometria_composicion",
+      "responsible": "Steve",
+      "status": "listo",
+      "sources": [
+        "https://www.nasa.gov/missions/station/iss-research/counteracting-bone-and-muscle-loss-in-microgravity/",
+        "https://www.nasa.gov/reference/risk-of-reduced-cardiorespiratory-and-musculoskeletal-fitness/"
+      ],
+      "ranges": {
+        "male_18_39": {
+          "absolute_mass_kg": [28, 36],
+          "smi_bioimpedance_min_kg_m2": 8.5,
+          "smi_dxa_min_kg_m2": 7.0
+        },
+        "female_18_39": {
+          "absolute_mass_kg": [18, 24],
+          "smi_bioimpedance_min_kg_m2": 5.75,
+          "smi_dxa_min_kg_m2": 5.5
+        }
+      },
+      "microgravity_loss": {
+        "without_intense_exercise_5_11d_max_pct": 20,
+        "standard_exercise_4_6m_avg_pct": [10, 12]
+      }
+    },
+    {
+      "miwork_id": "data-imc",
+      "label": "IMC",
+      "domain": "antropometria_composicion",
+      "responsible": "Foco (Poco) / Sandra",
+      "status": "listo",
+      "sources": [
+        "https://www.nasa.gov/wp-content/uploads/2025/05/nasa-std-3001-vol-2.pdf"
+      ],
+      "unit": "kg/m^2",
+      "phases": {
+        "pre_flight": {
+          "optimal": [18.5, 24.9],
+          "acceptable": [25.0, 27.9],
+          "acceptable_lean_conditional": [18.0, 18.4],
+          "critical_lt": 18.0,
+          "critical_gte": 28.0
+        },
+        "post_flight": {
+          "optimal_mass_retention_gt_pct": 95,
+          "optimal_bmi_delta_kg_m2": 1.0,
+          "acceptable_mass_retention_pct": [90, 95],
+          "critical_mass_retention_lt_pct": 90,
+          "critical_rehab_45_60d_lt_pct": 95
+        }
+      }
+    },
+    {
+      "miwork_id": "data-ritmo",
+      "label": "Ritmo Cardíaco",
+      "domain": "signos_vitales_metabolismo",
+      "responsible": "Foco (Poco)",
+      "status": "listo",
+      "sources": [
+        "https://medlineplus.gov/ency/article/003399.htm?utm_source"
+      ],
+      "unit": "bpm",
+      "ranges": {
+        "adults_and_10_plus": [60, 100],
+        "well_trained_athletes": [40, 60]
+      }
+    },
+    {
+      "miwork_id": "data-presion",
+      "label": "Presión Arterial",
+      "domain": "signos_vitales_metabolismo",
+      "responsible": "Foco (Poco)",
+      "status": "listo",
+      "sources": [
+        "https://medlineplus.gov/spanish/pruebas-de-laboratorio/medicion-de-la-presion-arterial/?utm_source"
+      ],
+      "unit": "mmHg",
+      "categories": {
+        "normal": { "systolic_lt": 120, "diastolic_lt": 80 },
+        "elevated": { "systolic": [120, 129], "diastolic_lt": 80 },
+        "hypertension_stage_1": { "systolic": [130, 139], "diastolic": [80, 89] },
+        "hypertension_stage_2": { "systolic_gte": 140, "diastolic_gte": 90 },
+        "hypertensive_crisis": { "systolic_gt": 180, "diastolic_gt": 120 }
+      }
+    },
+    {
+      "miwork_id": "mis-temp",
+      "label": "Temperatura",
+      "domain": "signos_vitales_metabolismo",
+      "responsible": "Foco (Poco)",
+      "status": "listo",
+      "sources": [
+        "https://www.medlineplus.gov/ency/article/002341.htm?utm_source"
+      ],
+      "unit_c": [36.5, 37.3],
+      "mean_c": 37.0,
+      "unit_f": [97.7, 99.1],
+      "mean_f": 98.6
+    },
+    {
+      "miwork_id": "mis-oxigeno",
+      "label": "Saturación oxígeno",
+      "domain": "signos_vitales_metabolismo",
+      "responsible": "Steve",
+      "status": "listo",
+      "sources": [
+        "https://www.americares.org/wp-content/uploads/globalassets/_mo/focus/ss/who-pulse-oximetry-training-manual2.pdf",
+        "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-003-habitable-atmosphere.pdf"
+      ],
+      "unit": "%",
+      "ranges_earth": {
+        "normal": [95, 100],
+        "acceptable_lower": [93, 94],
+        "mild_hypoxemia": [91, 92],
+        "moderate_hypoxemia": [86, 90]
+      },
+      "iss_rest_range_pct": [96, 99]
+    },
+    {
+      "miwork_id": "mis-glucosa",
+      "label": "Glucosa",
+      "domain": "signos_vitales_metabolismo",
+      "responsible": "Steve",
+      "status": "listo",
+      "sources": [
+        "https://medlineplus.gov/spanish/ency/article/003482.htm"
+      ],
+      "ranges": {
+        "fasting_mg_dl": [70, 99],
+        "postprandial_2h_lt_mg_dl": 140,
+        "hba1c_lt_pct": 5.7,
+        "random_mg_dl": [70, 139]
+      }
+    },
+    {
+      "miwork_id": "res-mot-vista / mis-examenes",
+      "label": "Salud Ocular y SANS",
+      "domain": "salud_ocular_sans",
+      "responsible": "Sandra",
+      "status": "en_proceso",
+      "sources": [
+        "https://www.nasa.gov/wp-content/uploads/2024/02/ochmo-mtb-001-sans.pdf?emrc=d4c581"
+      ],
+      "iss_tests": [
+        "Visual Acuity",
+        "Amsler Grid",
+        "Visual Symptoms Questionnaire",
+        "Fundoscopy",
+        "Optical Coherence Tomography (OCT)"
+      ]
+    },
+    {
+      "miwork_id": "ind-sueno",
+      "label": "Sueño",
+      "domain": "sueno_estres_psicologia",
+      "responsible": "Steve",
+      "status": "listo",
+      "sources": [
+        "https://www.ncbi.nlm.nih.gov/books/NBK526132/",
+        "https://www.thensf.org/what-is-sleep-quality/"
+      ],
+      "recommended_hours": [7, 9],
+      "stages_pct": {
+        "n1": 5,
+        "n2": [45, 55],
+        "n3_deep": [15, 25],
+        "rem": [20, 25]
+      },
+      "sleep_vitals": {
+        "heart_rate_bpm": [45, 65],
+        "hrv_rmssd_ms_min": 40,
+        "respiratory_rate_rpm": [12, 15],
+        "skin_temp_wrist_c": [34.5, 35.5]
+      }
+    },
+    {
+      "miwork_id": "ind-estres",
+      "label": "Nivel de estrés",
+      "domain": "sueno_estres_psicologia",
+      "responsible": "Foco (Poco) / Steve",
+      "status": "listo",
+      "sources": [
+        "https://medlineplus.gov/spanish/pruebas-de-laboratorio/prueba-de-cortisol/",
+        "https://www.frontiersin.org/journals/public-health/articles/10.3389/fpubh.2017.00258/full"
+      ],
+      "biomarkers": {
+        "serum_cortisol_morning_mcg_dl": [5, 25],
+        "serum_cortisol_afternoon_mcg_dl": [3, 16],
+        "salivary_cortisol_morning_mcg_dl": [0.1, 1.5],
+        "salivary_cortisol_night_lt_mcg_dl": 0.15,
+        "hrv_rmssd_normal_ms_min": 30,
+        "hrv_rmssd_acute_stress_lt_ms": [20, 30]
+      }
+    },
+    {
+      "miwork_id": "ind-alimentacion",
+      "label": "Alimentación",
+      "domain": "nutricion_hidratacion_ejercicio",
+      "responsible": "Steve",
+      "status": "listo",
+      "sources": [
+        "https://ajcn.nutrition.org/article/S0002-9165(23)16698-6/abstract",
+        "https://www.dietaryguidelines.gov/sites/default/files/2020-12/Dietary_Guidelines_for_Americans_2020-2025.pdf"
+      ],
+      "macronutrients_pct": {
+        "carbohydrates": [45, 65],
+        "fats": [20, 35],
+        "protein": [10, 35],
+        "protein_g_per_kg_min": 0.8,
+        "protein_g_per_kg_active": [1.2, 2.0]
+      }
+    },
+    {
+      "miwork_id": "ind-hidratacion",
+      "label": "Hidratación",
+      "domain": "nutricion_hidratacion_ejercicio",
+      "responsible": "Steve",
+      "status": "listo",
+      "sources": [
+        "https://www.hprc-online.org/nutrition/nutrition-fundamentals/how-accurately-assess-hydration-status-using-urine-color-charts",
+        "https://www.gssiweb.org/en/sports-science-exchange/article/urine-markers-for-hydration-monitoring--practical-assessment-and-interpretation"
+      ],
+      "urine_color_scale": {
+        "well_hydrated": [1, 3],
+        "hypohydrated": [4, 6],
+        "dehydrated_gte": 7
+      },
+      "daily_intake_l": {
+        "male": [2.5, 3.7],
+        "female": [2.0, 2.7],
+        "ml_per_kg": [30, 35]
+      },
+      "plasma_osmolality_mosm_kg": [275, 295]
+    },
+    {
+      "miwork_id": "mis-ejercicio",
+      "label": "Ejercicio",
+      "domain": "nutricion_hidratacion_ejercicio",
+      "responsible": "Sandra / Steve",
+      "status": "listo",
+      "sources": [
+        "https://www.nasa.gov/wp-content/uploads/2025/02/sp-20250000273.pdf?emrc="
+      ],
+      "protocols": {
+        "very_short_lt_10d": { "days_per_week": 0, "minutes_per_session": 0 },
+        "short_up_to_14d": { "days_per_week": 3, "minutes_per_session": 20 },
+        "long_gte_180d": { "days_per_week": [6, 7], "minutes_per_session": 30, "aerobic_vo2max_min_pct": 80 }
+      }
+    },
+    {
+      "miwork_id": "mis-humedad",
+      "label": "Humedad y Temperatura de Cabina",
+      "domain": "ambiente_cabina_radiacion",
+      "responsible": "Foco (Poco)",
+      "status": "listo",
+      "sources": [
+        "https://www.nasa.gov/reference/6-0-natural-and-induced-environments-vol-2/?utm_source"
+      ],
+      "performance_zone": {
+        "temp_c": [20, 25],
+        "humidity_pct": [30, 60]
+      },
+      "reference_extremes": [
+        { "temp_c": 18, "humidity_pct": 75 },
+        { "temp_c": 27, "humidity_pct": 25 }
+      ]
+    },
+    {
+      "miwork_id": "res-radiacion",
+      "label": "Radiación",
+      "domain": "ambiente_cabina_radiacion",
+      "responsible": "Steve",
+      "status": "listo",
+      "sources": [
+        "https://www.nasa.gov/humans-in-space/the-human-body-in-space/",
+        "https://www.nasa.gov/reference/about-the-space-radiation-element/",
+        "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-020-radiation-protection.pdf"
+      ],
+      "reference_doses": {
+        "natural_background_msv": [2.4, 3.0],
+        "public_limit_msv_year": 1,
+        "occupational_limit_msv_year": 20
+      }
+    }
+  ]
+}

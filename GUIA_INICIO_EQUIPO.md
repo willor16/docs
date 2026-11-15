@@ -10,7 +10,7 @@ El ecosistema de trabajo se estructura estrictamente en **dos repositorios indep
    * **Regla de Gobernanza:** Solo se integran módulos validados que cumplan los 10 criterios de premios globales, las 5 Leyes de Diseño UI/UX y bajo confirmación explícita. No se ejecutan operaciones de Git sin instrucción directa.
 
 2. **`docs/` (Repositorio Oficial de Documentación, Gestión y Workspace — `willor16/docs`)**:
-   * Centraliza las reglas inquebrantables, el estándar global de diseño UI/UX y guía maestra de construcción, la especificación formal de requerimientos, la arquitectura técnica, la división de trabajo para los 3 Devs fullstack, las bases oficiales del desafío, las directivas para modelos de IA y la Torre de Control Interna (`docs/miWork/`).
+   * Centraliza las reglas inquebrantables, el estándar global de diseño UI/UX y guía maestra de construcción, la especificación formal de requerimientos, la arquitectura técnica, la división de trabajo para los 3 Devs fullstack, las bases oficiales del desafío (`bases_reto/`), la investigación biomédica recopilada (`docs-investigacion/`), las directivas para modelos de IA y la Torre de Control Interna (`docs/miWork/`).
 
    * **`docs/miWork/` (Torre de Control Interna — Aislado dentro de `docs/`)**:
      * Espacio exclusivo de coordinación interactiva en red local (**Scan Workspace**): dashboard web (`index.html`), servidor Python (`server.py`), base de datos colaborativa en tiempo real (`state.json`), notas del editor Colab (`docs/miWork/docs/`) y scripts de arranque (`iniciar_servidor.*`).
@@ -26,9 +26,18 @@ docs/
 ├── GUIA_INICIO_EQUIPO.md                            # Gobernanza general, mapa documental y flujo de trabajo.
 ├── instrucciones_ia/
 │   └── DIRECTIVAS_AGENTE_AI.md                      # Reglas operativas, restricciones, stack e invariantes de IA.
-├── investigacion/
+├── bases_reto/
 │   ├── RETO_OFICIAL_NASA_2026.md                    # Consigna oficial del reto, criterios del jurado y 10 premios.
 │   └── reto_oficial_nasa_2026.json                  # Esquema estructurado en JSON de las bases oficiales del reto.
+├── docs-investigacion/
+│   ├── README.md                                    # Índice maestro, fuentes y brechas de investigación biomédica.
+│   ├── 01_antropometria_y_composicion.md            # Densidad ósea, masa muscular (IMM) e IMC por fase.
+│   ├── 02_signos_vitales_y_metabolismo.md           # Ritmo cardíaco, presión arterial, temperatura, SpO2 y glucosa.
+│   ├── 03_salud_ocular_sans.md                      # Cronograma y 5 pruebas visuales SANS en la ISS.
+│   ├── 04_sueno_estres_y_psicologia.md              # Arquitectura de sueño, cortisol, HRV y cobertura conductual.
+│   ├── 05_nutricion_hidratacion_ejercicio.md        # Calorías, TMB, colorimetría/osmolalidad y ejercicio.
+│   ├── 06_ambiente_cabina_y_radiacion.md            # Confort térmico/humedad y estándares de radiación.
+│   └── parametros_investigacion.json                # Catálogo JSON estructurado de rangos y URLs fuente.
 ├── control_avance/
 │   ├── REGLAS_INQUEBRANTABLES.md                    # PRIORITARIO: Los 10 criterios, idioma 100% inglés, prohibiciones y Figma.
 │   ├── REGLAS_DISENO_UI_UX.md                       # PRIORITARIO: Estándar UI/UX, 5 Leyes, 6 Colores, 16 Pantallas y Código Guía.
