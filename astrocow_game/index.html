@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>AstroCow: Space Flight Simulator — SCAN SPACE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #070913;
+    --hud-gold: #facc15;
+    --hud-green: #22c55e;
+    --hud-red: #ef4444;
+    --hud-blue: #38bdf8;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Rajdhani', sans-serif;
+    color: #f8fafc;
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  /* ── Canvas Frame (Clean retro-futuristic arcade) ── */
+  .game-container {
+    position: relative;
+    border: 2px solid rgba(56, 189, 248, 0.4);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 35px rgba(2, 132, 199, 0.25), inset 0 0 20px rgba(0, 0, 0, 0.7);
+    background: #000;
+  }
+
+  canvas {
+    display: block;
+    cursor: crosshair;
+    touch-action: none;
+    -webkit-user-drag: none;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    width: min(94vw, 1020px);
+    height: auto;
+    max-height: 84vh;
+    aspect-ratio: 900 / 560;
+  }
+
+  /* ── Discreet Non-Saturating Footer ── */
+  .discreet-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(94vw, 1020px);
+    margin-top: 10px;
+    font-size: 12px;
+    color: #94a3b8;
+    padding: 0 8px;
+    letter-spacing: 0.5px;
+  }
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .dot-green { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+
+  /* ── Minimalist Clean Mission End Overlay ── */
+  .end-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 7, 18, 0.88);
+    backdrop-filter: blur(6px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 20;
+    animation: fadeIn 0.22s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .debrief-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    color: #facc15;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    text-shadow: 0 0 8px rgba(250, 204, 21, 0.4);
+  }
+  .debrief-sub {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* Key Metrics Cards (Clean & Relevant Only) */
+  .metrics-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 20px;
+  }
+
+  .metric-card {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .metric-card.highlight {
+    grid-column: span 2;
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.3) 0%, rgba(15, 23, 42, 0.8) 100%);
+    border-color: rgba(96, 165, 250, 0.4);
+  }
+
+  .mc-label {
+    font-size: 11px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 2px;
+  }
+  .mc-val {
+    font-size: 20px;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+  .mc-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
+  .badge-NOMINAL { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+  .badge-ALERT { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+  .badge-CRITICAL { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+  /* Retry Button */
+  .btn-retry {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    border: 2px solid #38bdf8;
+    background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    transition: all 0.2s ease;
+    width: 100%;
+    max-width: 320px;
+  }
+  .btn-retry:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+  }
+  .btn-retry:active {
+    transform: translateY(1px);
+  }
+
+  .sub-note {
+    font-size: 10px;
+    color: #64748b;
+    margin-top: 10px;
+  }
+
+  .hud-toggle-btn {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid #38bdf8;
+    color: #38bdf8;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: 0.4px;
+  }
+  .hud-toggle-btn.active {
+    background: rgba(34, 197, 94, 0.18);
+    border-color: #22c55e;
+    color: #4ade80;
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="game-container">
+    <canvas ref="cvs" :width="W" :height="H"
+            @contextmenu.prevent="handleRightClick"
+            @dragstart.prevent
+            @mousedown="handlePointerDown"
+            @mousemove="handlePointerMove"
+            @mouseup="handlePointerUp"
+            @pointerdown="handlePointerDown"
+            @pointermove="handlePointerMove"
+            @pointerup="handlePointerUp"
+            @pointercancel="handlePointerUp"
+            @touchstart.prevent="handlePointerDown"
+            @touchmove.prevent="handlePointerMove"
+            @touchend.prevent="handlePointerUp"></canvas>
+
+    <!-- Clean, Non-saturating Post-Flight Debrief -->
+    <div class="end-overlay" v-if="gameState === 'DEAD'">
+      <div class="debrief-title">FLIGHT DEBRIEF</div>
+      <div class="debrief-sub">Session Assessment Complete</div>
+
+      <div class="metrics-summary">
+        <!-- Main Score -->
+        <div class="metric-card highlight">
+          <div class="mc-label">Flight Score</div>
+          <div class="mc-val" style="color:#facc15; font-size:24px;">{{ score }} <span style="font-size:13px; color:#94a3b8; font-weight:normal;">/ Best: {{ highScore }}</span></div>
+        </div>
+
+        <!-- Reaction Time -->
+        <div class="metric-card">
+          <div class="mc-label">Reaction Latency</div>
+          <div class="mc-val">{{ latestMetrics?.reactionTime?.meanMs || 280 }} <span style="font-size:12px;">ms</span></div>
+          <div class="mc-badge" :class="'badge-' + (latestMetrics?.reactionTime?.status || 'NOMINAL')">
+            {{ latestMetrics?.reactionTime?.status || 'NOMINAL' }}
+          </div>
+        </div>
+
+        <!-- Coordination -->
+        <div class="metric-card">
+          <div class="mc-label">Target Precision</div>
+          <div class="mc-val">{{ reticleHits }}/{{ reticleTotal }}</div>
+          <div class="mc-badge badge-NOMINAL">
+            {{ reticleTotal > 0 ? Math.round((reticleHits / reticleTotal) * 100) : 100 }}% HIT
+          </div>
+        </div>
+
+        <!-- Recovery Time (T_recovery) -->
+        <div class="metric-card">
+          <div class="mc-label">Recovery Time (T_rec)</div>
+          <div class="mc-val">{{ latestMetrics?.reactionTime?.recoverySec ?? 0.35 }} <span style="font-size:12px;">s</span></div>
+          <div class="mc-badge badge-NOMINAL">t_stable - t_change</div>
+        </div>
+
+        <!-- Reaction Variability -->
+        <div class="metric-card">
+          <div class="mc-label">RT Variability</div>
+          <div class="mc-val">&plusmn;{{ latestMetrics?.reactionTime?.variabilityMs ?? 24 }} <span style="font-size:12px;">ms</span></div>
+          <div class="mc-badge badge-NOMINAL">CONSISTENCY</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; width:100%; max-width:440px; justify-content:center;">
+        <button class="btn-retry" @click="startFlight">
+          HOLD [ W ] / SPACE TO FLY
+        </button>
+        <button class="btn-retry" style="background:linear-gradient(180deg,#059669 0%,#047857 100%); border-color:#34d399;" @click="exportBehavioralJson">
+          💾 EXPORT JSON
+        </button>
+      </div>
+      <div class="sub-note">Participant: AST001 &bull; Module: AST-01 &bull; Stage: In-Flight (FD030)</div>
+    </div>
+  </div>
+
+  <!-- Discreet Footer -->
+  <div class="discreet-footer">
+    <span class="status-tag">
+      <span class="dot dot-green"></span>
+      Thruster: [ W ] / Shift / Space / Click &bull; Target: Move Mouse or [ E ]
+    </span>
+    <div style="display:flex; gap:8px;">
+      <button class="hud-toggle-btn" :class="{ active: showTargetPreview }" @click="showTargetPreview = !showTargetPreview">
+        {{ showTargetPreview ? '📡 RADAR PREVIEW: ON (Key R)' : '📡 RADAR PREVIEW: OFF (Key R)' }}
+      </button>
+      <button class="hud-toggle-btn active" @click="exportBehavioralJson">
+        💾 SAVE / DOWNLOAD JSON
+      </button>
+    </div>
+    <span>AST001 &bull; AST-01 &bull; FD030</span>
+  </div>
+</div>
+
+<!-- Vue 3 CDN -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script>
+const { createApp, ref, onMounted } = Vue;
+
+createApp({
+setup() {
+  const W = 900;
+  const H = 560;
+  const cvs = ref(null);
+  let ctx = null;
+
+  // ── States ──
+  const gameState = ref('IDLE'); // 'IDLE' | 'FLYING' | 'DEAD'
+  const score = ref(0);
+  const highScore = ref(0);
+  const currentDifficultyLevel = ref(1);
+  const elapsedFlightSec = ref(0);
+  const latestMetrics = ref(null);
+  let attemptCount = 0;
+
+  // ── Precision Flight Physics (Micro-Thruster RCS Model) ──
+  // Siempre vuelas con normalidad sosteniendo o soltando el click/espacio
+  let isThrusting = false;
+let spaceKeyHeld = false;
+
+
+// Track spacebar state for simultaneous input
+let isPointerDown = false;  // Track pointer state for simultaneous input
+  const thrustAcceleration = -0.22;
+  const gravity = 0.11;
+  const maxAscentSpeed = -2.4;
+  const maxFallSpeed = 1.9;
+  const inertialDamping = 0.962;
+
+  // ── Background Images (4 Sliced Stages) ──
+  const bgImages = [];
+  let bgLoaded = false;
+  let currentBgIndex = 0;
+
+  // ── Astronaut Cow Sprite ──
+  const cowSprite = new Image();
+  let cowLoaded = false;
+
+  // ── Player Position & Physics ──
+  const cowW = 48, cowH = 50;
+  let cowX = 130, cowY = 260;
+  let cowVy = 0;
+
+  // ── Obstacles & Flight Dynamics ──
+  let obstacles = [];
+  let stars = [];
+  let speed = 1.35;
+  let gapSize = 310;
+  let obstacleSpacing = 620;
+  let scrollOffset = 0;
+  let shieldHp = 5;
+  let invulnerabilityTimer = 0;
+  let flightStartTime = 0;
+  let flightEndTime = 0;
+
+  // ── Obstacle Distribution Patterns (Procedural Architecture) ──
+  let lastTopHeight = 125;
+  let patternStep = 0;
+
+  // ── Particle Sparks from Jetpack & Target Hits ──
+  let thrustParticles = [];
+  let feedbackFloatingTexts = []; // Floating notifications like "+100 TARGET!"
+
+  // ── Timed Target Beacon System (Vuelas normal, objetivo con temporizador) ──
+  let targetReticle = null; // {x, y, radius, createdTime, maxLife}
+  let nextTargetCoords = null; // Pre-calculated {x, y} for incoming target radar warning
+  const showTargetPreview = ref(true); // Option to warn where the next target will appear
+  const reticleHits = ref(0);
+  const reticleTotal = ref(0);
+  let nextTargetSpawnTime = 0; // Scheduled next target appearance
+
+  // ── Behavioral & Clinical Telemetry Recording Arrays ──
+  let tapTimestamps = [];
+  let reactionPairs = [];
+  let thrustDurations = [];
+  let currentThrustStart = 0;
+  let omittedResponsesCount = 0;
+  let errorsAfterChangeCount = 0;
+  let collisionCount = 0;
+  let lastChangeTimestamp = 0; // Timestamp of latest stimulus/change (target spawn or collision)
+  let awaitingRecoveryFromChange = false;
+  let recoveryTimesSec = [];
+  let targetTimelineEvents = []; // { timeSec, hit } for performance per minute
+  const lastSavedRecord = ref(null);
+
+  // ── Retro Web Audio Synthesizer ──
+  let audioCtx = null;
+  let thrusterOsc = null;
+  let thrusterGain = null;
+
+  function initAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+  }
+
+  function startThrusterSound() {
+    if (!audioCtx) return;
+    try {
+      if (!thrusterOsc) {
+        thrusterOsc = audioCtx.createOscillator();
+        thrusterGain = audioCtx.createGain();
+        thrusterOsc.type = 'triangle';
+        thrusterOsc.frequency.setValueAtTime(130, audioCtx.currentTime);
+        thrusterGain.gain.setValueAtTime(0.035, audioCtx.currentTime);
+        thrusterOsc.connect(thrusterGain);
+        thrusterGain.connect(audioCtx.destination);
+        thrusterOsc.start();
+      } else {
+        thrusterGain.gain.setValueAtTime(0.035, audioCtx.currentTime);
+      }
+    } catch(e) {}
+  }
+
+  function stopThrusterSound() {
+    if (thrusterGain && audioCtx) {
+      try {
+        thrusterGain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+      } catch(e) {}
+    }
+  }
+
+  function playTone(freq, dur, type = 'square', vol = 0.05) {
+    if (!audioCtx) return;
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + dur);
+    } catch(e) {}
+  }
+
+  const sfxScore = () => playTone(880, 0.12, 'sine', 0.06);
+  const sfxHit = () => playTone(110, 0.22, 'sawtooth', 0.1);
+  const sfxTargetHit = () => { playTone(1050, 0.08, 'sine', 0.08); setTimeout(() => playTone(1350, 0.1, 'sine', 0.08), 80); };
+  const sfxTargetExpired = () => playTone(220, 0.15, 'triangle', 0.04);
+  const sfxLevelUp = () => {
+    playTone(587, 0.09, 'sine', 0.07);
+    setTimeout(() => playTone(784, 0.09, 'sine', 0.07), 90);
+    setTimeout(() => playTone(1046, 0.14, 'sine', 0.08), 180);
+  };
+
+  // ── Time-Based Progressive Difficulty System ──
+  // Starts ultra-relaxed (Level 1) and increases difficulty every 15 seconds of flight time
+  function updateDifficultyByTime(now) {
+    const elapsedSec = Math.max(0, (now - flightStartTime) / 1000);
+    elapsedFlightSec.value = Math.floor(elapsedSec);
+
+    // Determine discrete Difficulty Level (1 to 5, stepping up every 15s)
+    const computedLevel = Math.min(5, 1 + Math.floor(elapsedSec / 15));
+
+    // Smooth continuous progression of speed, pillar spacing, and vertical gap over time
+    // Level 1 (0s): speed 1.35, spacing 620px, gap 310px
+    // Level 5 (60s+): speed 2.75, spacing 330px, gap 200px
+    const progressRatio = Math.min(1, elapsedSec / 65);
+    speed = Number((1.35 + progressRatio * 1.40).toFixed(2));
+    obstacleSpacing = Math.round(620 - progressRatio * 290);
+    gapSize = Math.round(310 - progressRatio * 110);
+
+    if (computedLevel > currentDifficultyLevel.value) {
+      currentDifficultyLevel.value = computedLevel;
+      // Record difficulty step-up as an environmental change stimulus for T_recovery
+      lastChangeTimestamp = now;
+      awaitingRecoveryFromChange = true;
+      sfxLevelUp();
+
+      feedbackFloatingTexts.push({
+        text: `⚡ LEVEL ${computedLevel} — SPEED & OBSTACLES INCREASED!`,
+        x: W / 2,
+        y: 92,
+        alpha: 1.35,
+        color: '#facc15'
+      });
+    }
+  }
+
+  // ── Preload Graphics ──
+  function preloadAssets() {
+    const bgSources = [
+      'assets/bg_stage_1.png',
+      'assets/bg_stage_2.png',
+      'assets/bg_stage_3.png',
+      'assets/bg_stage_4.png'
+    ];
+    let loaded = 0;
+    bgSources.forEach((src, idx) => {
+      const img = new Image();
+      img.onload = () => {
+        loaded++;
+        if (loaded === bgSources.length) bgLoaded = true;
+      };
+      img.onerror = () => { loaded++; };
+      img.src = src;
+      bgImages[idx] = img;
+    });
+
+    cowSprite.onload = () => { cowLoaded = true; };
+    cowSprite.src = 'assets/vaca_sprite.png';
+
+    currentBgIndex = Math.floor(Math.random() * bgSources.length);
+
+    for (let i = 0; i < 55; i++) {
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        size: Math.random() * 1.5 + 0.8,
+        speed: Math.random() * 0.4 + 0.1
+      });
+    }
+  }
+
+  // ── Level Complexity & Dynamic Obstacle Distribution (Scales with Time & Level) ──
+  function calculateNextObstacleGeometry() {
+    patternStep++;
+    const lvl = currentDifficultyLevel.value;
+    let targetTop = lastTopHeight;
+
+    if (lvl === 1) {
+      const delta = (Math.random() - 0.5) * 45;
+      targetTop = Math.max(70, Math.min(H - gapSize - 70, lastTopHeight + delta));
+    } else if (lvl === 2) {
+      const delta = (Math.random() - 0.5) * 85;
+      targetTop = Math.max(65, Math.min(H - gapSize - 65, lastTopHeight + delta));
+    } else if (lvl === 3) {
+      const phase = Math.sin(patternStep * 0.75);
+      targetTop = 65 + ((phase + 1) / 2) * (H - gapSize - 130);
+    } else {
+      const phase = Math.sin(patternStep * 1.05) + (Math.random() - 0.5) * 0.5;
+      const clampedPhase = Math.max(-1, Math.min(1, phase));
+      targetTop = 60 + ((clampedPhase + 1) / 2) * (H - gapSize - 120);
+    }
+
+    lastTopHeight = targetTop;
+    return { topH: targetTop, botY: targetTop + gapSize };
+  }
+
+  // ── Spawn Obstacle ──
+  function spawnObstacle() {
+    const { topH, botY } = calculateNextObstacleGeometry();
+    const pipeWidth = 52;
+    const posX = W + 15;
+
+    let hazardType = 'NONE';
+    if (currentDifficultyLevel.value === 3 && Math.random() < 0.25) {
+      hazardType = 'METEOR';
+    } else if (currentDifficultyLevel.value >= 4 && Math.random() < 0.45) {
+      hazardType = Math.random() > 0.45 ? 'METEOR' : 'LASER';
+    }
+
+    obstacles.push({
+      x: posX,
+      width: pipeWidth,
+      topH: topH,
+      botY: botY,
+      scored: false,
+      hasSolarTop: Math.random() > 0.45,
+      hasSolarBot: Math.random() > 0.45,
+      hasEscapePod: Math.random() > 0.6,
+      hasRadar: Math.random() > 0.65,
+      hazardType,
+      hazardY: topH + gapSize * 0.5,
+      hazardCycle: 0,
+      rustSpots: [
+        { yRel: 0.2 + Math.random() * 0.4, h: 6 + Math.random() * 6 },
+        { yRel: 0.4 + Math.random() * 0.3, h: 5 + Math.random() * 5 }
+      ]
+    });
+  }
+
+  // ── Pre-calculate Next Target Coordinates for Radar Warning ──
+  function prepareNextTargetCoords() {
+    const minX = 240;
+    const maxX = W - 120;
+    const padY = 105;
+    nextTargetCoords = {
+      x: minX + Math.random() * (maxX - minX),
+      y: padY + Math.random() * (H - padY * 2)
+    };
+  }
+
+  // ── Spawn Timed Target (Scales with Difficulty Level over time) ──
+  function spawnTimedTarget() {
+    if (!nextTargetCoords) prepareNextTargetCoords();
+    const lvl = currentDifficultyLevel.value;
+    // Starts at 8.0s in Level 1 and tightens down to 3.6s by Level 5
+    const timeLimit = Math.max(3600, 8200 - (lvl - 1) * 1100);
+    // Target radius starts at 52px in Level 1 and scales to 38px in Level 5
+    const targetRad = Math.max(38, 52 - (lvl - 1) * 3.5);
+    const now = Date.now();
+
+    targetReticle = {
+      x: nextTargetCoords.x,
+      y: nextTargetCoords.y,
+      radius: targetRad,
+      createdTime: now,
+      maxLife: timeLimit,
+      isExpired: false
+    };
+    nextTargetCoords = null;
+    reticleTotal.value++;
+    lastChangeTimestamp = now;
+    awaitingRecoveryFromChange = true;
+  }
+
+  // ── Success on Target (Picar el objetivo a tiempo) ──
+  function claimTarget(hitSource = 'TAP') {
+    if (!targetReticle || targetReticle.isExpired) return;
+
+    const now = Date.now();
+    const reactionLatency = now - targetReticle.createdTime;
+    reactionPairs.push({ stimulus: targetReticle.createdTime, response: now });
+    reticleHits.value++;
+    score.value += 1; // Picar el objetivo da punto extra
+
+    // Record Recovery Time: T_recovery = t_stable_performance - t_change
+    if (awaitingRecoveryFromChange && lastChangeTimestamp > 0) {
+      const recSec = Number(((now - lastChangeTimestamp) / 1000).toFixed(2));
+      recoveryTimesSec.push(recSec);
+      awaitingRecoveryFromChange = false;
+    }
+
+    // Record timeline event for performance per minute
+    const elapsedSec = Number(((now - flightStartTime) / 1000).toFixed(1));
+    targetTimelineEvents.push({ time: elapsedSec, hit: true });
+
+    sfxTargetHit();
+
+    // Floating text feedback
+    feedbackFloatingTexts.push({
+      text: `TARGET HIT! ${reactionLatency}ms`,
+      x: targetReticle.x,
+      y: targetReticle.y - 20,
+      alpha: 1.0,
+      color: '#4ade80'
+    });
+
+    // Particle burst
+    for (let i = 0; i < 14; i++) {
+      thrustParticles.push({
+        x: targetReticle.x,
+        y: targetReticle.y,
+        vx: (Math.random() - 0.5) * 5,
+        vy: (Math.random() - 0.5) * 5,
+        life: 25 + Math.random() * 10,
+        color: Math.random() > 0.5 ? '#22c55e' : '#38bdf8',
+        size: 3 + Math.random() * 2
+      });
+    }
+
+    // Clear target and schedule next one quickly (1.5 to 2.2 seconds)
+    targetReticle = null;
+    nextTargetSpawnTime = Date.now() + 1600 + Math.random() * 600;
+    prepareNextTargetCoords();
+  }
+
+  // ── Render Obstacle (Faithful to Reference Pixel Art) ──
+  function renderObstacle(obs) {
+    const { x, width: pw, topH, botY } = obs;
+    const botH = H - botY;
+
+    const metalBody = '#5b6475';
+    const metalLight = '#8e9aaf';
+    const metalDark = '#2b303a';
+    const flangeColor = '#738299';
+    const rustOrange = 'rgba(180, 83, 9, 0.45)';
+    const cableColor = '#0f172a';
+    const cableRed = '#991b1b';
+    const rimW = pw + 12;
+    const rimH = 9;
+    const rimX = x - 6;
+
+    // ── 1. Top Space-Station Pillar ──
+    ctx.fillStyle = metalBody;
+    ctx.fillRect(x, 0, pw, topH);
+    ctx.fillStyle = metalLight;
+    ctx.fillRect(x, 0, 4, topH);
+    ctx.fillStyle = metalDark;
+    ctx.fillRect(x + pw - 4, 0, 4, topH);
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(x + Math.floor(pw * 0.6), 0, 5, topH);
+
+    ctx.fillStyle = flangeColor;
+    ctx.fillRect(rimX, topH - rimH, rimW, rimH);
+    ctx.fillStyle = metalLight;
+    ctx.fillRect(rimX, topH - rimH, rimW, 2);
+    ctx.fillStyle = metalDark;
+    ctx.fillRect(rimX, topH - 2, rimW, 2);
+    ctx.fillStyle = '#cbd5e1';
+    for (let r = 0; r < 4; r++) {
+      ctx.fillRect(rimX + 4 + r * (rimW / 4), topH - rimH + 3, 3, 3);
+    }
+
+    ctx.strokeStyle = cableColor;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(x - 2, topH - 22);
+    ctx.bezierCurveTo(x - 14, topH - 8, x - 12, topH + 18, x - 2, topH + 10);
+    ctx.stroke();
+
+    ctx.strokeStyle = cableRed;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x + pw + 2, topH - 30);
+    ctx.bezierCurveTo(x + pw + 12, topH - 12, x + pw + 14, topH + 14, x + pw + 2, topH + 6);
+    ctx.stroke();
+
+    if (obs.hasSolarTop && topH > 60) {
+      const spY = Math.floor(topH * 0.35);
+      const spW = 24, spH = 34;
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(x - 10, spY + 8, 10, 4);
+      ctx.fillStyle = '#1e3a8a';
+      ctx.fillRect(x - 34, spY, spW, spH);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x - 34, spY, spW, spH);
+      ctx.strokeStyle = '#60a5fa';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x - 34, spY + spH / 2); ctx.lineTo(x - 10, spY + spH / 2);
+      ctx.moveTo(x - 22, spY); ctx.lineTo(x - 22, spY + spH);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = rustOrange;
+    obs.rustSpots.forEach(s => {
+      ctx.fillRect(x + 5, topH * s.yRel, pw * 0.45, s.h);
+    });
+
+    // ── 2. Bottom Space-Station Pillar ──
+    ctx.fillStyle = metalBody;
+    ctx.fillRect(x, botY, pw, botH);
+    ctx.fillStyle = metalLight;
+    ctx.fillRect(x, botY, 4, botH);
+    ctx.fillStyle = metalDark;
+    ctx.fillRect(x + pw - 4, botY, 4, botH);
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(x + Math.floor(pw * 0.6), botY, 5, botH);
+
+    ctx.fillStyle = flangeColor;
+    ctx.fillRect(rimX, botY, rimW, rimH);
+    ctx.fillStyle = metalLight;
+    ctx.fillRect(rimX, botY, rimW, 2);
+    ctx.fillStyle = metalDark;
+    ctx.fillRect(rimX, botY + rimH - 2, rimW, 2);
+    ctx.fillStyle = '#cbd5e1';
+    for (let r = 0; r < 4; r++) {
+      ctx.fillRect(rimX + 4 + r * (rimW / 4), botY + 3, 3, 3);
+    }
+
+    if (obs.hasSolarBot && botH > 65) {
+      const spY = botY + Math.floor(botH * 0.25);
+      const spW = 24, spH = 34;
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(x + pw, spY + 8, 10, 4);
+      ctx.fillStyle = '#1e3a8a';
+      ctx.fillRect(x + pw + 10, spY, spW, spH);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x + pw + 10, spY, spW, spH);
+      ctx.strokeStyle = '#60a5fa';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x + pw + 10, spY + spH / 2); ctx.lineTo(x + pw + 10 + spW, spY + spH / 2);
+      ctx.moveTo(x + pw + 10 + spW / 2, spY); ctx.lineTo(x + pw + 10 + spW / 2, spY + spH);
+      ctx.stroke();
+    }
+
+    if (obs.hasEscapePod && botH > 90) {
+      ctx.save();
+      ctx.translate(x + pw * 0.3, botY + 45);
+      ctx.rotate(-0.4);
+      ctx.fillStyle = '#ea580c';
+      ctx.fillRect(-8, -18, 16, 36);
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(-8, -8, 16, 14);
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(-6, 18, 12, 6);
+      ctx.restore();
+    }
+
+    ctx.fillStyle = rustOrange;
+    obs.rustSpots.forEach(s => {
+      ctx.fillRect(x + 6, botY + botH * s.yRel, pw * 0.5, s.h);
+    });
+
+    if (obs.hazardType === 'METEOR') {
+      obs.hazardCycle += 0.05;
+      const mX = x + pw / 2;
+      const mY = obs.hazardY + Math.sin(obs.hazardCycle) * 14;
+
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath();
+      ctx.moveTo(mX + 10, mY); ctx.lineTo(mX + 32, mY - 14); ctx.lineTo(mX + 14, mY + 12);
+      ctx.fill();
+
+      ctx.fillStyle = '#fde047';
+      ctx.beginPath();
+      ctx.moveTo(mX + 6, mY); ctx.lineTo(mX + 22, mY - 8); ctx.lineTo(mX + 10, mY + 6);
+      ctx.fill();
+
+      ctx.fillStyle = '#78716c';
+      ctx.beginPath();
+      ctx.arc(mX, mY, 13, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#44403c';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#44403c';
+      ctx.beginPath(); ctx.arc(mX - 4, mY - 3, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(mX + 3, mY + 2, 2.5, 0, Math.PI * 2); ctx.fill();
+    } else if (obs.hazardType === 'LASER') {
+      obs.hazardCycle += 0.08;
+      const pulseAlpha = 0.45 + Math.sin(obs.hazardCycle) * 0.35;
+      ctx.save();
+      ctx.globalAlpha = pulseAlpha;
+
+      ctx.fillStyle = '#0284c7';
+      ctx.fillRect(x + pw / 2 - 7, topH + rimH, 14, 5);
+      ctx.fillRect(x + pw / 2 - 7, botY - 5, 14, 5);
+
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x + pw / 2, topH + rimH + 5);
+      ctx.lineTo(x + pw / 2, botY - 5);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x + pw / 2 + Math.sin(obs.hazardCycle * 2) * 4, topH + rimH + 5);
+      ctx.lineTo(x + pw / 2 - Math.sin(obs.hazardCycle * 2) * 4, botY - 5);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // ── Render Astronaut Cow with Jetpack Thruster ──
+  function renderCow() {
+    if (invulnerabilityTimer > 0 && Math.floor(invulnerabilityTimer / 4) % 2 === 0) {
+      return;
+    }
+
+    ctx.save();
+    const targetPitch = isThrusting ? -0.18 : Math.min(0.35, cowVy * 0.06);
+    ctx.translate(cowX + cowW / 2, cowY + cowH / 2);
+    ctx.rotate(targetPitch);
+
+    if (cowLoaded && cowSprite.complete) {
+      ctx.drawImage(cowSprite, -cowW / 2, -cowH / 2, cowW, cowH);
+    } else {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(-cowW / 2, -cowH / 2, cowW, cowH);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(-8, -6, 14, 14);
+    }
+
+    // Jetpack Thruster Flame
+    if (isThrusting) {
+      const flameLen = 12 + Math.random() * 8;
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath();
+      ctx.moveTo(-cowW / 2 + 2, -5);
+      ctx.lineTo(-cowW / 2 - flameLen, 4);
+      ctx.lineTo(-cowW / 2 + 2, 13);
+      ctx.fill();
+
+      ctx.fillStyle = '#fde047';
+      ctx.beginPath();
+      ctx.moveTo(-cowW / 2 + 3, -1);
+      ctx.lineTo(-cowW / 2 - flameLen * 0.6, 4);
+      ctx.lineTo(-cowW / 2 + 3, 9);
+      ctx.fill();
+
+      thrustParticles.push({
+        x: cowX - 6,
+        y: cowY + cowH * 0.55 + (Math.random() - 0.5) * 4,
+        vx: -speed - Math.random() * 2,
+        vy: (Math.random() - 0.5) * 1.5,
+        life: 16 + Math.random() * 8,
+        color: Math.random() > 0.4 ? '#f97316' : '#facc15',
+        size: 2 + Math.random() * 2
+      });
+    } else {
+      ctx.fillStyle = 'rgba(249, 115, 22, 0.5)';
+      ctx.beginPath();
+      ctx.arc(-cowW / 2 - 2, 4, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+
+    // Render thrust particles
+    thrustParticles.forEach(p => {
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(0, p.life / 24);
+      ctx.fillRect(p.x, p.y, p.size, p.size);
+    });
+    ctx.globalAlpha = 1.0;
+  }
+
+  // ── Render Incoming Target Radar Preview & Active Timed Target Reticle ──
+  function renderTimedTarget() {
+    const now = Date.now();
+
+    // Render Radar Warning Preview before target spawns (if enabled)
+    if (!targetReticle && showTargetPreview.value && nextTargetCoords && nextTargetSpawnTime > now) {
+      const timeUntilSpawn = nextTargetSpawnTime - now;
+      const { x, y } = nextTargetCoords;
+      const secToSpawn = (timeUntilSpawn / 1000).toFixed(1);
+      const pulse = 0.45 + Math.abs(Math.sin(now * 0.008)) * 0.5;
+
+      ctx.save();
+      ctx.globalAlpha = pulse;
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 2.2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.arc(x, y, 40, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Guidance line from cow to incoming target
+      ctx.strokeStyle = 'rgba(250, 204, 21, 0.45)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 6]);
+      ctx.beginPath();
+      ctx.moveTo(cowX + cowW / 2, cowY + cowH / 2);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Center radar ping dot
+      ctx.fillStyle = '#facc15';
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Warning label
+      ctx.globalAlpha = 0.95;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+      ctx.fillRect(x - 52, y - 58, 104, 18);
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(x - 52, y - 58, 104, 18);
+
+      ctx.fillStyle = '#facc15';
+      ctx.font = '700 10px "Rajdhani", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`⚠ NEXT TARGET ${secToSpawn}s`, x, y - 45);
+      ctx.restore();
+      return;
+    }
+
+    if (!targetReticle) return;
+    const elapsed = now - targetReticle.createdTime;
+    const remainingMs = Math.max(0, targetReticle.maxLife - elapsed);
+    const remainingRatio = remainingMs / targetReticle.maxLife;
+
+    if (remainingRatio <= 0) return;
+
+    const { x, y, radius } = targetReticle;
+    const remainingSeconds = (remainingMs / 1000).toFixed(1);
+    const isUrgent = remainingMs < 1600;
+
+    ctx.save();
+
+    // 1. Outer Glow Circle
+    ctx.strokeStyle = isUrgent ? '#ef4444' : '#22c55e';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // 2. Visible Countdown Circular Progress Ring
+    ctx.strokeStyle = isUrgent ? '#f87171' : '#4ade80';
+    ctx.lineWidth = 4.5;
+    ctx.beginPath();
+    ctx.arc(x, y, radius + 4, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * remainingRatio));
+    ctx.stroke();
+
+    // 3. Holographic Reticle Crosshairs
+    ctx.strokeStyle = isUrgent ? 'rgba(239, 68, 68, 0.5)' : 'rgba(74, 222, 128, 0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x - radius * 0.7, y); ctx.lineTo(x + radius * 0.7, y);
+    ctx.moveTo(x, y - radius * 0.7); ctx.lineTo(x, y + radius * 0.7);
+    ctx.stroke();
+
+    // 4. Center Touch Beacon
+    ctx.fillStyle = isUrgent ? '#ef4444' : '#22c55e';
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 5. Digital Countdown Timer Badge (Clear & Readable)
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+    ctx.fillRect(x - 26, y + radius + 7, 52, 18);
+    ctx.strokeStyle = isUrgent ? '#ef4444' : '#38bdf8';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - 26, y + radius + 7, 52, 18);
+
+    ctx.fillStyle = isUrgent ? '#fca5a5' : '#facc15';
+    ctx.font = '700 11px "Press Start 2P", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${remainingSeconds}s`, x, y + radius + 21);
+
+    // 6. Action Tag
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = '700 10px "Rajdhani", sans-serif';
+    ctx.fillText('MOUSE OVER / CLICK / [ E ]', x, y - radius - 6);
+
+    ctx.restore();
+  }
+
+  // ── Render Floating Notifications (+100 TARGET, etc) ──
+  function renderFloatingTexts() {
+    ctx.save();
+    feedbackFloatingTexts.forEach(ft => {
+      ctx.globalAlpha = Math.max(0, ft.alpha);
+      ctx.fillStyle = ft.color;
+      ctx.font = '700 11px "Press Start 2P", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(ft.text, ft.x, ft.y);
+      ft.y -= 0.8;
+      ft.alpha -= 0.022;
+    });
+    feedbackFloatingTexts = feedbackFloatingTexts.filter(ft => ft.alpha > 0);
+    ctx.restore();
+  }
+
+  // ── Clean Non-Saturating Retro HUD ──
+  function renderHUD() {
+    ctx.save();
+    // 1. Retro Score
+    ctx.fillStyle = '#facc15';
+    ctx.font = '16px "Press Start 2P", monospace';
+    ctx.textAlign = 'center';
+    const scoreStr = 'SCORE: ' + String(score.value).padStart(3, '0');
+    ctx.fillText(scoreStr, W / 2, 34);
+
+    // 2. Health Heart & Shield Segments (5 Shields)
+    const heartX = W - 106, heartY = 22;
+    ctx.fillStyle = '#ef4444';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('❤', heartX, heartY + 8);
+    for (let s = 0; s < 5; s++) {
+      ctx.fillStyle = s < shieldHp ? '#22c55e' : '#334155';
+      ctx.fillRect(heartX + 18 + s * 14, heartY, 10, 8);
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(heartX + 18 + s * 14, heartY, 10, 8);
+    }
+
+    // 3. Subtle Status Pill (Top Left) + Targets Counter
+    const modeBadgeX = 14, modeBadgeY = 18;
+    const badgeColor = targetReticle ? '#22c55e' : '#38bdf8';
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.78)';
+    ctx.fillRect(modeBadgeX, modeBadgeY, 108, 20);
+    ctx.strokeStyle = badgeColor;
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(modeBadgeX, modeBadgeY, 108, 20);
+
+    ctx.fillStyle = badgeColor;
+    ctx.font = '700 11px "Rajdhani", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(targetReticle ? '🎯 TARGET ACTIVE' : '📡 RADAR SCANNING', modeBadgeX + 54, modeBadgeY + 14);
+
+    // 4. Live Target Hits Counter Badge
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.78)';
+    ctx.fillRect(modeBadgeX + 116, modeBadgeY, 96, 20);
+    ctx.strokeStyle = '#4ade80';
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(modeBadgeX + 116, modeBadgeY, 96, 20);
+    ctx.fillStyle = '#4ade80';
+    ctx.fillText(`TARGETS: ${reticleHits.value}/${reticleTotal.value}`, modeBadgeX + 164, modeBadgeY + 14);
+
+    // 5. Progressive Time & Difficulty Level Badge (Steps up every 15s)
+    const lvlX = modeBadgeX + 220;
+    const lvlColors = ['#38bdf8', '#4ade80', '#facc15', '#fb923c', '#ef4444'];
+    const lvlColor = lvlColors[Math.min(4, currentDifficultyLevel.value - 1)];
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.82)';
+    ctx.fillRect(lvlX, modeBadgeY, 128, 20);
+    ctx.strokeStyle = lvlColor;
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(lvlX, modeBadgeY, 128, 20);
+
+    // Progress bar inside bottom of badge for next 15s level step
+    if (currentDifficultyLevel.value < 5) {
+      const secInStage = elapsedFlightSec.value % 15;
+      const barW = Math.min(124, Math.round((secInStage / 15) * 124));
+      ctx.fillStyle = lvlColor;
+      ctx.globalAlpha = 0.28;
+      ctx.fillRect(lvlX + 2, modeBadgeY + 16, barW, 3);
+      ctx.globalAlpha = 1.0;
+    }
+
+    ctx.fillStyle = lvlColor;
+    ctx.fillText(`⚡ LVL ${currentDifficultyLevel.value} • ${elapsedFlightSec.value}s`, lvlX + 64, modeBadgeY + 14);
+
+    ctx.restore();
+  }
+
+  // ── Render Background ──
+  function renderBackground() {
+    if (bgLoaded && bgImages[currentBgIndex] && bgImages[currentBgIndex].complete) {
+      const img = bgImages[currentBgIndex];
+      const scale = H / img.naturalHeight;
+      const imgW = img.naturalWidth * scale;
+      const offsetX = -(scrollOffset * 0.35) % imgW;
+
+      for (let x = offsetX; x < W; x += imgW) {
+        ctx.drawImage(img, x, 0, imgW, H);
+      }
+    } else {
+      ctx.fillStyle = '#050814';
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    ctx.fillStyle = '#ffffff';
+    stars.forEach(st => {
+      st.x -= st.speed * speed;
+      if (st.x < 0) st.x = W + Math.random() * 20;
+      ctx.globalAlpha = 0.6;
+      ctx.fillRect(st.x, st.y, st.size, st.size);
+    });
+    ctx.globalAlpha = 1.0;
+  }
+
+  // ── Main Game Loop ──
+  function gameLoop() {
+    requestAnimationFrame(gameLoop);
+    if (!ctx) return;
+
+    if (gameState.value === 'IDLE') {
+      renderBackground();
+      ctx.fillStyle = 'rgba(3, 7, 18, 0.72)';
+      ctx.fillRect(0, 0, W, H);
+
+      // Main Title
+      ctx.fillStyle = '#facc15';
+      ctx.font = '24px "Press Start 2P", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('ASTROCOW: SCAN SPACE', W / 2, H / 2 - 140);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = '700 18px "Rajdhani", sans-serif';
+      ctx.fillText('MISSION FLIGHT & REFLEX TELEMETRY SIMULATOR', W / 2, H / 2 - 108);
+
+      // Astronaut Cow Preview
+      if (cowLoaded) {
+        ctx.drawImage(cowSprite, W / 2 - cowW / 2, H / 2 - 86, cowW, cowH);
+      }
+
+      // Controls Instruction Box
+      const boxW = 560, boxH = 148;
+      const boxX = W / 2 - boxW / 2, boxY = H / 2 - 22;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+      ctx.fillRect(boxX, boxY, boxW, boxH);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(boxX, boxY, boxW, boxH);
+
+      ctx.fillStyle = '#facc15';
+      ctx.font = '11px "Press Start 2P", monospace';
+      ctx.fillText('FLIGHT & TARGET CONTROLS', W / 2, boxY + 28);
+
+      ctx.font = '600 16px "Rajdhani", sans-serif';
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillText('🚀 THRUSTER (FLY UP):   Hold [ W ] / [ SHIFT ] / [ CTRL ]  (or Space / Click)', W / 2, boxY + 58);
+      ctx.fillStyle = '#4ade80';
+      ctx.fillText('🎯 TIMED TARGETS:   Move Mouse over Target — or Press [ E ] / [ ENTER ]!', W / 2, boxY + 86);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText('💡 LAPTOP TIP:   Use [ SHIFT ] or [ CTRL ] to fly if Touchpad locks on [ W ]', W / 2, boxY + 112);
+      ctx.fillStyle = '#fde047';
+      ctx.fillText('📡 RADAR WARNING:   Yellow Circle warns 2.5s before Target appears (Key R)', W / 2, boxY + 136);
+
+      // Blinking Start Prompt
+      const pulse = 0.55 + Math.abs(Math.sin(Date.now() * 0.004)) * 0.45;
+      ctx.save();
+      ctx.globalAlpha = pulse;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '13px "Press Start 2P", monospace';
+      ctx.fillText('PRESS [ W ] / [ SHIFT ] / SPACE / CLICK TO LAUNCH', W / 2, H / 2 + 168);
+      ctx.restore();
+      return;
+    }
+
+    if (gameState.value === 'DEAD') {
+      renderBackground();
+      obstacles.forEach(renderObstacle);
+      renderCow();
+      return;
+    }
+
+    // ── Normal Continuous Flight Physics (Always active, uninterrupted) ──
+    if (isThrusting) {
+      cowVy += thrustAcceleration;
+      if (cowVy < maxAscentSpeed) cowVy = maxAscentSpeed;
+    } else {
+      cowVy += gravity;
+      if (cowVy > maxFallSpeed) cowVy = maxFallSpeed;
+    }
+    cowVy *= inertialDamping;
+    cowY += cowVy;
+
+    // Floor & Ceiling Cushion (Bounce instead of instant death on floor!)
+    if (cowY < 0) { cowY = 0; cowVy = 0; }
+    if (cowY + cowH > H - 6) {
+      cowY = H - cowH - 6;
+      cowVy = -1.6; // Gentle upward safety bounce from magnetic floor
+    }
+
+    scrollOffset += speed;
+    if (invulnerabilityTimer > 0) invulnerabilityTimer--;
+
+    // Update thrust particles
+    thrustParticles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life--;
+    });
+    thrustParticles = thrustParticles.filter(p => p.life > 0);
+
+    // ── Timed Target Lifecycle & Interception ──
+    const now = Date.now();
+    // Update time-based progressive difficulty (steps up every 15s)
+    updateDifficultyByTime(now);
+
+    // Spawn target if scheduled
+    if (!targetReticle && now >= nextTargetSpawnTime && (now - flightStartTime) > 1800) {
+      spawnTimedTarget();
+    }
+
+    if (targetReticle) {
+      // 1. Check if the mouse cursor is ALREADY over the target (continuous check every frame)
+      if (!targetReticle.isExpired && pointerX >= 0 && pointerY >= 0) {
+        const ptrDist = Math.hypot(pointerX - targetReticle.x, pointerY - targetReticle.y);
+        if (ptrDist <= targetReticle.radius + 22) {
+          claimTarget('MOUSE_CURSOR');
+        }
+      }
+    }
+
+    if (targetReticle) {
+      // 2. Check if cow flies directly through target
+      const cowCenterX = cowX + cowW / 2;
+      const cowCenterY = cowY + cowH / 2;
+      const dist = Math.hypot(cowCenterX - targetReticle.x, cowCenterY - targetReticle.y);
+      if (dist <= targetReticle.radius + 14) {
+        claimTarget('FLY_THROUGH');
+      }
+      // 3. Check if timer expired (Omitted response!)
+      else if (now - targetReticle.createdTime > targetReticle.maxLife) {
+        targetReticle.isExpired = true;
+        omittedResponsesCount++;
+        errorsAfterChangeCount++;
+        const elapsedSec = Number(((now - flightStartTime) / 1000).toFixed(1));
+        targetTimelineEvents.push({ time: elapsedSec, hit: false });
+        sfxTargetExpired();
+        feedbackFloatingTexts.push({
+          text: 'MISSED TARGET',
+          x: targetReticle.x,
+          y: targetReticle.y - 15,
+          alpha: 1.0,
+          color: '#f87171'
+        });
+        targetReticle = null;
+        // Schedule next target opportunity in 1.6 seconds
+        nextTargetSpawnTime = now + 1600 + Math.random() * 600;
+        prepareNextTargetCoords();
+      }
+    }
+
+    // Move & cull obstacles
+    obstacles.forEach(o => { o.x -= speed; });
+    obstacles = obstacles.filter(o => o.x + o.width > -40);
+
+    // Spawn obstacles
+    const runway = (now - flightStartTime) < 3200;
+    const lastObs = obstacles[obstacles.length - 1];
+    if (!runway && (!lastObs || lastObs.x < W - obstacleSpacing)) {
+      spawnObstacle();
+    }
+
+    // Collisions (ultra-forgiving hitbox)
+    for (const obs of obstacles) {
+      const cx = cowX + 12, cy = cowY + 12, cw = cowW - 24, ch = cowH - 24;
+      const hitTop = (cx + cw > obs.x && cx < obs.x + obs.width && cy < obs.topH);
+      const hitBot = (cx + cw > obs.x && cx < obs.x + obs.width && cy + ch > obs.botY);
+
+      if (hitTop || hitBot) {
+        if (invulnerabilityTimer <= 0) {
+          shieldHp--;
+          collisionCount++;
+          if (awaitingRecoveryFromChange || (now - lastChangeTimestamp) < 4000) {
+            errorsAfterChangeCount++;
+          }
+          lastChangeTimestamp = now;
+          awaitingRecoveryFromChange = true;
+          invulnerabilityTimer = 85;
+          sfxHit();
+          if (shieldHp <= 0) {
+            endFlight();
+            return;
+          }
+        }
+        break;
+      }
+
+      // Scoring (passing an obstacle smoothly also counts as stable performance recovery!)
+      if (!obs.scored && obs.x + obs.width < cowX) {
+        obs.scored = true;
+        score.value++;
+        if (awaitingRecoveryFromChange && lastChangeTimestamp > 0) {
+          const recSec = Number(((now - lastChangeTimestamp) / 1000).toFixed(2));
+          recoveryTimesSec.push(recSec);
+          awaitingRecoveryFromChange = false;
+        }
+        sfxScore();
+      }
+    }
+
+    // ── Draw Frame ──
+    renderBackground();
+    obstacles.forEach(renderObstacle);
+    renderTimedTarget();
+    renderFloatingTexts();
+    renderCow();
+    renderHUD();
+
+    // Render subtle tactical cursor reticle when mouse is inside canvas
+    if (pointerX >= 0 && pointerY >= 0 && pointerX <= W && pointerY <= H) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.75)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(pointerX, pointerY, 10, 0, Math.PI * 2);
+      ctx.moveTo(pointerX - 14, pointerY); ctx.lineTo(pointerX - 6, pointerY);
+      ctx.moveTo(pointerX + 6, pointerY); ctx.lineTo(pointerX + 14, pointerY);
+      ctx.moveTo(pointerX, pointerY - 14); ctx.lineTo(pointerX, pointerY - 6);
+      ctx.moveTo(pointerX, pointerY + 6); ctx.lineTo(pointerX, pointerY + 14);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // ── Unified Input Handlers (Pointer + Spacebar + Mouse Move) ──
+  let pointerX = -100, pointerY = -100;
+
+  function updatePointerCoords(e) {
+    if (!cvs.value) return false;
+    const rect = cvs.value.getBoundingClientRect();
+    const clientX = e.clientX ?? (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+    const clientY = e.clientY ?? (e.touches && e.touches[0] ? e.touches[0].clientY : null);
+    if (clientX === null || clientY === null) return false;
+
+    const scaleX = W / rect.width;
+    const scaleY = H / rect.height;
+    pointerX = (clientX - rect.left) * scaleX;
+    pointerY = (clientY - rect.top) * scaleY;
+    return true;
+  }
+
+  function checkTargetAtPoint(e, source = 'TAP') {
+    if (!updatePointerCoords(e)) return false;
+
+    if (targetReticle && !targetReticle.isExpired) {
+      const dist = Math.hypot(pointerX - targetReticle.x, pointerY - targetReticle.y);
+      if (dist <= targetReticle.radius + 24) {
+        claimTarget(source);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function handlePointerMove(e) {
+    updatePointerCoords(e);
+    if (gameState.value !== 'FLYING') return;
+    if (targetReticle && !targetReticle.isExpired) {
+      const dist = Math.hypot(pointerX - targetReticle.x, pointerY - targetReticle.y);
+      if (dist <= targetReticle.radius + 24) {
+        claimTarget('MOUSE_HOVER');
+      }
+    }
+  }
+
+  function handleRightClick(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    initAudio();
+    if (gameState.value === 'FLYING') {
+      checkTargetAtPoint(e, 'RIGHT_CLICK');
+    }
+  }
+
+  function handlePointerDown(e) {
+    initAudio();
+    if (e.target && e.target.releasePointerCapture && e.pointerId !== undefined) {
+      try { e.target.releasePointerCapture(e.pointerId); } catch(err) {}
+    }
+    if (gameState.value === 'IDLE') {
+      startFlight();
+      isPointerDown = true;
+      isThrusting = true;
+      currentThrustStart = Date.now();
+      tapTimestamps.push(currentThrustStart);
+      startThrusterSound();
+      return;
+    }
+    if (gameState.value === 'DEAD') {
+      return;
+    }
+
+    // Detect tap on timed target first
+    checkTargetAtPoint(e, 'TAP');
+
+    // Ignore right-click (button === 2) for thrust
+    if (e && e.button === 2) {
+      return;
+    }
+
+    // Pointer is down -> track for simultaneous input
+    isPointerDown = true;
+
+    // Start thrust via pointer (if not already active)
+    if (!isThrusting) {
+      isThrusting = true;
+      currentThrustStart = Date.now();
+      tapTimestamps.push(currentThrustStart);
+      startThrusterSound();
+    }
+  }
+
+  function handlePointerUp(e) {
+    // Ignore right-click release so it never cancels ongoing left-click or keyboard thrust
+    if (e && e.button === 2) return;
+    isPointerDown = false;
+    // Release thrust only if flight key is not held
+    if (isThrusting && !spaceKeyHeld) {
+      isThrusting = false;
+      stopThrusterSound();
+      if (currentThrustStart > 0) {
+        thrustDurations.push(Date.now() - currentThrustStart);
+        currentThrustStart = 0;
+      }
+    }
+  }
+
+  // Track a Set of all held flight keys so pressing/releasing multiple keys never conflicts
+  const heldFlightKeys = new Set();
+
+  function isFlightKey(code) {
+    return (
+      code === 'Space' ||
+      code === 'ArrowUp' ||
+      code === 'KeyW' ||
+      code === 'ShiftLeft' ||
+      code === 'ShiftRight' ||
+      code === 'ControlLeft' ||
+      code === 'ControlRight'
+    );
+  }
+
+  function handleKeyDown(e) {
+    // Allow 'R' key to toggle Radar Preview anytime
+    if (e.code === 'KeyR' && !e.repeat) {
+      showTargetPreview.value = !showTargetPreview.value;
+      return;
+    }
+    // Allow 'E' or 'Enter' to instantly claim active Timed Target (Laser Lock) if touchpad is busy
+    if ((e.code === 'KeyE' || e.code === 'Enter') && !e.repeat) {
+      if (gameState.value === 'FLYING' && targetReticle && !targetReticle.isExpired) {
+        claimTarget('KEY_LOCK');
+      }
+      return;
+    }
+    if (isFlightKey(e.code)) {
+      e.preventDefault();
+      if (document.activeElement && document.activeElement !== document.body) {
+        try { document.activeElement.blur(); } catch(err) {}
+      }
+      heldFlightKeys.add(e.code);
+      spaceKeyHeld = heldFlightKeys.size > 0;
+      if (e.repeat) return;
+      initAudio();
+      if (gameState.value === 'IDLE' || gameState.value === 'DEAD') {
+        startFlight();
+        spaceKeyHeld = true;
+        isThrusting = true;
+        currentThrustStart = Date.now();
+        tapTimestamps.push(currentThrustStart);
+        startThrusterSound();
+        return;
+      }
+      if (!isThrusting) {
+        isThrusting = true;
+        currentThrustStart = Date.now();
+        tapTimestamps.push(currentThrustStart);
+        startThrusterSound();
+      }
+    }
+  }
+
+  function handleKeyUp(e) {
+    if (isFlightKey(e.code)) {
+      e.preventDefault();
+      heldFlightKeys.delete(e.code);
+      spaceKeyHeld = heldFlightKeys.size > 0;
+      if (!spaceKeyHeld && isThrusting && !isPointerDown) {
+        isThrusting = false;
+        stopThrusterSound();
+        if (currentThrustStart > 0) {
+          thrustDurations.push(Date.now() - currentThrustStart);
+          currentThrustStart = 0;
+        }
+      }
+    }
+  }
+
+  window.addEventListener('keydown', handleKeyDown, { passive: false });
+  window.addEventListener('keyup', handleKeyUp, { passive: false });
+  window.addEventListener('mousemove', handlePointerMove, { passive: true });
+  window.addEventListener('pointermove', handlePointerMove, { passive: true });
+  window.addEventListener('pointercancel', handlePointerUp);
+  window.addEventListener('mouseup', handlePointerUp);
+
+
+  // ── Start / Restart Flight ──
+  function startFlight() {
+    initAudio();
+    currentBgIndex = Math.floor(Math.random() * bgImages.length);
+
+    gameState.value = 'FLYING';
+    score.value = 0;
+    currentDifficultyLevel.value = 1;
+    elapsedFlightSec.value = 0;
+    cowX = 130;
+    cowY = H / 2 - 20;
+    cowVy = 0;
+    isThrusting = false;
+    obstacles = [];
+    thrustParticles = [];
+    feedbackFloatingTexts = [];
+    shieldHp = 5;
+    invulnerabilityTimer = 0;
+    speed = 1.35;
+    gapSize = 310;
+    obstacleSpacing = 620;
+    scrollOffset = 0;
+
+    targetReticle = null;
+    reticleHits.value = 0;
+    reticleTotal.value = 0;
+    nextTargetSpawnTime = Date.now() + 2000; // First target spawns in 2.0s (with immediate yellow radar preview!)
+    prepareNextTargetCoords();
+
+    tapTimestamps = [];
+    reactionPairs = [];
+    thrustDurations = [];
+    omittedResponsesCount = 0;
+    errorsAfterChangeCount = 0;
+    collisionCount = 0;
+    lastChangeTimestamp = Date.now();
+    awaitingRecoveryFromChange = false;
+    recoveryTimesSec = [];
+    targetTimelineEvents = [];
+    lastTopHeight = 125;
+    patternStep = 0;
+    flightStartTime = Date.now();
+    attemptCount++;
+  }
+
+  // ── Build Complete Behavioral & Clinical JSON Payload ──
+  function buildTelemetryPayload(testStatus = 'Completed', observations = 'Normal practice session') {
+    const nowTime = Date.now();
+    const endMs = gameState.value === 'DEAD' ? flightEndTime : nowTime;
+    const flightTimeSeconds = Math.max(1, Math.round((endMs - flightStartTime) / 1000));
+
+    const tapIntervals = [];
+    for (let i = 1; i < tapTimestamps.length; i++) {
+      tapIntervals.push(tapTimestamps[i] - tapTimestamps[i - 1]);
+    }
+    const reactionTimes = reactionPairs.map(r => r.response - r.stimulus);
+    const meanRt = reactionTimes.length
+      ? Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length)
+      : 280;
+
+    let rtVariabilityMs = 24;
+    if (reactionTimes.length > 1) {
+      const variance = reactionTimes.reduce((acc, val) => acc + Math.pow(val - meanRt, 2), 0) / reactionTimes.length;
+      rtVariabilityMs = Math.round(Math.sqrt(variance));
+    }
+
+    const avgRecoverySec = recoveryTimesSec.length
+      ? Number((recoveryTimesSec.reduce((a, b) => a + b, 0) / recoveryTimesSec.length).toFixed(2))
+      : Number((meanRt / 1000).toFixed(2));
+
+    const precisionPct = reticleTotal.value > 0
+      ? Math.round((reticleHits.value / reticleTotal.value) * 100)
+      : 100;
+
+    // Calculate Performance per Minute (%)
+    const totalMinutes = Math.max(1, Math.ceil(flightTimeSeconds / 60));
+    const performanceByMinute = [];
+    for (let m = 1; m <= totalMinutes; m++) {
+      const minStart = (m - 1) * 60;
+      const minEnd = m * 60;
+      const eventsInMin = targetTimelineEvents.filter(ev => ev.time >= minStart && ev.time <= minEnd);
+      const hitsInMin = eventsInMin.filter(ev => ev.hit).length;
+      const pctInMin = eventsInMin.length > 0 ? Math.round((hitsInMin / eventsInMin.length) * 100) : precisionPct;
+      performanceByMinute.push({
+        minute: m,
+        accuracyPct: pctInMin,
+        targetsHit: hitsInMin,
+        targetsTotal: eventsInMin.length
+      });
+    }
+
+    const nowDate = new Date();
+    const formattedDateTime = nowDate.getFullYear() + '-' +
+      String(nowDate.getMonth() + 1).padStart(2, '0') + '-' +
+      String(nowDate.getDate()).padStart(2, '0') + ' ' +
+      String(nowDate.getHours()).padStart(2, '0') + ':' +
+      String(nowDate.getMinutes()).padStart(2, '0');
+
+    return {
+      // ── Standardized Session Metadata (Clinical Table Format) ──
+      participantId: 'AST001',
+      stage: 'In-Flight', // Pre-Flight / In-Flight / Post-Flight
+      evaluationDay: 'FD030',
+      dateTime: formattedDateTime,
+      module: 'AST-01',
+      difficultyLevel: currentDifficultyLevel.value,
+      durationSeconds: flightTimeSeconds,
+      meanReactionTimeMs: meanRt,
+      collisions: collisionCount,
+      precisionPct: precisionPct,
+      testStatus: testStatus,
+      handUsed: 'Right',
+      device: 'Laptop A',
+      observations: observations,
+
+      // ── Behavioral Assessment Indicators & Recovery Time Formula ──
+      behavioralIndicators: {
+        reactionTimeToChangesMs: {
+          value: meanRt,
+          unit: 'ms',
+          interpretation: 'Speed of adaptation to a new stimulus'
+        },
+        errorsAfterChange: {
+          value: errorsAfterChangeCount,
+          unit: 'count',
+          interpretation: 'Difficulty adapting after stimulus or trajectory change'
+        },
+        recoveryTime: {
+          value: avgRecoverySec,
+          unit: 's',
+          formula: 'T_recovery = t_stable_performance - t_change',
+          samplesSec: recoveryTimesSec,
+          interpretation: 'Time to return to stable performance level'
+        },
+        omittedResponses: {
+          value: omittedResponsesCount,
+          unit: 'count',
+          interpretation: 'Stimuli that received no response before expiring'
+        },
+        reactionTimeVariabilityMs: {
+          value: rtVariabilityMs,
+          unit: 'ms',
+          interpretation: 'Consistency of the sensorimotor response'
+        },
+        performancePerMinute: {
+          value: performanceByMinute,
+          unit: '%',
+          interpretation: 'Performance evolution across each minute of the test'
+        }
+      },
+
+      // ── Raw Engine Arrays for Backend Compatibility ──
+      score: score.value,
+      flightTimeSeconds,
+      astronaut: 'Wilson (Crew Specialist)',
+      crewId: 'AST001',
+      attempt: attemptCount,
+      timestamp: nowDate.toISOString(),
+      tapTimestamps,
+      tapIntervals,
+      reactionTimes,
+      reactionPairs,
+      thrustDurations,
+      totalTaps: tapTimestamps.length,
+      successfulHits: reticleHits.value,
+      omittedResponses: omittedResponsesCount,
+      errorsAfterChange: errorsAfterChangeCount,
+      recoveryTimesSec,
+      recoveryTimeSec: avgRecoverySec,
+      performanceByMinute,
+      sessionTapsTimeline: targetTimelineEvents,
+      sessionStartMs: flightStartTime,
+      sessionEndMs: endMs,
+      beaconTotal: reticleTotal.value,
+      beaconHit: reticleHits.value,
+      visualPursuitFrames: reticleTotal.value,
+      visualPursuitClearances: reticleHits.value,
+      hits: collisionCount
+    };
+  }
+
+  // ── Save & Download Practice Behavioral JSON Anytime ──
+  async function exportBehavioralJson() {
+    const isMidFlight = gameState.value === 'FLYING';
+    const statusLabel = isMidFlight ? 'Completed (Saved During Practice)' : 'Completed';
+    const obsLabel = collisionCount > 0
+      ? `${collisionCount} collision(s) recorded during session`
+      : 'Clean flight without interruptions';
+
+    const payload = buildTelemetryPayload(statusLabel, obsLabel);
+    lastSavedRecord.value = payload;
+
+    try {
+      await fetch('/api/telemetry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch (e) {}
+
+    // Trigger browser file download of the behavioral JSON
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `AST001_AST-01_${payload.evaluationDay}_practice.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    feedbackFloatingTexts.push({
+      text: 'JSON TELEMETRY SAVED!',
+      x: W / 2,
+      y: 80,
+      alpha: 1.0,
+      color: '#38bdf8'
+    });
+  }
+
+  // ── End Flight (Telemetry Saved Silently in Background) ──
+  async function endFlight() {
+    isThrusting = false;
+    stopThrusterSound();
+    gameState.value = 'DEAD';
+    flightEndTime = Date.now();
+    if (score.value > highScore.value) highScore.value = score.value;
+
+    const obsLabel = collisionCount > 0
+      ? `Test ended after ${collisionCount} collisions`
+      : 'Completed normally';
+    const payload = buildTelemetryPayload('Completed', obsLabel);
+    lastSavedRecord.value = payload;
+
+    try {
+      const res = await fetch('/api/telemetry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const m = data.metrics || data;
+        latestMetrics.value = {
+          reactionTime: {
+            meanMs: m.reactionTimeAvg || payload.meanReactionTimeMs || 280,
+            variabilityMs: m.reactionTimeVariabilityMs ?? payload.behavioralIndicators.reactionTimeVariabilityMs.value,
+            recoverySec: m.recoveryTimeSeconds ?? payload.behavioralIndicators.recoveryTime.value,
+            status: m.statusCode || 'NOMINAL'
+          },
+          eyeHandCoordination: {
+            score: m.eyeHandAccuracy || payload.precisionPct || 100,
+            status: m.statusCode || 'NOMINAL'
+          }
+        };
+      }
+    } catch(err) {
+      latestMetrics.value = {
+        reactionTime: {
+          meanMs: payload.meanReactionTimeMs,
+          variabilityMs: payload.behavioralIndicators.reactionTimeVariabilityMs.value,
+          recoverySec: payload.behavioralIndicators.recoveryTime.value,
+          status: 'NOMINAL'
+        },
+        eyeHandCoordination: { score: payload.precisionPct, status: 'NOMINAL' }
+      };
+    }
+  }
+
+  window.addEventListener('pointerup', () => handlePointerUp());
+  window.addEventListener('blur', () => {
+    spaceKeyHeld = false;
+    handlePointerUp();
+  });
+
+  onMounted(() => {
+    ctx = cvs.value.getContext('2d');
+    preloadAssets();
+    gameLoop();
+  });
+
+  return {
+    W, H, cvs,
+    gameState, score, highScore, currentDifficultyLevel, elapsedFlightSec, latestMetrics,
+    reticleHits, reticleTotal, showTargetPreview, lastSavedRecord,
+    handlePointerDown, handlePointerMove, handlePointerUp, handleRightClick, startFlight, exportBehavioralJson
+  };
+}
+}).mount('#app');
+</script>
+</body>
+</html>

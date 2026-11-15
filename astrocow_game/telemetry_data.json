@@ -1,0 +1,66 @@
+[
+  {
+    "id": "flight_1",
+    "participantId": "AST001",
+    "stage": "In-Flight",
+    "evaluationDay": "FD030",
+    "dateTime": "2026-11-14 10:00",
+    "module": "AST-01",
+    "difficultyLevel": 2,
+    "durationSeconds": 120,
+    "meanReactionTimeMs": 370,
+    "collisions": 4,
+    "precisionPct": 87,
+    "testStatus": "Completed",
+    "handUsed": "Right",
+    "device": "Tablet A",
+    "observations": "Normal practice session with progressive difficulty adaptation",
+    "behavioralIndicators": {
+      "reactionTimeToChangesMs": {
+        "value": 370,
+        "unit": "ms",
+        "interpretation": "Speed of adaptation to a new stimulus"
+      },
+      "errorsAfterChange": {
+        "value": 1,
+        "unit": "count",
+        "interpretation": "Difficulty adapting after stimulus or trajectory change"
+      },
+      "recoveryTime": {
+        "value": 0.42,
+        "unit": "s",
+        "formula": "T_recovery = t_stable_performance - t_change",
+        "samplesSec": [0.38, 0.45, 0.43],
+        "interpretation": "Time to return to stable performance level"
+      },
+      "omittedResponses": {
+        "value": 1,
+        "unit": "count",
+        "interpretation": "Stimuli that received no response before expiring"
+      },
+      "reactionTimeVariabilityMs": {
+        "value": 28,
+        "unit": "ms",
+        "interpretation": "Consistency of the sensorimotor response"
+      },
+      "performancePerMinute": {
+        "value": [
+          {
+            "minute": 1,
+            "accuracyPct": 90,
+            "targetsHit": 9,
+            "targetsTotal": 10
+          },
+          {
+            "minute": 2,
+            "accuracyPct": 84,
+            "targetsHit": 8,
+            "targetsTotal": 10
+          }
+        ],
+        "unit": "%",
+        "interpretation": "Performance evolution across each minute of the test"
+      }
+    }
+  }
+]
