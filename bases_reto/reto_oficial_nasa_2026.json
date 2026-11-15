@@ -38,7 +38,42 @@
       "Entradas de datos y recordatorios de rutina: recopilar datos vía teclado, ratón, cámara o sensores, e integrar recordatorios de mediciones periódicas como parte de la rutina del astronauta.",
       "Salud mental y conductual: seguimiento del estrés, fatiga y estado anímico.",
       "Engagement: gamificación e interfaces claras que faciliten la rutina diaria del astronauta."
-    ]
+    ],
+    "recursos_oficiales_tab_resources": {
+      "url_tab": "https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/?tab=resources",
+      "aviso_legal": "NASA does not endorse any non-U.S. Government entity and is not responsible for information contained on non-U.S. Government websites. For non-U.S. Government websites, participants must comply with any data use parameters of that specific website.",
+      "nasa_data_and_resources": [
+        {
+          "titulo": "5 Hazards of Human Spaceflight",
+          "url": "https://www.nasa.gov/hrp/hazards/",
+          "descripcion": "Basic information from NASA’s human research program on the main hazards that affect humans on space missions. It also provides links to detailed NASA articles and reports related to a specific hazard."
+        },
+        {
+          "titulo": "Risks of Human Spaceflight",
+          "url": "https://www.nasa.gov/hrp/risks/",
+          "descripcion": "Basic information from NASA’s human research program on the main risks faced by humans on space missions. It also provides links to detailed NASA articles and reports related to a specific risk."
+        },
+        {
+          "titulo": "Ongoing HRP Research in Space",
+          "url": "https://www.nasa.gov/hrp/ongoing-hrp-research/",
+          "descripcion": "Articles from ongoing research on NASA’s human research program."
+        }
+      ],
+      "space_agency_partner_resources": [
+        {
+          "agencia": "CSA (Canadian Space Agency)",
+          "titulo": "Monitoring Radiation for Astronaut Health",
+          "url": "https://www.asc-csa.gc.ca/eng/news/articles/2026/2026-02-26-monitoring-radiation-astronaut-health.asp",
+          "descripcion": "Learn how the CSA is helping monitor space radiation to better protect astronaut health during long-duration missions. This resource highlights Canadian technologies and research used to measure radiation exposure in space and improve our understanding of its effects on the human body."
+        },
+        {
+          "agencia": "CSA (Canadian Space Agency)",
+          "titulo": "Why Do We Conduct Science Experiments in Space?",
+          "url": "https://www.asc-csa.gc.ca/eng/iss/science/why-do-we-conduct-science-experiments-in-space.asp",
+          "descripcion": "This CSA resource explains how the unique environment of space allows scientists to conduct experiments that cannot be performed on Earth. Learn how research aboard the International Space Station advances our understanding of human health, technology, and the universe. The discoveries made in space help improve life on Earth while supporting future exploration missions."
+        }
+      ]
+    }
   },
   "guia_juzgamiento_y_entrega": {
     "url_guia": "https://www.spaceappschallenge.org/resources/judging-awards-guide/",

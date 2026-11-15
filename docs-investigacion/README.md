@@ -1,6 +1,7 @@
 # Investigación Biomédica y Operativa Recopilada (`docs-investigacion`)
 
 > **Origen:** Consolidación limpia y estructurada de las notas y referencias recopiladas por el equipo en [docs/miWork/state.json](../miWork/state.json).  
+> **Recursos Oficiales del Reto (`?tab=resources`):** Ver listado oficial de NASA HRP y CSA en [docs/bases_reto/RECURSOS_OFICIALES_RETO_2026.md](../bases_reto/RECURSOS_OFICIALES_RETO_2026.md).  
 > **Nota de gobernanza:** Este directorio recopila la **investigación de soporte científico y biomédico**. Las reglas normativas de arquitectura, diseño UI/UX y contratos del sistema entregable residen en [docs/control_avance/](../control_avance/), y las bases oficiales del desafío residen en [docs/bases_reto/](../bases_reto/).
 
 ---

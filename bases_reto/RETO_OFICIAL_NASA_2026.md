@@ -1,6 +1,7 @@
 # Guía del Reto y Evaluación: NASA International Space Apps Challenge
 
-> **Reto Oficial:** [Create Health Monitoring Software for Astronauts on Space Missions](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/?tab=details)  
+> **Reto Oficial (`?tab=details`):** [Create Health Monitoring Software for Astronauts on Space Missions](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/?tab=details)  
+> **Recursos Oficiales del Reto (`?tab=resources`):** [Ver pestaña Resources en Space Apps](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/?tab=resources) · Detalle local en [RECURSOS_OFICIALES_RETO_2026.md](./RECURSOS_OFICIALES_RETO_2026.md)  
 > **Guía Oficial de Juzgamiento y Premios:** [NASA Space Apps Challenge - Judging & Awards Guide](https://www.spaceappschallenge.org/resources/judging-awards-guide/)  
 > **Página Oficial de Premios:** [NASA Space Apps Challenge - Awards](https://www.spaceappschallenge.org/awards/)  
 > **Propósito:** Documento unificado y estructurado exclusivamente con la información oficial del reto, las reglas de entrega de la guía de evaluación y las 10 categorías de premios globales de la NASA.
@@ -43,6 +44,16 @@ Para destacar en la solución, la NASA sugiere considerar los siguientes aspecto
   * *Métricas específicas que la NASA menciona en el reto:* Presión arterial, frecuencia cardíaca, glucosa en sangre, temperatura corporal, horas de sueño diarias, estado anímico e imágenes médicas (como ultrasonidos).
 * **Salud Mental y Conductual (*Behavioral Health*):** No limitarse solo a constantes vitales; el monitoreo del sueño, estado anímico, motivación y niveles de estrés es igual de crítico para la supervivencia de la misión.
 * **Adherencia y Gamificación (*User Engagement*):** Incorporar mecánicas interactivas, interfaces limpias o dinámicas que motiven a los astronautas a registrar sus datos a diario a pesar del cansancio o la alta carga de trabajo.
+
+### 1.4 Recursos Oficiales del Reto (`?tab=resources`)
+El listado completo, descripciones y matriz de trazabilidad se encuentran en [RECURSOS_OFICIALES_RETO_2026.md](./RECURSOS_OFICIALES_RETO_2026.md):
+* **NASA Data & Resources:**
+  1. *5 Hazards of Human Spaceflight* — https://www.nasa.gov/hrp/hazards/
+  2. *Risks of Human Spaceflight* — https://www.nasa.gov/hrp/risks/
+  3. *Ongoing HRP Research in Space* — https://www.nasa.gov/hrp/ongoing-hrp-research/
+* **Space Agency Partner Resources — CSA (Canadian Space Agency):**
+  1. *Monitoring Radiation for Astronaut Health* — https://www.asc-csa.gc.ca/eng/news/articles/2026/2026-02-26-monitoring-radiation-astronaut-health.asp
+  2. *Why Do We Conduct Science Experiments in Space?* — https://www.asc-csa.gc.ca/eng/iss/science/why-do-we-conduct-science-experiments-in-space.asp
 
 ---
 
