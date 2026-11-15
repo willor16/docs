@@ -64,14 +64,17 @@ Al redactar código, especificaciones, estilos CSS, componentes Vue o textos de 
 
 ---
 
-## 4. Orden de Prioridad Documental en `docs/`
+## 4. Taxonomía de las 5 Capas Documentales y Orden de Prioridad en `docs/`
 
-Antes de proponer o escribir código, el agente debe consultar en orden de prioridad:
-1. [`control_avance/REGLAS_INQUEBRANTABLES.md`](../control_avance/REGLAS_INQUEBRANTABLES.md) — Los 10 criterios de premios, datos a recolectar, flujo de trabajo, idioma inglés estricto y prohibiciones.
-2. [`control_avance/REGLAS_DISENO_UI_UX.md`](../control_avance/REGLAS_DISENO_UI_UX.md) — Estándar global UI/UX, las 5 Leyes de Diseño, paleta de 6 colores (`tokens.css`), mapeo de las 16 pantallas Figma y plantillas de código (Vue/ECharts/WebAudio/Zod/SQLite/FastAPI).
-3. [`control_avance/ESPECIFICACION_REQUERIMIENTOS.md`](../control_avance/ESPECIFICACION_REQUERIMIENTOS.md) — Objetivos, 5 roles, RF 3.1 a 3.12, Requerimientos de Información y RNF 1 a 5.
-4. [`control_avance/ARQUITECTURA_Y_STACK_TECNICO.md`](../control_avance/ARQUITECTURA_Y_STACK_TECNICO.md) — Stack oficial `[núcleo]` y `[extra]`.
-5. [`control_avance/DIVISION_TRABAJO_DEVS.md`](../control_avance/DIVISION_TRABAJO_DEVS.md) — Contrato de Fase 0 (`backend/db/schema.sql`) y reparto de tareas `D1-xx`, `D2-xx`, `D3-xx`.
+El repositorio `docs/` se estructura en **5 capas con roles diferenciados** para evitar mezclar borradores preliminares con especificaciones normativas o estado de código:
+
+| Capa | Directorio / Archivo | Propósito y Regla de Uso para el Agente |
+| :--- | :--- | :--- |
+| **1. Especificaciones Normativas (Prioridad 1–5)** | `docs/control_avance/` | **Única fuente de verdad de producto y arquitectura:**<br>1. [`REGLAS_INQUEBRANTABLES.md`](../control_avance/REGLAS_INQUEBRANTABLES.md) — Los 10 criterios de premios, datos a recolectar, flujo de trabajo, idioma inglés estricto y prohibiciones.<br>2. [`REGLAS_DISENO_UI_UX.md`](../control_avance/REGLAS_DISENO_UI_UX.md) — Estándar global UI/UX, las 5 Leyes de Diseño, paleta de 6 colores (`tokens.css`), mapeo de las 16 pantallas Figma (`1568 × 940`) y componentes de construcción (`HoloFigure.vue`, `CaptureTabs.vue`, `ProfileTabs.vue`, `SubnavTabs.vue`, `ArcGauge.vue`, `BandRow.vue`).<br>3. [`ESPECIFICACION_REQUERIMIENTOS.md`](../control_avance/ESPECIFICACION_REQUERIMIENTOS.md) — Objetivos, 5 roles, RF 3.1 a 3.12, Requerimientos de Información y RNF 1 a 5.<br>4. [`ARQUITECTURA_Y_STACK_TECNICO.md`](../control_avance/ARQUITECTURA_Y_STACK_TECNICO.md) — Stack oficial `[núcleo]` y `[extra]`.<br>5. [`DIVISION_TRABAJO_DEVS.md`](../control_avance/DIVISION_TRABAJO_DEVS.md) — Contrato de Fase 0 (`backend/db/schema.sql`) y reparto de tareas `D1-xx`, `D2-xx`, `D3-xx`. |
+| **2. Estado de Implementación (`dev`)** | [`control_avance/BITACORA_AVANCE_RETO.md`](../control_avance/BITACORA_AVANCE_RETO.md) | **Registro real de lo implementado en `wakax-nasa-challenge-2026/` (rama `dev`):** Documenta el cierre completo de Fase 0 y Fase 1 (`D1-01`..`D1-07`, `D2-01`..`D2-06`, `D3-01`..`D3-06`) y las revisiones integrales de cumplimiento (`PR #14` y `PR #16`). |
+| **3. Investigación y Abstracción Biomédica** | [`docs-investigacion/`](../docs-investigacion/README.md) | **Soporte científico del equipo:** 6 fichas clínicas (`01` a `06_*.md`) y [`parametros_investigacion.json`](../docs-investigacion/parametros_investigacion.json). Es la fuente que alimenta el catálogo maestro del backend en `backend/db/seed_snapshots/reference_ranges.json` (`38` métricas clínicas en `metric_catalog`). |
+| **4. Recursos Oficiales del Reto** | [`bases_reto/`](../bases_reto/RETO_OFICIAL_NASA_2026.md) | **Bases oficiales del desafío:** [`RETO_OFICIAL_NASA_2026.md`](../bases_reto/RETO_OFICIAL_NASA_2026.md) (`?tab=details` y *Judging Guide*), [`RECURSOS_OFICIALES_RETO_2026.md`](../bases_reto/RECURSOS_OFICIALES_RETO_2026.md) (`?tab=resources`: NASA HRP y CSA) y [`reto_oficial_nasa_2026.json`](../bases_reto/reto_oficial_nasa_2026.json). Se usan para justificar elegibilidad y trazabilidad en la entrega de Space Apps, respetando siempre la prohibición de mostrar la palabra `"NASA"` dentro de la interfaz de la aplicación. |
+| **5. Notas Operativas y Borradores Colab** | `docs/miWork/docs/` | **Almacén de trabajo del editor Colab:**<br>• **Guías operativas vigentes:** [`GUIA_INICIO_tecnica_EQUIPO.md`](../miWork/docs/GUIA_INICIO_tecnica_EQUIPO.md) (arranque y puertos), [`guia_pruebas_funcionales_web.md`](../miWork/docs/guia_pruebas_funcionales_web.md) (plan de pruebas funcionales paso a paso) y [`usuarios.md`](../miWork/docs/usuarios.md) (credenciales PIN y RBAC).<br>• **Borradores iniciales superados:** `Especifcacion.md`, `reglas inquebrantables.md`, `divicion del trabajo.md` y `requerimientos tecnicos.md` son apuntes preliminares cuyo contenido oficial ya fue consolidado en `docs/control_avance/`. **Nunca usar estos borradores por encima de `docs/control_avance/`.** |
 
 ---
 

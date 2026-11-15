@@ -4,7 +4,7 @@
 >
 > **Diseño Maestro en Figma (Fuente Oficial ante Cualquier Duda Visual, Medidas o Exportación de SVGs):**
 > - **Figma Oficial del Proyecto:** [SpaceScan — Figma Design (`node-id=7382-2`)](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1) *(Todo desarrollador debe guiarse directamente de este archivo de Figma ante cualquier detalle de espaciado, proporción, iconografía o estados visuales).*
-> - Respaldo local en el repositorio (`16` pantallas `1568 × 940`): [SPACESCAN_FIGMA_COMPLETO.svg](../../diseno_ui_figma/SPACESCAN_FIGMA_COMPLETO.svg) · [SPACESCAN_FIGMA_COMPLETO.png](../../diseno_ui_figma/SPACESCAN_FIGMA_COMPLETO.png) · [`diseno_ui_figma/pantallas_svg/`](../../diseno_ui_figma/pantallas_svg/)
+> - Recursos vectoriales exportados en el repositorio (`16` pantallas `1568 × 940`): `frontend/app/assets/hologram/` (`body_scan.svg`, `body_small.svg`, `brain.svg`, `heart.svg`, `lungs.svg`, `logo.svg`) y `frontend/app/assets/icons/spacescan/`.
 
 ---
 
@@ -13,9 +13,9 @@
 Para mantener coherencia total entre todas las piezas solicitadas (**Nuxt 4 + Tailwind CSS 4 + Reka UI + ECharts + Python 3.13 + FastAPI + SQLite 3 STRICT**):
 
 1. **Arquitectura Unificada de Borde (Un Solo Proceso, Un Solo Puerto, Cero Nube — `RNF 1`):**
-   - `Nuxt 4` compila en modo estático (`ssr: false`) y `FastAPI` sirve tanto los archivos estáticos del SPA como la API REST y el canal `SSE` desde un único puerto local, sin depender de servidores externos, CDNs ni ORM (`backend/db/schema.sql` es la única verdad con `sqlite3` parametrizado).
+   - `Nuxt 4` compila en modo estático (`ssr: false`) y `FastAPI` sirve tanto los archivos estáticos del SPA como la API REST y el canal `SSE` desde un único puerto local (`8080`), sin depender de servidores externos, CDNs ni ORM (`backend/db/schema.sql` es la única verdad con `sqlite3` parametrizado).
 2. **Conciliación entre Regla *"Solo Inglés en UI"* y `@nuxtjs/i18n` (Premio *Global Connection*):**
-   - Toda la interfaz debe mostrarse **100% en inglés (`en`)**, sin mezclar español/inglés en ningún componente. Si se integra `@nuxtjs/i18n` para cubrir *Global Connection*, se fija `defaultLocale: 'en'` centralizando todas las cadenas en `app/locales/en.json`, manteniendo la experiencia visual de cabina estrictamente en inglés.
+   - Toda la interfaz debe mostrarse **100% en inglés (`en`)**, sin mezclar español/inglés en ningún componente. En `@nuxtjs/i18n` se fija `defaultLocale: 'en'` centralizando las cadenas en `frontend/i18n/locales/en.ts` mediante `defineI18nLocale`, manteniendo la experiencia visual de cabina estrictamente en inglés.
 3. **Fluidez de `Apache ECharts` en Ondas de Tiempo Real (`ECG` y Fonocardiograma):**
    - Para evitar carga excesiva de CPU en hardware económico o desconectado, `vue-echarts` debe usar **`CanvasRenderer`**, desactivar animaciones (`animation: false`) en ondas continuas y aplicar muestreo `lttb` al refrescar trazos provenientes de `SSE` o `Web Audio API`.
 
@@ -228,7 +228,7 @@ withDefaults(defineProps<{
 </template>
 ```
 
-**Ejemplo de Pestañas con `Reka UI` (`CaptureSubnavBar.vue` o `SleepTimeFilterBar.vue`):**
+**Ejemplo de Pestañas (`SubnavTabs.vue`, `CaptureTabs.vue` y `ProfileTabs.vue`):**
 ```vue
 <script setup lang="ts">
 import { TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
@@ -305,9 +305,9 @@ export default defineNuxtPlugin(() => {
 
 ---
 
-### 4.3 Hologramas SVG del Figma + Escaneo CSS (`[núcleo]`) y 3D (`[extra]`)
+### 4.3 Hologramas SVG del Figma (`HoloFigure.vue` — `[núcleo]`) y 3D (`[extra]`)
 
-Extraer los vectores limpios del cuerpo y órganos (`astronaut_body.svg`, `heart.svg`, `lungs.svg`, `brain.svg`) desde `diseno_ui_figma/pantallas_svg/` hacia `frontend/app/components/telemetry/SpaceScanHologram.vue` y aplicar brilho + línea de barrido puramente con CSS:
+Extraer los vectores limpios del cuerpo y órganos (`body_scan.svg`, `body_small.svg`, `heart.svg`, `lungs.svg`, `brain.svg`, `logo.svg`) hacia `frontend/app/assets/hologram/` y renderizarlos mediante `frontend/app/components/ui/HoloFigure.vue`:
 
 ```css
 /* Brillo holográfico y línea de escaneo vertical sin dependencias externas */
@@ -393,7 +393,7 @@ export function useAuscultationRecorder() {
 
 1. **Contrato Único Backend $\rightarrow$ Frontend:** Cada vez que cambia un modelo Pydantic en FastAPI, ejecutar:
    ```bash
-   npx openapi-typescript http://127.0.0.1:8000/openapi.json -o frontend/app/types/api.d.ts
+   npx openapi-typescript http://127.0.0.1:8080/openapi.json -o frontend/app/types/api.d.ts
    ```
 2. **Validación Pre-envío en `Capture` (`11`, `12`, `13`) con mensajes 100% en inglés:**
    ```ts
@@ -598,24 +598,24 @@ if STATIC_SPA_DIR.exists():
 
 ## 6. Mapeo Global de las 16 Pantallas Figma para el Equipo
 
-| Sección | Pantalla SVG | Ruta Nuxt 4 | Rol de Datos | Componentes Clave |
+| Sección | Pantalla Figma | Ruta Nuxt 4 | Rol de Datos | Componentes Clave en `dev` |
 | :--- | :--- | :--- | :---: | :--- |
-| **1. Pública** | [01_Sign_In.svg](../../diseno_ui_figma/pantallas_svg/01_Sign_In.svg) | `/login` | Auth PIN | `PinPad4Digits` + 2 botones públicos + `PublicHierarchyBar` |
-| **1. Pública** | [02_Crew_Overview.svg](../../diseno_ui_figma/pantallas_svg/02_Crew_Overview.svg) | `/crew-overview` | **Solo Resultados** | 4 tarjetas de tripulantes + `ECharts` Gauge `84/100` |
-| **1. Pública** | [03_Crew_Streaks.svg](../../diseno_ui_figma/pantallas_svg/03_Crew_Streaks.svg) | `/crew-streaks` | **Solo Resultados** | Rachas activas de los 4 tripulantes + escudo `EVA` |
-| **2. Resultados** | [04_Profile_Personal_Data.svg](../../diseno_ui_figma/pantallas_svg/04_Profile_Personal_Data.svg) | `/profile/personal` | **Solo Resultados** | `Profile` en Slot 4 Central + `SpaceScanHologram` |
-| **2. Resultados** | [05_Profile_Psychological.svg](../../diseno_ui_figma/pantallas_svg/05_Profile_Psychological.svg) | `/profile/psychological` | **Solo Resultados** | Curva ECharts 14 días (`Mood`/`Calmness`) + resultados `268 ms` |
-| **2. Resultados** | [06_Profile_Physical.svg](../../diseno_ui_figma/pantallas_svg/06_Profile_Physical.svg) | `/profile/physical` | **Solo Resultados** | 6 barras clínicas + `ECharts` `ECG` en vivo + 4 labs |
-| **2. Resultados** | [07_Sleep_Monitor.svg](../../diseno_ui_figma/pantallas_svg/07_Sleep_Monitor.svg) | `/sleep` | **Solo Resultados** | `SleepTimeFilterBar` + Score `84` + **Barra de Cintas ECharts** + Lapsos |
-| **2. Resultados** | [08_Vision_Exam.svg](../../diseno_ui_figma/pantallas_svg/08_Vision_Exam.svg) | `/vision` | **Solo Resultados** | Arcos Ojo Izq/Der + Curva bilateral `ONSD` + 3 pasos |
-| **2. Resultados** | [09_Auscultation_Results.svg](../../diseno_ui_figma/pantallas_svg/09_Auscultation_Results.svg) | `/auscultation` | **Solo Resultados** | Fonocardiograma `S1/S2` + envolvente pulmonar + `CO₂` 24 h |
-| **3. Captura** | [10_Capture_Auscultation.svg](../../diseno_ui_figma/pantallas_svg/10_Capture_Auscultation.svg) | `/capture/auscultation` | **Entrada Audio** | `useAuscultationRecorder` (`30 s` cardíaco y pulmonar + `dBA`) |
-| **3. Captura** | [11_Capture_Physical_Labs.svg](../../diseno_ui_figma/pantallas_svg/11_Capture_Physical_Labs.svg) | `/capture/physical` | **Entrada Datos** | Formulario validado con `Zod` para signos, hábitos y tiras |
-| **3. Captura** | [12_Capture_Vision_Ocular.svg](../../diseno_ui_figma/pantallas_svg/12_Capture_Vision_Ocular.svg) | `/capture/vision` | **Entrada Datos** | Formulario ocular `Zod` + guía visual axial `3.0 mm` |
-| **3. Captura** | [13_Capture_Psych_Sleep.svg](../../diseno_ui_figma/pantallas_svg/13_Capture_Psych_Sleep.svg) | `/capture/psych-sleep` | **Entrada Datos** | Escalas `1–5` + ventana `UTC` de sueño + arena interactiva `2 min` |
-| **4. Soporte** | [14_Medical_Guide.svg](../../diseno_ui_figma/pantallas_svg/14_Medical_Guide.svg) | `/guide` | Consulta `FTS5` | Buscador médico instantáneo + localizador `Drawer B2` |
-| **4. Soporte** | [15_Mission_Control.svg](../../diseno_ui_figma/pantallas_svg/15_Mission_Control.svg) | `/comms` | Cola `DTN` | Mensajes `Flight Surgeon` (`+12 min`) + clima solar `DONKI` |
-| **4. Header** | [16_Notifications_Header.svg](../../diseno_ui_figma/pantallas_svg/16_Notifications_Header.svg) | `/notifications` | **Solo Header** | Avisos y plan preventivo (abierta únicamente desde la campana del header) |
+| **1. Pública** | `01_Sign_In.svg` | `/login` | Auth PIN | Teclado PIN de 4 dígitos + 2 botones públicos + `PublicHierarchyBar` |
+| **1. Pública** | `02_Crew_Overview.svg` | `/crew-overview` | **Solo Resultados** | 4 tarjetas de tripulantes + `ArcGauge` (`Crew Score`) + ambiente |
+| **1. Pública** | `03_Crew_Streaks.svg` | `/crew-streaks` | **Solo Resultados** | Rachas activas de los 4 tripulantes + escudo `EVA` |
+| **2. Resultados** | `04_Profile_Personal_Data.svg` | `/profile/personal` | **Solo Resultados** | `ProfileTabs` + `HoloFigure` (`body_scan.svg`) + biometría |
+| **2. Resultados** | `05_Profile_Psychological.svg` | `/profile/psychological` | **Solo Resultados** | `ProfileTabs` + curva ECharts 14 días (`Mood`/`Calmness`) + PVT |
+| **2. Resultados** | `06_Profile_Physical.svg` | `/profile/physical` | **Solo Resultados** | `ProfileTabs` + 6 `BandRow` clínicos + `ECG` en vivo + 4 labs |
+| **2. Resultados** | `07_Sleep_Monitor.svg` | `/sleep` | **Solo Resultados** | `SubnavTabs` + `ArcGauge` (`Sleep Score`) + **Barra de Cintas ECharts** + Lapsos |
+| **2. Resultados** | `08_Vision_Exam.svg` | `/vision` | **Solo Resultados** | `ArcGauge` Ojo Izq/Der + Curva bilateral `ONSD` + 3 pasos preventivos |
+| **2. Resultados** | `09_Auscultation_Results.svg` | `/auscultation` | **Solo Resultados** | `HoloFigure` (`heart.svg`/`lungs.svg`) + ondas `Channel 1/2` + `CO₂` 24 h |
+| **3. Captura** | `10_Capture_Auscultation.svg` | `/capture/auscultation` | **Entrada Audio** | `CaptureTabs` + `useAuscultationRecorder` (`30 s` cardíaco/pulmonar + `dBA`) |
+| **3. Captura** | `11_Capture_Physical_Labs.svg` | `/capture/physical` | **Entrada Datos** | `CaptureTabs` + `NumberField` + `SaveResult` para signos, hábitos y labs |
+| **3. Captura** | `12_Capture_Vision_Ocular.svg` | `/capture/vision` | **Entrada Datos** | `CaptureTabs` + formulario ocular bilateral + detección de umbral en vivo |
+| **3. Captura** | `13_Capture_Psych_Sleep.svg` | `/capture/psych-sleep` | **Entrada Datos** | `CaptureTabs` + escalas `1–5` + ventana `UTC` de sueño + `useReactionArena` (`2 min`) |
+| **4. Soporte** | `14_Medical_Guide.svg` | `/guide` | Consulta `FTS5` | Buscador médico instantáneo + `Emergency Index` + localizador `DRAWER` |
+| **4. Soporte** | `15_Mission_Control.svg` | `/comms` | Cola `DTN` | Mensajes `Flight Surgeon` (`+12 min`) + clima solar `DONKI` |
+| **4. Header** | `16_Notifications_Header.svg` | `/notifications` | **Solo Header** | `SubnavTabs` + avisos, `Scheduled Checks` y `Pending Reviews` (`PHYSICIAN`) |
 
 ---
 

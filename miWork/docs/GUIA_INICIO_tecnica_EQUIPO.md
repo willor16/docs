@@ -23,11 +23,11 @@ El ecosistema de trabajo se estructura estrictamente en **dos repositorios indep
 
 ```text
 docs/
-├── GUIA_INICIO_EQUIPO.md                            # Gobernanza general, mapa documental y flujo de trabajo.
 ├── instrucciones_ia/
 │   └── DIRECTIVAS_AGENTE_AI.md                      # Reglas operativas, restricciones, stack e invariantes de IA.
 ├── bases_reto/
-│   ├── RETO_OFICIAL_NASA_2026.md                    # Consigna oficial del reto, criterios del jurado y 10 premios.
+│   ├── RETO_OFICIAL_NASA_2026.md                    # Consigna oficial del reto (?tab=details), criterios y 10 premios.
+│   ├── RECURSOS_OFICIALES_RETO_2026.md              # Recursos oficiales del reto (?tab=resources: NASA HRP y CSA).
 │   └── reto_oficial_nasa_2026.json                  # Esquema estructurado en JSON de las bases oficiales del reto.
 ├── docs-investigacion/
 │   ├── README.md                                    # Índice maestro, fuentes y brechas de investigación biomédica.
@@ -44,7 +44,7 @@ docs/
 │   ├── ESPECIFICACION_REQUERIMIENTOS.md             # PRIORITARIO: Objetivos, 5 roles, RF 3.1–3.12, Datos y RNF 1–5.
 │   ├── ARQUITECTURA_Y_STACK_TECNICO.md              # PRIORITARIO: Stack Nuxt 4 + FastAPI + SQLite3 + ONNX/Ollama offline.
 │   ├── DIVISION_TRABAJO_DEVS.md                     # PRIORITARIO: Fase 0 (tablas SQLite) y Fase 1 (tareas D1, D2, D3).
-│   └── BITACORA_AVANCE_RETO.md                      # Resumen ejecutivo del estado actual, trazabilidad y bitácora.
+│   └── BITACORA_AVANCE_RETO.md                      # Resumen ejecutivo del estado actual en dev, trazabilidad y bitácora.
 └── miWork/                                          # Torre de Control Interna (aislada del código entregable).
     ├── server.py                                    # Servidor HTTP colaborativo en tiempo real (Puerto 8000).
     ├── index.html                                   # Dashboard colaborativo, checklist y editor Markdown Colab.
@@ -52,13 +52,16 @@ docs/
     ├── ESPECIFICACION_CONTROL_AVANCE.md             # Manual técnico y funcional de la Torre de Control.
     ├── iniciar_servidor.command / .bat              # Lanzadores rápidos para macOS y Windows.
     └── docs/                                        # Almacén físico de archivos .md sincronizados por Colab.
+        ├── GUIA_INICIO_tecnica_EQUIPO.md            # Guía técnica de coordinación, gobernanza y arranque local.
+        ├── guia_pruebas_funcionales_web.md          # Plan de pruebas funcionales paso a paso.
+        └── usuarios.md                              # Credenciales de acceso (PIN de 4 dígitos) y roles RBAC.
 ```
 
 ---
 
 ## 3. Reglas Inquebrantables de Producto, Diseño y Entrega
 
-> El detalle normativo y técnico completo se encuentra en [`control_avance/REGLAS_INQUEBRANTABLES.md`](./control_avance/REGLAS_INQUEBRANTABLES.md) y [`control_avance/REGLAS_DISENO_UI_UX.md`](./control_avance/REGLAS_DISENO_UI_UX.md).
+> El detalle normativo y técnico completo se encuentra en [`../../control_avance/REGLAS_INQUEBRANTABLES.md`](../../control_avance/REGLAS_INQUEBRANTABLES.md) y [`../../control_avance/REGLAS_DISENO_UI_UX.md`](../../control_avance/REGLAS_DISENO_UI_UX.md).
 
 1. **Cumplimiento de los 10 Premios Globales:**
    * Todo módulo, pantalla, tabla, tarea o commit debe satisfacer los 10 criterios de premios globales. Si un cambio no aporta a ellos, se replantea antes de implementarlo.
