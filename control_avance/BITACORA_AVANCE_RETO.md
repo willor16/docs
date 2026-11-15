@@ -1,7 +1,7 @@
 # Bitácora de Avance y Resumen Maestro del Proyecto — SpaceScan
 
 > **ESTADO ACTUAL:** Fase 0 y **100% de la Fase 1 completados e integrados en la rama `dev` (`2fed09c`)** de `wakax-nasa-challenge-2026/`: bloques `D1-01` a `D1-07` (Dev 1 completo), `D2-01` a `D2-06` (Dev 2 completo incluyendo `Auscultation` cardíaca/pulmonar de 30 s y tendencia 24h de $\text{CO}_2$), `D3-01` a `D3-06` (Dev 3 completo: motor de alertas con *z-score* drift y *Quiet Hours*, bandeja `/notifications`, evaluación psicológica + test de reacción PVT de 2 min, red neuronal `ONNX`, asistente clínico local `gpt-oss:120b`/`llama3.2:3b` con revisión del `PHYSICIAN`, y `Medical Guide` `FTS5` con localizador de botiquín), además de la reconstrucción integral de cumplimiento y fidelidad al Figma (`PR #14` `f68090b` y `PR #16` `2fed09c` con `195 passed` en `pytest` y `21 passed` en `vitest`).  
-> **NOMBRE DEL SISTEMA:** **SpaceScan (`Scan Space · ARES VII`)**  
+> **NOMBRE DEL SISTEMA:** **SpaceScan**  
 > **DISEÑO OFICIAL (FIGMA):** [SpaceScan — Figma Design (`node-id=7382-2`)](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1)
 
 ---

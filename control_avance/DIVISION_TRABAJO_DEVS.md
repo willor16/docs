@@ -2,7 +2,7 @@
 
 ## 1. Contexto Operativo
 
-**SpaceScan (`Scan Space · ARES VII`)** utiliza **Nuxt 4 + Python 3.13 (FastAPI) + SQLite 3 STRICT**.
+**SpaceScan** utiliza **Nuxt 4 + Python 3.13 (FastAPI) + SQLite 3 STRICT**.
 
 * **3 Desarrolladores Fullstack:** Cada desarrollador es dueño de módulos completos de punta a punta: **sus tablas en SQLite + sus endpoints en FastAPI + sus pantallas en Nuxt**.
 * **Idioma Estrictamente 100% en Inglés (UI y Código):** Ni una sola palabra en español dentro del software entregable, **incluyendo el código fuente** (rutas, variables, funciones, endpoints, tablas y comentarios), y cero jerga técnica interna en pantalla (`SQLite`, `JSON`, `Offline`, `DTN`, etc.), conforme a [`REGLAS_INQUEBRANTABLES.md`](./REGLAS_INQUEBRANTABLES.md) y [`REGLAS_DISENO_UI_UX.md`](./REGLAS_DISENO_UI_UX.md).

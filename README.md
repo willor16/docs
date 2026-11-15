@@ -1,4 +1,4 @@
-# Documentación Oficial y Espacio de Trabajo — SpaceScan (`Scan Space · ARES VII`)
+# Documentación Oficial y Espacio de Trabajo — SpaceScan
 
 > **Repositorio Oficial de Código (`dev`):** `wakax-nasa-challenge-2026/` (`willor16/wakax-nasa-challenge-2026`)  
 > **Diseño Oficial en Figma (`1568 × 940`):** [SpaceScan — Figma Design (`node-id=7382-2`)](https://www.figma.com/design/6CTTAE1vbTSG7z8HWOJSf2/SpaceScan?node-id=7382-2&t=tzbC2RhJeGZ2Dlov-1)

@@ -1,6 +1,6 @@
 # Directivas Maestras e Instrucciones para Agentes de IA — SpaceScan
 
-> **PROPÓSITO:** Establecer las reglas de gobernanza, arquitectura técnica, estándar visual UI/UX, restricciones normativas y protocolos operativos que debe cumplir cualquier asistente de Inteligencia Artificial al colaborar en el proyecto **SpaceScan (`Scan Space · ARES VII`)**.
+> **PROPÓSITO:** Establecer las reglas de gobernanza, arquitectura técnica, estándar visual UI/UX, restricciones normativas y protocolos operativos que debe cumplir cualquier asistente de Inteligencia Artificial al colaborar en el proyecto **SpaceScan**.
 
 ---
 

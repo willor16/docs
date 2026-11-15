@@ -1,4 +1,4 @@
-# Estándar Global de Diseño UI/UX y Guía Maestra de Construcción (`Scan Space · ARES VII`)
+# Estándar Global de Diseño UI/UX y Guía Maestra de Construcción — SpaceScan
 
 > **Propósito de este Documento:** Ser la **única fuente de verdad de diseño e implementación** para cualquier desarrollador del equipo. Define qué reglas visuales son obligatorias, la paleta exacta de 6 colores, el uso estricto del idioma inglés sin jerga técnica, y cómo se construye cada módulo del stack **[núcleo]** y **[extra]** cumpliendo la regla **100% a bordo y sin internet (RNF 1)**.
 >
@@ -559,7 +559,7 @@ async def lifespan(app: FastAPI):
     yield
     scheduler.shutdown()
 
-app = FastAPI(title="Scan Space Onboard API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="SpaceScan Onboard API", version="1.0.0", lifespan=lifespan)
 
 # Server-Sent Events (SSE): telemetría y alertas en vivo sin complejidad de WebSocket
 @app.get("/api/v1/stream/telemetry")
