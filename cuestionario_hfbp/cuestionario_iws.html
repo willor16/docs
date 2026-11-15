@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NASA HFBP-EM: Comprehensive Behavioral & Social Dynamics Assessment (20 Items)</title>
+  <style>
+    /* ========================================================
+       OFFICIAL SPACECRAFT CABIN COLOR PALETTE
+       ======================================================== */
+    :root {
+      --bg-base: #001524;
+      --bg-grad-top: #00101C;
+      --bg-grad-bottom: #062838;
+      --halo-primary: #15616D;
+      --halo-secondary: #0C4350;
+
+      --card-bg: rgba(21, 97, 109, 0.45);
+      --card-border: #25899B;
+      --card-border-glow: #2994A6;
+
+      --surface-inner: rgba(4, 30, 46, 0.88);
+      --surface-inner-solid: #041E2E;
+
+      /* Official Typography */
+      --text-main: #FFECD1;
+      --text-sub: #F2DEC0;
+      --text-muted: #C8B69C;
+      --text-dim: #968976;
+
+      /* Operational Telemetry States */
+      --status-nominal: #2AEF4B;
+      --status-warning-bg: rgba(0, 12, 92, 0.55);
+      --status-warning-border: #263BB0;
+      --status-critical: #D5110B;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 100%, var(--halo-primary) 0%, var(--halo-secondary) 25%, transparent 60%),
+                  linear-gradient(180deg, var(--bg-grad-top) 0%, var(--bg-base) 50%, var(--bg-grad-bottom) 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Ambient Cabin Starfield */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image: 
+        radial-gradient(1px 1px at 25px 35px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 150px 190px, #FFECD1, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 340px 90px, #2AEF4B, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 480px 320px, #25899B, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 800px 230px, #ffffff, rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 800px 800px;
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 1140px;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ========================================================
+       TOP TELEMETRY BAR (HUD)
+       ======================================================== */
+    .telemetry-hud {
+      background: rgba(4, 30, 46, 0.92);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hud-badge-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-nasa {
+      background: rgba(0, 12, 92, 0.7);
+      border: 1px solid var(--status-warning-border);
+      color: var(--text-main);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    .hud-program-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .hud-progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .progress-bar-bg {
+      width: 160px;
+      height: 7px;
+      background: rgba(0, 21, 36, 0.95);
+      border: 1px solid var(--card-border);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--halo-primary), var(--status-nominal));
+      transition: width 0.3s ease;
+    }
+
+    /* ========================================================
+       QUESTION HUD (FIXED AT TOP, 100% CLEAR AND READABLE)
+       ======================================================== */
+    .question-hud {
+      background: linear-gradient(135deg, rgba(21, 97, 109, 0.6) 0%, rgba(4, 30, 46, 0.95) 100%);
+      border: 2px solid var(--card-border-glow);
+      border-radius: 18px;
+      padding: 18px 24px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .q-meta-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag-item-num {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--status-nominal);
+      background: rgba(42, 239, 75, 0.12);
+      border: 1px solid rgba(42, 239, 75, 0.3);
+      padding: 2px 10px;
+      border-radius: 9999px;
+      letter-spacing: 0.05em;
+    }
+
+    .tag-block {
+      font-size: 0.72rem;
+      background: rgba(255, 236, 209, 0.12);
+      border: 1px solid rgba(255, 236, 209, 0.25);
+      color: var(--text-main);
+      padding: 2px 9px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    .tag-construct {
+      font-size: 0.75rem;
+      background: rgba(0, 12, 92, 0.65);
+      border: 1px solid var(--status-warning-border);
+      color: var(--text-sub);
+      padding: 2px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .question-en-display {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .question-sub-prompt {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .question-sub-prompt strong {
+      color: var(--status-nominal);
+    }
+
+    /* ========================================================
+       NON-LINEAR SPATIAL CANVAS (RESPONSES POSITIONED ACROSS SCREEN)
+       ======================================================== */
+    .spatial-deck-area {
+      position: relative;
+      width: 100%;
+      height: 440px;
+      border-radius: 20px;
+      border: 1px solid rgba(37, 137, 155, 0.35);
+      background: linear-gradient(180deg, rgba(21, 97, 109, 0.15) 0%, rgba(4, 30, 46, 0.65) 100%);
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    /* Spatial Response Pods */
+    .spatial-option-pod {
+      position: absolute;
+      width: 175px;
+      background: rgba(4, 30, 46, 0.94);
+      border: 2px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(21, 97, 109, 0.2);
+      backdrop-filter: blur(8px);
+      transition: top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                  left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  transform 0.2s ease,
+                  border-color 0.2s ease,
+                  box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+    }
+
+    .spatial-option-pod:hover {
+      border-color: var(--status-nominal);
+      box-shadow: 0 0 24px rgba(42, 239, 75, 0.45);
+      transform: scale(1.08);
+      z-index: 40;
+    }
+
+    .spatial-option-pod:active {
+      transform: scale(0.96);
+    }
+
+    .spatial-option-pod.selected {
+      background: var(--halo-primary);
+      border-color: var(--status-nominal);
+      box-shadow: 0 0 25px rgba(42, 239, 75, 0.6);
+    }
+
+    .pod-rating-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .spatial-option-pod:hover .pod-rating-num,
+    .spatial-option-pod.selected .pod-rating-num {
+      color: var(--status-nominal);
+    }
+
+    .pod-rating-label {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .pod-rating-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Neutral Hugging Cow Mascot */
+    .hugging-cow-anchor {
+      position: absolute;
+      top: -46px;
+      right: -18px;
+      width: 76px;
+      height: 76px;
+      pointer-events: none;
+      z-index: 50;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.8));
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: cowGentleFloat 3s ease-in-out infinite;
+    }
+
+    .hugging-cow-sprite {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    @keyframes cowGentleFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-4px) rotate(3deg); }
+    }
+
+    /* Navigation Bar */
+    .bottom-nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-nav {
+      background: var(--surface-inner);
+      border: 1px solid var(--card-border);
+      color: var(--text-sub);
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: var(--halo-primary);
+      color: var(--text-main);
+      border-color: var(--card-border-glow);
+    }
+
+    /* ========================================================
+       EXECUTIVE RESULTS DASHBOARD (UPDATED TO BASE 80 POINTS)
+       ======================================================== */
+    .executive-results-screen {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+      width: 100%;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .executive-results-screen.visible {
+      display: flex;
+    }
+
+    /* 1. Astronaut Wellness Card */
+    .astronaut-report-card {
+      background: linear-gradient(135deg, rgba(21, 97, 109, 0.65) 0%, var(--surface-inner) 100%);
+      border: 2px solid var(--card-border-glow);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .role-stamp {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: rgba(0, 12, 92, 0.7);
+      border: 1px solid var(--status-warning-border);
+      color: var(--text-main);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      letter-spacing: 0.05em;
+    }
+
+    .dialog-astro-row {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .dialog-astro-row {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    .cow-report-avatar {
+      width: 85px;
+      height: 85px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.6));
+    }
+
+    .astro-speech-card {
+      background: var(--bg-base);
+      border-radius: 14px;
+      padding: 16px 20px;
+      border-left: 6px solid var(--status-nominal);
+      flex: 1;
+    }
+
+    .astro-speech-card.warning { border-left-color: #FFD166; }
+    .astro-speech-card.critical { border-left-color: var(--status-critical); }
+
+    .speech-heading { font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
+    .speech-body { font-size: 0.95rem; color: var(--text-sub); }
+
+    .recovery-tips-deck {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .recovery-tips-deck { grid-template-columns: 1fr; }
+    }
+
+    .recovery-tip-card {
+      background: var(--surface-inner);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .tip-glyph { font-size: 1.6rem; margin-bottom: 4px; }
+    .tip-name { font-size: 0.88rem; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+    .tip-detail { font-size: 0.78rem; color: var(--text-muted); }
+
+    /* 2. Mission Control Report */
+    .mission-control-report {
+      background: var(--surface-inner);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .flight-status-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 18px 0;
+    }
+
+    @media (max-width: 640px) {
+      .flight-status-row { grid-template-columns: 1fr; }
+    }
+
+    .fs-metric-box {
+      background: var(--bg-base);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .fs-metric-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .fs-metric-val {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin: 4px 0;
+    }
+
+    .fs-metric-status {
+      display: inline-block;
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    /* 5 Subscales Grid */
+    .quint-subscales-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 880px) {
+      .quint-subscales-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 580px) {
+      .quint-subscales-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .subscale-indicator-pod {
+      background: var(--bg-base);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .sub-code { font-size: 0.7rem; color: var(--status-nominal); font-weight: 800; }
+    .sub-name { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin: 2px 0; }
+    .sub-val { font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin: 2px 0; }
+    .sub-tag { font-size: 0.72rem; font-weight: 700; }
+
+    .directive-callout {
+      background: rgba(0, 21, 36, 0.85);
+      border-left: 4px solid var(--card-border-glow);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 0.88rem;
+      color: var(--text-sub);
+    }
+
+    .results-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- TOP TELEMETRY HUD -->
+    <header class="telemetry-hud">
+      <div class="hud-badge-group">
+        <span class="badge-nasa">NASA BHP / IWS</span>
+        <div class="hud-program-title">HFBP-EM: Mood, Affect & Social Dynamics (20 Items)</div>
+      </div>
+
+      <div class="hud-progress-wrap">
+        <span id="hud-progress-counter">Item 1 of 20 (0%)</span>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-bar-fill"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========================================================
+         QUESTIONNAIRE INTERFACE (QUESTION & ALL 5 RESPONSES READABLE)
+         ======================================================== -->
+    <main id="assessment-viewport">
+
+      <!-- QUESTION HUD (CLEAR & READABLE AT ALL TIMES) -->
+      <section class="question-hud">
+        <div class="q-meta-row">
+          <span class="tag-item-num" id="q-item-num">ITEM 1 OF 20</span>
+          <span class="tag-block" id="q-block-tag">Block 1: Individual Mood</span>
+          <span class="tag-construct" id="q-construct-tag">Tension / Anxiety</span>
+        </div>
+
+        <div class="question-en-display" id="q-en-text">Tense</div>
+
+        <p class="question-sub-prompt">
+          Rate how you feel <strong>in this exact moment</strong>. Select your response below.
+        </p>
+      </section>
+
+      <!-- SPATIAL CANVAS (NON-LINEAR RANDOMIZED POSITIONS ACROSS THE SCREEN) -->
+      <section class="spatial-deck-area" id="spatial-canvas">
+        <!-- 5 pods injected dynamically in non-linear coordinates -->
+      </section>
+
+      <!-- BOTTOM NAVIGATION BAR -->
+      <footer class="bottom-nav-bar">
+        <button type="button" class="btn-nav" id="btn-prev-item">← Previous Item</button>
+        <span style="font-size: 0.82rem; color: var(--text-muted);">
+          Tap any response pod to record your telemetry and advance
+        </span>
+        <button type="button" class="btn-nav" id="btn-reset-session">Reset Session</button>
+      </footer>
+
+    </main>
+
+    <!-- ========================================================
+         EXECUTIVE RESULTS DASHBOARD (BASE 80 POINTS)
+         Calculated strictly in background
+         ======================================================== -->
+    <section class="executive-results-screen" id="executive-dashboard">
+
+      <!-- 1. ASTRONAUT MODULE -->
+      <div class="astronaut-report-card">
+        <span class="role-stamp">Astronaut Module</span>
+        <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 16px;">
+          Personal Wellness & Social Dynamics Assessment
+        </h2>
+
+        <div class="dialog-astro-row">
+          <img src="vaca_pixel_transparente.png" alt="Dr. Moo - Space Psychologist" class="cow-report-avatar">
+          <div class="astro-speech-card" id="astro-speech-card">
+            <div class="speech-heading" id="astro-status-title">Processing Assessment...</div>
+            <div class="speech-body" id="astro-status-body">Evaluating intra-individual psychosocial telemetry...</div>
+          </div>
+        </div>
+
+        <div class="recovery-tips-deck">
+          <div class="recovery-tip-card">
+            <div class="tip-glyph">🧘</div>
+            <div class="tip-name">Autonomic Regulation</div>
+            <div class="tip-detail">5 cycles of deep diaphragmatic breathing (4s in, 4s hold, 6s out) to modulate vagal tone.</div>
+          </div>
+          <div class="recovery-tip-card">
+            <div class="tip-glyph">💬</div>
+            <div class="tip-name">Crew Connection</div>
+            <div class="tip-detail">Engage in shared galley meal or informal communication uplink to reinforce group cohesion.</div>
+          </div>
+          <div class="recovery-tip-card">
+            <div class="tip-glyph">🌌</div>
+            <div class="tip-name">Cupola Sensory Break</div>
+            <div class="tip-detail">10 minutes of relaxed visual focus on the Earth's horizon for cognitive decompression.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. MISSION CONTROL REPORT -->
+      <div class="mission-control-report">
+        <span class="role-stamp" style="background: rgba(21, 97, 109, 0.7);">Flight Operations</span>
+        <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
+          Executive Operational Readiness Report (Base 80 Points)
+        </h2>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">
+          Integrated Suite: Mood & Affect (Bell et al., 2022) + Social Dynamics (UCLA-3 / NIMH RDoC Social Processes).
+        </p>
+
+        <div class="flight-status-row">
+          <div class="fs-metric-box">
+            <div class="fs-metric-tag">Operational Flight Status</div>
+            <div class="fs-metric-val" id="fs-flight-status-val">FIT FOR FLIGHT</div>
+            <span class="fs-metric-status" id="fs-flight-status-badge">Cleared for Operations</span>
+          </div>
+
+          <div class="fs-metric-box">
+            <div class="fs-metric-tag">Global Psychosocial Load (I_total)</div>
+            <div class="fs-metric-val" id="fs-distress-val">0 / 80 pts</div>
+            <span class="fs-metric-status" id="fs-distress-badge">Optimal Resilience (0–20 pts)</span>
+          </div>
+        </div>
+
+        <!-- 5 Subscales Grid -->
+        <div class="quint-subscales-grid">
+          <div class="subscale-indicator-pod">
+            <div class="sub-code">T (Subscale 1)</div>
+            <div class="sub-name">Tension & Stress</div>
+            <div class="sub-val" id="val-t">0 / 16</div>
+            <div class="sub-tag" id="tag-t" style="color:var(--status-nominal)">Nominal</div>
+          </div>
+          <div class="subscale-indicator-pod">
+            <div class="sub-code">D (Subscale 2)</div>
+            <div class="sub-name">Dejection / Inertia</div>
+            <div class="sub-val" id="val-d">0 / 16</div>
+            <div class="sub-tag" id="tag-d" style="color:var(--status-nominal)">Nominal</div>
+          </div>
+          <div class="subscale-indicator-pod">
+            <div class="sub-code">C (Subscale 3)</div>
+            <div class="sub-name">Anger / Irritability</div>
+            <div class="sub-val" id="val-c">0 / 16</div>
+            <div class="sub-tag" id="tag-c" style="color:var(--status-nominal)">Nominal</div>
+          </div>
+          <div class="subscale-indicator-pod">
+            <div class="sub-code">F (Subscale 4)</div>
+            <div class="sub-name">Fatigue / Exhaustion</div>
+            <div class="sub-val" id="val-f">0 / 16</div>
+            <div class="sub-tag" id="tag-f" style="color:var(--status-nominal)">Nominal</div>
+          </div>
+          <div class="subscale-indicator-pod">
+            <div class="sub-code">S (Subscale 5)</div>
+            <div class="sub-name">Social Isolation</div>
+            <div class="sub-val" id="val-s">0 / 16</div>
+            <div class="sub-tag" id="tag-s" style="color:var(--status-nominal)">Nominal</div>
+          </div>
+        </div>
+
+        <div class="directive-callout">
+          <strong style="color:var(--text-main);">Flight Director Directive:</strong>
+          <span id="flight-directive-text">Loading directive...</span>
+        </div>
+      </div>
+
+      <div class="results-actions-bar">
+        <button type="button" class="btn-nav" id="btn-restart-daily">
+          🔄 Start New Daily Assessment
+        </button>
+        <button type="button" class="btn-nav" id="btn-export-json" style="border-color: var(--card-border-glow);">
+          💾 Download Flight Telemetry (JSON)
+        </button>
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- ========================================================
+       JAVASCRIPT: 20 ITEMS, 5 SUBSCALES, BASE 80 PSYCHOMETRICS
+       ======================================================== -->
+  <script>
+    // 20 Items Catalog (Block 1: Individual Mood 1-16; Block 2: Social Dynamics 17-20)
+    const itemsCatalog = [
+      // Block 1: Mood and Affect (Items 1 - 16)
+      { id: 1,  en: "Tense",          block: "Block 1: Individual Mood", construct: "Tension / Anxiety",     code: "T" },
+      { id: 2,  en: "Disengaged",     block: "Block 1: Individual Mood", construct: "Depression (Motivation)",code: "D" },
+      { id: 3,  en: "Angry",          block: "Block 1: Individual Mood", construct: "Anger / Hostility",     code: "C" },
+      { id: 4,  en: "Tired",          block: "Block 1: Individual Mood", construct: "Fatigue / Inertia",     code: "F" },
+      { id: 5,  en: "Anxious",        block: "Block 1: Individual Mood", construct: "Tension / Anxiety",     code: "T" },
+      { id: 6,  en: "Unenthusiastic", block: "Block 1: Individual Mood", construct: "Depression (Motivation)",code: "D" },
+      { id: 7,  en: "Annoyed",        block: "Block 1: Individual Mood", construct: "Anger / Hostility",     code: "C" },
+      { id: 8,  en: "Exhausted",      block: "Block 1: Individual Mood", construct: "Fatigue / Inertia",     code: "F" },
+      { id: 9,  en: "Nervous",        block: "Block 1: Individual Mood", construct: "Tension / Anxiety",     code: "T" },
+      { id: 10, en: "Sad",            block: "Block 1: Individual Mood", construct: "Depression / Dejection",code: "D" },
+      { id: 11, en: "Resentful",      block: "Block 1: Individual Mood", construct: "Anger / Hostility",     code: "C" },
+      { id: 12, en: "Fatigued",       block: "Block 1: Individual Mood", construct: "Fatigue / Inertia",     code: "F" },
+      { id: 13, en: "Restless",       block: "Block 1: Individual Mood", construct: "Tension / Anxiety",     code: "T" },
+      { id: 14, en: "Discouraged",    block: "Block 1: Individual Mood", construct: "Depression / Dejection",code: "D" },
+      { id: 15, en: "Furious",        block: "Block 1: Individual Mood", construct: "Anger / Hostility",     code: "C" },
+      { id: 16, en: "Worn out",       block: "Block 1: Individual Mood", construct: "Fatigue / Inertia",     code: "F" },
+      // Block 2: Team & Social Dynamics (Items 17 - 20)
+      { id: 17, en: "Isolated",       block: "Block 2: Social Dynamics", construct: "Social Support / Living",code: "S" },
+      { id: 18, en: "Lonely",         block: "Block 2: Social Dynamics", construct: "Social Support / Living",code: "S" },
+      { id: 19, en: "Left out",       block: "Block 2: Social Dynamics", construct: "Team Cohesion / Living", code: "S" },
+      { id: 20, en: "Unsupported",    block: "Block 2: Social Dynamics", construct: "Perceived Social Support",code: "S" }
+    ];
+
+    // Standard 5-point Likert scale (0 to 4)
+    const scaleDefinitions = [
+      { val: 0, label: "Not at all", desc: "Absence" },
+      { val: 1, label: "A little",   desc: "Slight" },
+      { val: 2, label: "Moderately", desc: "Moderate" },
+      { val: 3, label: "Quite a bit",desc: "Substantial" },
+      { val: 4, label: "Extremely",  desc: "Severe" }
+    ];
+
+    let currentItemIdx = 0;
+    const recordedAnswers = new Array(20).fill(null);
+    let telemetryPayload = null;
+
+    // DOM Elements
+    const qItemNum = document.getElementById("q-item-num");
+    const qBlockTag = document.getElementById("q-block-tag");
+    const qConstructTag = document.getElementById("q-construct-tag");
+    const qEnText = document.getElementById("q-en-text");
+    const spatialCanvas = document.getElementById("spatial-canvas");
+    const btnPrevItem = document.getElementById("btn-prev-item");
+    const hudProgressCounter = document.getElementById("hud-progress-counter");
+    const progressBarFill = document.getElementById("progress-bar-fill");
+
+    // Neutral mascot element (unbiased)
+    const huggingCowEl = document.createElement("div");
+    huggingCowEl.className = "hugging-cow-anchor";
+    huggingCowEl.id = "hugging-cow";
+    huggingCowEl.innerHTML = `<img src="vaca_pixel_transparente.png" alt="Dr. Moo mascot" class="hugging-cow-sprite">`;
+
+    // Compute Non-linear spatial coordinates
+    function computeNonLinearPositions() {
+      const canvasW = spatialCanvas.clientWidth || 900;
+      const canvasH = spatialCanvas.clientHeight || 440;
+      const podW = 180;
+      const podH = 110;
+
+      const zones = [
+        { xMin: 0.04, xMax: 0.26, yMin: 0.05, yMax: 0.38 }, // Top-Left
+        { xMin: 0.68, xMax: 0.92, yMin: 0.05, yMax: 0.38 }, // Top-Right
+        { xMin: 0.36, xMax: 0.60, yMin: 0.28, yMax: 0.62 }, // Center
+        { xMin: 0.06, xMax: 0.30, yMin: 0.58, yMax: 0.90 }, // Bottom-Left
+        { xMin: 0.65, xMax: 0.90, yMin: 0.58, yMax: 0.90 }  // Bottom-Right
+      ];
+
+      for (let i = zones.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [zones[i], zones[j]] = [zones[j], zones[i]];
+      }
+
+      const shuffledOptions = [...scaleDefinitions];
+      for (let i = shuffledOptions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+      }
+
+      return shuffledOptions.map((opt, idx) => {
+        const z = zones[idx];
+        const rawLeft = (z.xMin + Math.random() * (z.xMax - z.xMin)) * (canvasW - podW);
+        const rawTop = (z.yMin + Math.random() * (z.yMax - z.yMin)) * (canvasH - podH);
+
+        const left = Math.max(12, Math.min(rawLeft, canvasW - podW - 12));
+        const top = Math.max(12, Math.min(rawTop, canvasH - podH - 12));
+
+        return { ...opt, left, top };
+      });
+    }
+
+    function renderQuestionScreen() {
+      const item = itemsCatalog[currentItemIdx];
+      qItemNum.textContent = `ITEM ${item.id} OF 20`;
+      qBlockTag.textContent = item.block;
+      qConstructTag.textContent = item.construct;
+      qEnText.textContent = item.en;
+
+      btnPrevItem.style.visibility = (currentItemIdx === 0) ? "hidden" : "visible";
+
+      spatialCanvas.innerHTML = "";
+      const pods = computeNonLinearPositions();
+
+      pods.forEach((pod) => {
+        const isSelected = (recordedAnswers[currentItemIdx] === pod.val);
+
+        const podEl = document.createElement("div");
+        podEl.className = `spatial-option-pod ${isSelected ? 'selected' : ''}`;
+        podEl.style.left = `${pod.left}px`;
+        podEl.style.top = `${pod.top}px`;
+
+        podEl.innerHTML = `
+          <div class="pod-rating-num">${pod.val}</div>
+          <div class="pod-rating-label">${pod.label}</div>
+          <div class="pod-rating-desc">${pod.desc}</div>
+        `;
+
+        podEl.addEventListener("mouseenter", () => {
+          podEl.appendChild(huggingCowEl);
+        });
+
+        podEl.addEventListener("click", () => {
+          handleSelectAnswer(pod.val);
+        });
+
+        spatialCanvas.appendChild(podEl);
+      });
+
+      const firstPod = spatialCanvas.querySelector(".spatial-option-pod");
+      if (firstPod) {
+        firstPod.appendChild(huggingCowEl);
+      }
+
+      updateProgressBar();
+    }
+
+    function handleSelectAnswer(val) {
+      recordedAnswers[currentItemIdx] = val;
+
+      if (currentItemIdx < 19) {
+        currentItemIdx++;
+        renderQuestionScreen();
+      } else {
+        executeBackgroundCalculations();
+      }
+    }
+
+    btnPrevItem.addEventListener("click", () => {
+      if (currentItemIdx > 0) {
+        currentItemIdx--;
+        renderQuestionScreen();
+      }
+    });
+
+    document.getElementById("btn-reset-session").addEventListener("click", () => {
+      if (confirm("Reset current assessment responses?")) {
+        for (let i = 0; i < 20; i++) recordedAnswers[i] = null;
+        currentItemIdx = 0;
+        renderQuestionScreen();
+      }
+    });
+
+    function updateProgressBar() {
+      const answeredCount = recordedAnswers.filter(v => v !== null).length;
+      const pct = Math.round((answeredCount / 20) * 100);
+      hudProgressCounter.textContent = `Item ${currentItemIdx + 1} of 20 (${pct}%)`;
+      progressBarFill.style.width = `${pct}%`;
+    }
+
+    // ========================================================
+    // BACKGROUND PSYCHOMETRIC ENGINE (20 ITEMS / BASE 80 POINTS)
+    // ========================================================
+    function executeBackgroundCalculations() {
+      document.getElementById("assessment-viewport").style.display = "none";
+
+      // 1. Group by 5 Subscales (Sums: 0 to 16 | Max: 16 each)
+      // Subscale 1 - Tension & Anxiety (T): 1, 5, 9, 13
+      const T_sum = recordedAnswers[0] + recordedAnswers[4] + recordedAnswers[8] + recordedAnswers[12];
+      // Subscale 2 - Depression & Dejection (D): 2, 6, 10, 14
+      const D_sum = recordedAnswers[1] + recordedAnswers[5] + recordedAnswers[9] + recordedAnswers[13];
+      // Subscale 3 - Anger & Hostility (C): 3, 7, 11, 15
+      const C_sum = recordedAnswers[2] + recordedAnswers[6] + recordedAnswers[10] + recordedAnswers[14];
+      // Subscale 4 - Fatigue & Inertia (F): 4, 8, 12, 16
+      const F_sum = recordedAnswers[3] + recordedAnswers[7] + recordedAnswers[11] + recordedAnswers[15];
+      // Subscale 5 - Loneliness & Social Isolation (S): 17, 18, 19, 20
+      const S_sum = recordedAnswers[16] + recordedAnswers[17] + recordedAnswers[18] + recordedAnswers[19];
+
+      // Global Psychosocial Load Index I_total = T + D + C + F + S (0 to 80 points)
+      const I_total = T_sum + D_sum + C_sum + F_sum + S_sum;
+      const I_avg = I_total / 20;
+
+      // 2. NASA Operational Decision Rules (Base 80 Points)
+      let readinessStatus = "FIT FOR FLIGHT";
+      let readinessBadge = "Cleared for Operations";
+      let statusColor = "var(--status-nominal)";
+      let rangeDescriptor = "Optimal State (0–20 pts)";
+      let directiveText = "Maintain nominal mission operational schedule. Psychosocial and neurobehavioral baseline optimal.";
+
+      let astroHeading = "🟢 Optimal Resilience & Social Cohesion";
+      let astroBody = `"Outstanding performance, astronaut! Your emotional balance and team integration indicators are in the green zone. You are fully cleared for nominal flight operations today."`;
+      let bubbleClass = "astro-speech-card";
+
+      // Operational Thresholds: 0–20 Nominal | 21–40 Moderate | 41–80 Critical
+      if (I_total <= 20) {
+        readinessStatus = "FIT FOR FLIGHT";
+        readinessBadge = "Cleared for Operations";
+        statusColor = "var(--status-nominal)";
+        rangeDescriptor = "Optimal State (0–20 pts)";
+      } else if (I_total <= 40) {
+        readinessStatus = "MONITORING REQUIRED";
+        readinessBadge = "Moderate Load / Observation";
+        statusColor = "#FFD166";
+        rangeDescriptor = "Moderate Load (21–40 pts)";
+        astroHeading = "🟡 Moderate Psychosocial Load Detected";
+        astroBody = `"I observe a moderate elevation in stress, fatigue, or social distance. Scheduled crew connection and sensory rest are recommended before critical tasks."`;
+        bubbleClass = "astro-speech-card warning";
+        directiveText = "Cleared for routine operations. Monitor intra-individual trend over subsequent mission days. Review elevated subscales (> 8 pts).";
+      } else {
+        readinessStatus = "RESTRICTED DUTY";
+        readinessBadge = "Workload Reduction Mandated";
+        statusColor = "var(--status-critical)";
+        rangeDescriptor = "Critical Alert (41–80 pts)";
+        astroHeading = "🔴 Critical Strain / Social Isolation Alert";
+        astroBody = `"Attention: Telemetry indicates acute psychological strain, severe fatigue, or pronounced social isolation. Flight Control has been notified to mandate structured rest."`;
+        bubbleClass = "astro-speech-card critical";
+        directiveText = "Immediate flight duty restriction on critical operations (e.g., EVA, manual docking). Mandate rest window and clinical debriefing.";
+      }
+
+      // Specific Subscale Peak Rules (> 8 pts & specific syndromes)
+      const elevatedAlerts = [];
+      if (S_sum >= 8) {
+        elevatedAlerts.push(`Social Isolation Spike (S=${S_sum}/16): Elevated loneliness or alienation in confinement. Protocol: Schedule family/ground communication uplink and organize crew group meal.`);
+      }
+      if (F_sum >= 8 && T_sum < 8) {
+        elevatedAlerts.push(`Physical Fatigue Spike (F=${F_sum}/16): Physical exhaustion without emotional friction. Cross-reference with Sleep and Heart Rate modules.`);
+      }
+      if (D_sum >= 8) {
+        elevatedAlerts.push(`Dejection Spike (D=${D_sum}/16): Motivational deficit or disengagement.`);
+      }
+      if (C_sum >= 8 && T_sum >= 8) {
+        elevatedAlerts.push(`Concurrent Tension & Hostility (C=${C_sum}, T=${T_sum}): Intra-crew friction risk. Evaluate team cohesion.`);
+      }
+
+      if (elevatedAlerts.length > 0) {
+        directiveText += " " + elevatedAlerts.map(a => `[${a}]`).join(" ");
+      }
+
+      // 3. Inject into UI
+      const astroCard = document.getElementById("astro-speech-card");
+      astroCard.className = bubbleClass;
+      document.getElementById("astro-status-title").textContent = astroHeading;
+      document.getElementById("astro-status-body").textContent = astroBody;
+
+      const fVal = document.getElementById("fs-flight-status-val");
+      const fBadge = document.getElementById("fs-flight-status-badge");
+      fVal.textContent = readinessStatus;
+      fVal.style.color = statusColor;
+      fBadge.textContent = readinessBadge;
+      fBadge.style.background = (statusColor === "var(--status-nominal)") ? "rgba(42, 239, 75, 0.2)" : (statusColor === "#FFD166" ? "rgba(255, 209, 102, 0.2)" : "rgba(213, 17, 11, 0.2)");
+      fBadge.style.color = statusColor;
+
+      const dVal = document.getElementById("fs-distress-val");
+      const dBadge = document.getElementById("fs-distress-badge");
+      dVal.textContent = `${I_total} / 80 pts (Mean: ${I_avg.toFixed(2)})`;
+      dBadge.textContent = rangeDescriptor;
+      dBadge.style.color = statusColor;
+
+      // 5 Subscales display
+      const setSub = (valId, tagId, sumVal) => {
+        document.getElementById(valId).textContent = `${sumVal} / 16`;
+        const tag = document.getElementById(tagId);
+        if (sumVal <= 4) { tag.textContent = "Nominal"; tag.style.color = "var(--status-nominal)"; }
+        else if (sumVal <= 8) { tag.textContent = "Moderate"; tag.style.color = "#FFD166"; }
+        else { tag.textContent = "Alert / High"; tag.style.color = "var(--status-critical)"; }
+      };
+
+      setSub("val-t", "tag-t", T_sum);
+      setSub("val-d", "tag-d", D_sum);
+      setSub("val-c", "tag-c", C_sum);
+      setSub("val-f", "tag-f", F_sum);
+      setSub("val-s", "tag-s", S_sum);
+
+      document.getElementById("flight-directive-text").textContent = directiveText;
+
+      // 4. Telemetry Payload (JSON)
+      telemetryPayload = {
+        instrument: "NASA HFBP-EM Suite: Comprehensive 20-Item Mood & Social Dynamics Assessment",
+        references: [
+          "Bell et al., 2022 (NASA HFBP-EM Suite: Mood and Affect)",
+          "Hughes et al., 2004 (UCLA Loneliness Scale Short Form)",
+          "National Institute of Mental Health (NIMH RDoC: Social Processes / Affiliation & Attachment)",
+          "Cranford et al. intra-individual reliability R_C: 0.73-0.79"
+        ],
+        timestamp_utc: new Date().toISOString(),
+        operational_readiness: {
+          flight_status: readinessStatus,
+          global_psychosocial_index_I_total: { score: I_total, max: 80, mean: parseFloat(I_avg.toFixed(2)) },
+          range: rangeDescriptor
+        },
+        subscales_base_16: {
+          subscale_1_tension_stress_T: { score: T_sum, mean: parseFloat((T_sum/4).toFixed(2)), max: 16 },
+          subscale_2_dejection_motivation_D: { score: D_sum, mean: parseFloat((D_sum/4).toFixed(2)), max: 16 },
+          subscale_3_anger_irritability_C: { score: C_sum, mean: parseFloat((C_sum/4).toFixed(2)), max: 16 },
+          subscale_4_fatigue_exhaustion_F: { score: F_sum, mean: parseFloat((F_sum/4).toFixed(2)), max: 16 },
+          subscale_5_social_isolation_S: { score: S_sum, mean: parseFloat((S_sum/4).toFixed(2)), max: 16 }
+        },
+        flight_director_directive: directiveText,
+        item_responses: itemsCatalog.map((item, idx) => ({
+          item_id: item.id,
+          term_en: item.en,
+          block: item.block,
+          construct: item.construct,
+          code: item.code,
+          score: recordedAnswers[idx]
+        }))
+      };
+
+      console.log("Telemetry Payload:", telemetryPayload);
+
+      document.getElementById("executive-dashboard").classList.add("visible");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // Restart Daily Assessment
+    document.getElementById("btn-restart-daily").addEventListener("click", () => {
+      for (let i = 0; i < 20; i++) recordedAnswers[i] = null;
+      currentItemIdx = 0;
+      document.getElementById("executive-dashboard").classList.remove("visible");
+      document.getElementById("assessment-viewport").style.display = "block";
+      renderQuestionScreen();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    // Export Telemetry JSON
+    document.getElementById("btn-export-json").addEventListener("click", () => {
+      if (!telemetryPayload) return;
+      const blob = new Blob([JSON.stringify(telemetryPayload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `NASA_HFBP_EM_20Items_Telemetry_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Initialize Assessment
+    renderQuestionScreen();
+  </script>
+</body>
+</html>
