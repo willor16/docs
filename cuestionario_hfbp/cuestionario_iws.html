@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NASA HFBP-EM: Comprehensive Behavioral & Social Dynamics Assessment (20 Items)</title>
+  <title>HFBP-EM & DSM-5-TR: Comprehensive Behavioral & Social Dynamics Assessment (20 Items)</title>
   <style>
     /* ========================================================
        OFFICIAL SPACECRAFT CABIN COLOR PALETTE
@@ -532,7 +532,92 @@
     .sub-code { font-size: 0.7rem; color: var(--status-nominal); font-weight: 800; }
     .sub-name { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin: 2px 0; }
     .sub-val { font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin: 2px 0; }
+    .sub-apa-mean { font-size: 0.7rem; color: var(--text-sub); margin-bottom: 2px; }
     .sub-tag { font-size: 0.72rem; font-weight: 700; }
+
+    /* DSM-5-TR Clinical Cross-Walk Section */
+    .dsm5-crosswalk-panel {
+      background: rgba(0, 21, 36, 0.75);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .dsm5-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(37, 137, 155, 0.3);
+      padding-bottom: 8px;
+    }
+
+    .dsm5-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: 0.02em;
+    }
+
+    .dsm5-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: rgba(0, 12, 92, 0.7);
+      border: 1px solid var(--status-warning-border);
+      color: var(--text-sub);
+      padding: 2px 9px;
+      border-radius: 6px;
+    }
+
+    .dsm5-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 680px) {
+      .dsm5-grid { grid-template-columns: 1fr; }
+    }
+
+    .dsm5-card {
+      background: var(--surface-inner-solid);
+      border: 1px solid rgba(37, 137, 155, 0.45);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .dsm5-scale-name {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: var(--status-nominal);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .dsm5-severity-val {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 4px 0;
+    }
+
+    .dsm5-domains-list {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .dsm5-note {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px dashed rgba(37, 137, 155, 0.35);
+      padding-top: 8px;
+      line-height: 1.4;
+    }
 
     .directive-callout {
       background: rgba(0, 21, 36, 0.85);
@@ -564,8 +649,8 @@
     <!-- TOP TELEMETRY HUD -->
     <header class="telemetry-hud">
       <div class="hud-badge-group">
-        <span class="badge-nasa">NASA BHP / IWS</span>
-        <div class="hud-program-title">HFBP-EM: Mood, Affect & Social Dynamics (20 Items)</div>
+        <span class="badge-nasa">SPACEFLIGHT BHP / IWS</span>
+        <div class="hud-program-title">HFBP-EM & DSM-5-TR: Mood, Affect & Social Dynamics (20 Items)</div>
       </div>
 
       <div class="hud-progress-wrap">
@@ -682,31 +767,66 @@
             <div class="sub-code">T (Subscale 1)</div>
             <div class="sub-name">Tension & Stress</div>
             <div class="sub-val" id="val-t">0 / 16</div>
-            <div class="sub-tag" id="tag-t" style="color:var(--status-nominal)">Nominal</div>
+            <div class="sub-apa-mean" id="mean-t">Mean: 0.00 / 4</div>
+            <div class="sub-tag" id="tag-t" style="color:var(--status-nominal)">None (APA 0)</div>
           </div>
           <div class="subscale-indicator-pod">
             <div class="sub-code">D (Subscale 2)</div>
             <div class="sub-name">Dejection / Inertia</div>
             <div class="sub-val" id="val-d">0 / 16</div>
-            <div class="sub-tag" id="tag-d" style="color:var(--status-nominal)">Nominal</div>
+            <div class="sub-apa-mean" id="mean-d">Mean: 0.00 / 4</div>
+            <div class="sub-tag" id="tag-d" style="color:var(--status-nominal)">None (APA 0)</div>
           </div>
           <div class="subscale-indicator-pod">
             <div class="sub-code">C (Subscale 3)</div>
             <div class="sub-name">Anger / Irritability</div>
             <div class="sub-val" id="val-c">0 / 16</div>
-            <div class="sub-tag" id="tag-c" style="color:var(--status-nominal)">Nominal</div>
+            <div class="sub-apa-mean" id="mean-c">Mean: 0.00 / 4</div>
+            <div class="sub-tag" id="tag-c" style="color:var(--status-nominal)">None (APA 0)</div>
           </div>
           <div class="subscale-indicator-pod">
             <div class="sub-code">F (Subscale 4)</div>
             <div class="sub-name">Fatigue / Exhaustion</div>
             <div class="sub-val" id="val-f">0 / 16</div>
-            <div class="sub-tag" id="tag-f" style="color:var(--status-nominal)">Nominal</div>
+            <div class="sub-apa-mean" id="mean-f">Mean: 0.00 / 4</div>
+            <div class="sub-tag" id="tag-f" style="color:var(--status-nominal)">None (APA 0)</div>
           </div>
           <div class="subscale-indicator-pod">
             <div class="sub-code">S (Subscale 5)</div>
             <div class="sub-name">Social Isolation</div>
             <div class="sub-val" id="val-s">0 / 16</div>
-            <div class="sub-tag" id="tag-s" style="color:var(--status-nominal)">Nominal</div>
+            <div class="sub-apa-mean" id="mean-s">Mean: 0.00 / 4</div>
+            <div class="sub-tag" id="tag-s" style="color:var(--status-nominal)">None (APA 0)</div>
+          </div>
+        </div>
+
+        <!-- APA DSM-5-TR Clinical Cross-Walk Panel -->
+        <div class="dsm5-crosswalk-panel">
+          <div class="dsm5-header">
+            <span class="dsm5-title">🏥 APA DSM-5-TR Clinical Severity Cross-Walk (GAD & PHQ-9 Concordance)</span>
+            <span class="dsm5-badge">Spaceflight & Rural Telemedicine Standard</span>
+          </div>
+
+          <div class="dsm5-grid">
+            <div class="dsm5-card">
+              <div class="dsm5-scale-name">GAD (DSM-5-TR Adult Anxiety Measure — 18+ yrs)</div>
+              <div class="dsm5-severity-val" id="dsm5-gad-val">Mean 0.00 / 4.00 — None (0)</div>
+              <div class="dsm5-domains-list" id="dsm5-gad-domains">
+                <strong>Evaluated Dimensions:</strong> Excessive worry, nervousness & fear, somatic anxiety tension, avoidance, and sleep/concentration impact.
+              </div>
+            </div>
+
+            <div class="dsm5-card">
+              <div class="dsm5-scale-name">PHQ-9 (DSM-5-TR Adult Depression Measure — 0–27 Scale)</div>
+              <div class="dsm5-severity-val" id="dsm5-phq9-val">0 / 27 Eq. — Minimal or Absent (0–4)</div>
+              <div class="dsm5-domains-list" id="dsm5-phq9-domains">
+                <strong>Evaluated Dimensions:</strong> Loss of interest/pleasure (anhedonia), depressed mood, fatigue/loss of energy, sleep alterations, and concentration difficulty.
+              </div>
+            </div>
+          </div>
+
+          <div class="dsm5-note" id="dsm5-clinical-note">
+            <strong>Clinical Protocol Note (APA DSM-5-TR):</strong> These severity measures quantify symptom intensity and guide clinical follow-up but do not establish a standalone diagnosis. If moderate-to-severe indicators persist, administer the 7-day DSM-5-TR GAD (10-item) and PHQ-9 (9-item, including specific clinical evaluation of Item 9).
           </div>
         </div>
 
@@ -1002,30 +1122,81 @@
       dBadge.textContent = rangeDescriptor;
       dBadge.style.color = statusColor;
 
-      // 5 Subscales display
-      const setSub = (valId, tagId, sumVal) => {
-        document.getElementById(valId).textContent = `${sumVal} / 16`;
-        const tag = document.getElementById(tagId);
-        if (sumVal <= 4) { tag.textContent = "Nominal"; tag.style.color = "var(--status-nominal)"; }
-        else if (sumVal <= 8) { tag.textContent = "Moderate"; tag.style.color = "#FFD166"; }
-        else { tag.textContent = "Alert / High"; tag.style.color = "var(--status-critical)"; }
+      // 5 Subscales display + APA DSM-5-TR Mean Severity (0 = None, 1 = Mild, 2 = Moderate, 3 = Severe, 4 = Extreme)
+      const getApaSeverity = (meanVal) => {
+        if (meanVal < 0.5) return { label: "None (APA 0)", color: "var(--status-nominal)", level: 0 };
+        if (meanVal < 1.5) return { label: "Mild (APA 1)", color: "var(--status-nominal)", level: 1 };
+        if (meanVal < 2.5) return { label: "Moderate (APA 2)", color: "#FFD166", level: 2 };
+        if (meanVal < 3.5) return { label: "Severe (APA 3)", color: "var(--status-critical)", level: 3 };
+        return { label: "Extreme (APA 4)", color: "var(--status-critical)", level: 4 };
       };
 
-      setSub("val-t", "tag-t", T_sum);
-      setSub("val-d", "tag-d", D_sum);
-      setSub("val-c", "tag-c", C_sum);
-      setSub("val-f", "tag-f", F_sum);
-      setSub("val-s", "tag-s", S_sum);
+      const setSub = (valId, meanId, tagId, sumVal) => {
+        const meanVal = sumVal / 4;
+        const apa = getApaSeverity(meanVal);
+        document.getElementById(valId).textContent = `${sumVal} / 16`;
+        document.getElementById(meanId).textContent = `APA Mean: ${meanVal.toFixed(2)} / 4`;
+        const tag = document.getElementById(tagId);
+        tag.textContent = apa.label;
+        tag.style.color = apa.color;
+      };
+
+      setSub("val-t", "mean-t", "tag-t", T_sum);
+      setSub("val-d", "mean-d", "tag-d", D_sum);
+      setSub("val-c", "mean-c", "tag-c", C_sum);
+      setSub("val-f", "mean-f", "tag-f", F_sum);
+      setSub("val-s", "mean-s", "tag-s", S_sum);
+
+      // APA DSM-5-TR Cross-Walk Calculations (GAD Adult 0-40 / Mean 0-4 & PHQ-9 Adult 0-27)
+      const gadMean = T_sum / 4; // Subscale T (Tense, Anxious, Nervous, Restless) -> GAD 0-4 Mean Severity
+      const gadScaled40 = Math.round(gadMean * 10); // Equivalent on 10-item GAD (0-40 scale)
+      const gadApa = getApaSeverity(gadMean);
+
+      // PHQ-9 Cross-Walk: Combines Dejection/Motivation (D: anhedonia + depressed mood) and Fatigue/Inertia (F: loss of energy)
+      const depCompositeMean = (D_sum * 0.65 + F_sum * 0.35) / 4; // 0 to 4 scale
+      const phq9Eq = Math.min(27, Math.round((depCompositeMean / 4) * 27));
+      let phq9Category = "Minimal or Absent (0–4)";
+      let phq9Color = "var(--status-nominal)";
+      if (phq9Eq >= 20) {
+        phq9Category = "Severe (20–27)";
+        phq9Color = "var(--status-critical)";
+      } else if (phq9Eq >= 15) {
+        phq9Category = "Moderately Severe (15–19)";
+        phq9Color = "var(--status-critical)";
+      } else if (phq9Eq >= 10) {
+        phq9Category = "Moderate (10–14)";
+        phq9Color = "#FFD166";
+      } else if (phq9Eq >= 5) {
+        phq9Category = "Mild (5–9)";
+        phq9Color = "var(--status-nominal)";
+      }
+
+      const dsmGadEl = document.getElementById("dsm5-gad-val");
+      dsmGadEl.textContent = `Mean ${gadMean.toFixed(2)} / 4.00 (${gadScaled40}/40 Eq.) — ${gadApa.label}`;
+      dsmGadEl.style.color = gadApa.color;
+
+      const dsmPhqEl = document.getElementById("dsm5-phq9-val");
+      dsmPhqEl.textContent = `${phq9Eq} / 27 Eq. — ${phq9Category}`;
+      dsmPhqEl.style.color = phq9Color;
+
+      const dsmNoteEl = document.getElementById("dsm5-clinical-note");
+      if (gadMean >= 1.5 || phq9Eq >= 10 || S_sum >= 8) {
+        dsmNoteEl.innerHTML = `<strong style="color:var(--status-critical);">⚠️ Active Clinical Trigger (APA DSM-5-TR 7-Day Protocol):</strong> Elevated anxiety, depressive-motivational, or isolation markers detected. Screen shared domains (<strong>sleep alterations, concentration difficulty, somatic tension, and avoidance</strong>). Administer full 7-day DSM-5-TR PHQ-9 and GAD adult measures; any non-zero response on PHQ-9 Item 9 (self-harm/death thoughts) mandates immediate clinical evaluation regardless of total score.`;
+      } else {
+        dsmNoteEl.innerHTML = `<strong>Clinical Protocol Note (APA DSM-5-TR):</strong> Severity measures quantify symptom intensity for spaceflight & rural telemedicine monitoring without establishing a standalone diagnosis. Shared dimensions (sleep, concentration, energy, somatic anxiety) remain within nominal parameters.`;
+      }
 
       document.getElementById("flight-directive-text").textContent = directiveText;
 
       // 4. Telemetry Payload (JSON)
       telemetryPayload = {
-        instrument: "NASA HFBP-EM Suite: Comprehensive 20-Item Mood & Social Dynamics Assessment",
+        instrument: "HFBP-EM & APA DSM-5-TR Integrated Suite: 20-Item Mood, Affect & Social Dynamics Assessment",
         references: [
-          "Bell et al., 2022 (NASA HFBP-EM Suite: Mood and Affect)",
+          "Bell et al., 2022 (HFBP-EM Suite: Mood and Affect)",
           "Hughes et al., 2004 (UCLA Loneliness Scale Short Form)",
           "National Institute of Mental Health (NIMH RDoC: Social Processes / Affiliation & Attachment)",
+          "American Psychiatric Association (APA DSM-5-TR): Severity Measure for Generalized Anxiety Disorder — Adult (10-item, 0-40 / Mean 0-4)",
+          "American Psychiatric Association (APA DSM-5-TR): PHQ-9 Severity Measure for Depression — Adult (9-item, 0-27, 7-day window)",
           "Cranford et al. intra-individual reliability R_C: 0.73-0.79"
         ],
         timestamp_utc: new Date().toISOString(),
@@ -1034,12 +1205,43 @@
           global_psychosocial_index_I_total: { score: I_total, max: 80, mean: parseFloat(I_avg.toFixed(2)) },
           range: rangeDescriptor
         },
+        apa_dsm5_tr_clinical_crosswalk: {
+          gad_dsm5_adult_anxiety_proxy: {
+            mean_severity_0_to_4: parseFloat(gadMean.toFixed(2)),
+            scaled_score_0_to_40: gadScaled40,
+            apa_severity_category: gadApa.label,
+            evaluated_variables: [
+              "Excessive worry (Direct)",
+              "Nervousness and fear (Direct)",
+              "Somatic anxiety symptoms (Direct)",
+              "Anxiety avoidance (Direct)",
+              "Sleep alterations (Direct)",
+              "Difficulty concentrating (Indirect)",
+              "Fatigue / lack of energy (Indirect)"
+            ]
+          },
+          phq9_dsm5_tr_adult_depression_proxy: {
+            equivalent_score_0_to_27: phq9Eq,
+            phq9_severity_category: phq9Category,
+            assessment_window_note: "DSM-5-TR adapted PHQ-9 evaluates past 7 days (vs. 14 days in original PHQ-9)",
+            item_9_clinical_rule: "Any non-zero response on PHQ-9 Item 9 requires immediate clinical evaluation regardless of total score",
+            evaluated_variables: [
+              "Loss of interest or pleasure / Anhedonia (Direct)",
+              "Depressed mood (Direct)",
+              "Fatigue or lack of energy (Direct)",
+              "Sleep alterations (Direct)",
+              "Difficulty concentrating (Direct)",
+              "Thoughts of death or self-harm (Item 9 trigger)"
+            ]
+          },
+          clinical_stage2_7day_protocol_triggered: (gadMean >= 1.5 || phq9Eq >= 10 || S_sum >= 8)
+        },
         subscales_base_16: {
-          subscale_1_tension_stress_T: { score: T_sum, mean: parseFloat((T_sum/4).toFixed(2)), max: 16 },
-          subscale_2_dejection_motivation_D: { score: D_sum, mean: parseFloat((D_sum/4).toFixed(2)), max: 16 },
-          subscale_3_anger_irritability_C: { score: C_sum, mean: parseFloat((C_sum/4).toFixed(2)), max: 16 },
-          subscale_4_fatigue_exhaustion_F: { score: F_sum, mean: parseFloat((F_sum/4).toFixed(2)), max: 16 },
-          subscale_5_social_isolation_S: { score: S_sum, mean: parseFloat((S_sum/4).toFixed(2)), max: 16 }
+          subscale_1_tension_stress_T: { score: T_sum, apa_mean_0_4: parseFloat((T_sum/4).toFixed(2)), apa_severity: getApaSeverity(T_sum/4).label, max: 16 },
+          subscale_2_dejection_motivation_D: { score: D_sum, apa_mean_0_4: parseFloat((D_sum/4).toFixed(2)), apa_severity: getApaSeverity(D_sum/4).label, max: 16 },
+          subscale_3_anger_irritability_C: { score: C_sum, apa_mean_0_4: parseFloat((C_sum/4).toFixed(2)), apa_severity: getApaSeverity(C_sum/4).label, max: 16 },
+          subscale_4_fatigue_exhaustion_F: { score: F_sum, apa_mean_0_4: parseFloat((F_sum/4).toFixed(2)), apa_severity: getApaSeverity(F_sum/4).label, max: 16 },
+          subscale_5_social_isolation_S: { score: S_sum, apa_mean_0_4: parseFloat((S_sum/4).toFixed(2)), apa_severity: getApaSeverity(S_sum/4).label, max: 16 }
         },
         flight_director_directive: directiveText,
         item_responses: itemsCatalog.map((item, idx) => ({
