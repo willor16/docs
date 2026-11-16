@@ -24,7 +24,7 @@ Toda la definición funcional, visual, normativa y técnica revisada por el equi
 
 ### 2.1 Jerarquía de Navegación en 2 Niveles y Separación Resultados vs. Captura
 * **Nivel 1 Público (Sin PIN — Barra inferior de 3 pestañas):**
-  * `01_Sign_In.svg` (`/login`): Acceso exclusivo por PIN de 4 dígitos + botones directos a vistas públicas.
+  * `01_Sign_In.svg` (`/login`): Acceso exclusivo por PIN de 4 dígitos (`PublicHierarchyBar` para vistas públicas).
   * `02_Crew_Overview.svg` (`/crew-overview`): Resumen grupal de solo lectura (*Optimal / Nominal / Attention*, signos clave y ambiente de cabina).
   * `03_Crew_Streaks.svg` (`/crew-streaks`): Rachas individuales y grupal de solo lectura.
 * **Nivel 2 Autenticado (Tras PIN — Dock inferior trapezoidal simétrico de 7 módulos con `Profile` elevado al centro):**

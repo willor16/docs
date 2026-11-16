@@ -34,8 +34,8 @@ Guía paso a paso con casillas de verificación para validar todas las pantallas
 - [x] Se muestran las 4 tarjetas de tripulantes con su código (`ID·01` a `ID·04`), nombre, puesto y píldora de estado (`OPTIMAL` o `ATTENTION`).
 - [x] Al hacer clic en una tarjeta, cambia a estado `SELECTED` y su nombre aparece en el encabezado `Enter PIN · <Nombre>`.
 - [x] El campo de PIN solo acepta hasta 4 dígitos numéricos y los oculta como puntos.
-- [ ] El botón `Open Crew Overview` abre la vista grupal sin pedir PIN.
-- [ ] El botón `Open Crew Streaks` abre la vista de rachas del equipo sin pedir PIN.
+- [ ] La pestaña `Crew Overview` en la barra inferior pública abre la vista grupal sin pedir PIN.
+- [ ] La pestaña `Crew Streaks` en la barra inferior pública abre la vista de rachas del equipo sin pedir PIN.
 - [ ] Al ingresar un PIN incorrecto, aparece un mensaje indicando cuántos intentos quedan antes del bloqueo (`Incorrect PIN. X attempts remaining.`).
 - [ ] *(Hacer al final o con permiso de Operator disponible)* Al fallar 5 veces seguidas el PIN de un perfil, la tarjeta queda marcada como `LOCKED` y no permite iniciar sesión durante 5 minutos (o hasta ser desbloqueada por el `Operator`).
 
@@ -62,10 +62,8 @@ Guía paso a paso con casillas de verificación para validar todas las pantallas
 **Dónde:** Desde `Sign In` hacia la cabina autenticada · **Perfil:** `ID·01` Elena Vargas (PIN `1042`)
 
 - [ ] Al seleccionar `Elena Vargas`, ingresar `1042` y pulsar `Sign In`, redirige automáticamente a `Profile → Personal Data`.
-- [ ] En la **barra superior** se visualizan: marca `SpaceScan`, título de la pantalla actual, reloj de misión, botón `Notifications (N)` (con punto rojo si hay avisos pendientes) y píldora de estado a la derecha.
-- [ ] En la **barra inferior (dock de 7 módulos)** aparecen en orden: `Vision · Sleep · Auscultation · [Profile elevado al centro] · Capture · Guide · Comms`.
-- [ ] En la esquina inferior izquierda aparece la tarjeta del usuario activo (`ID·01 · E. VARGAS`).
-- [ ] En la esquina inferior derecha aparece el botón `Sign Out` (al probarlo al final, cierra sesión y devuelve a `Sign In`).
+- [ ] En la **barra superior** se visualizan: marca `SpaceScan`, título de la pantalla actual, botón central `Capture`, reloj de misión, botón de campana `Notifications` (con contador si hay avisos pendientes), botón `Comms` (icono de satélite) y botón `Sign Out` a la derecha.
+- [ ] En la **barra inferior (dock trapezoidal de 5 módulos)** aparecen simétricos con el botón central de astronauta (`Profile`, solo icono) al centro: `Vision · Sleep · [Astronauta] · Auscultation · Guide`.
 
 ---
 
@@ -224,6 +222,6 @@ Guía paso a paso con casillas de verificación para validar todas las pantallas
 
 ## 7. Cierre de Sesión y Verificación Final
 
-- [ ] Al pulsar `Sign Out` en cualquier pantalla autenticada, regresa a `Sign In` y desaparece la barra inferior de 7 módulos.
+- [ ] Al pulsar `Sign Out` en el header de cualquier pantalla autenticada, regresa a `Sign In` y desaparece el dock inferior autenticado.
 - [ ] Tras cerrar sesión, intentar navegar manualmente a una ruta privada (por ejemplo `/profile/personal` o `/capture/physical`) redirige a `/login` sin mostrar datos privados.
 - [ ] Todo el flujo completo (`Sign In → Capture → Alerta en Notifications → Guide → Comms → Sign Out`) funciona sin errores bloqueantes.

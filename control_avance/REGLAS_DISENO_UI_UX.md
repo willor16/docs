@@ -600,7 +600,7 @@ if STATIC_SPA_DIR.exists():
 
 | Sección | Pantalla Figma | Ruta Nuxt 4 | Rol de Datos | Componentes Clave en `dev` |
 | :--- | :--- | :--- | :---: | :--- |
-| **1. Pública** | `01_Sign_In.svg` | `/login` | Auth PIN | Teclado PIN de 4 dígitos + 2 botones públicos + `PublicHierarchyBar` |
+| **1. Pública** | `01_Sign_In.svg` | `/login` | Auth PIN | Teclado PIN de 4 dígitos + `PublicHierarchyBar` |
 | **1. Pública** | `02_Crew_Overview.svg` | `/crew-overview` | **Solo Resultados** | 4 tarjetas de tripulantes + `ArcGauge` (`Crew Score`) + ambiente |
 | **1. Pública** | `03_Crew_Streaks.svg` | `/crew-streaks` | **Solo Resultados** | Rachas activas de los 4 tripulantes + escudo `EVA` |
 | **2. Resultados** | `04_Profile_Personal_Data.svg` | `/profile/personal` | **Solo Resultados** | `ProfileTabs` + `HoloFigure` (`body_scan.svg`) + biometría |

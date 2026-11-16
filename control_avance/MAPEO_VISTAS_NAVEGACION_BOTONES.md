@@ -20,27 +20,28 @@ En `layouts/default.vue` y `middleware/auth.global.ts` existen **2 niveles de na
 │   ├── /crew-overview       (02 · Crew Overview)
 │   └── /crew-streaks        (03 · Crew Streaks)
 │
-└── NIVEL 2 · CABINA AUTENTICADA (tras PIN de 4 dígitos · BottomCockpitDock de 7 módulos)
+└── NIVEL 2 · CABINA AUTENTICADA (tras PIN de 4 dígitos · TopTelemetryBar + BottomCockpitDock de 5 módulos)
     ├── TopTelemetryBar (siempre visible arriba)
-    │   └── /notifications   (16 · Notifications + Pending Reviews [solo PHYSICIAN])
+    │   ├── Centro: /capture/auscultation (Módulo Capture · 4 sub-pestañas)
+    │   │   ├── Sub-tab: /capture/auscultation   (10 · Auscultation Audio)
+    │   │   ├── Sub-tab: /capture/physical       (11 · Physical & Labs)
+    │   │   ├── Sub-tab: /capture/vision         (12 · Vision & Ocular + Modal SANDRA)
+    │   │   └── Sub-tab: /capture/psych-sleep    (13 · Psych, Motor & Sleep)
+    │   ├── Derecha: /notifications (16 · Notifications + Pending Reviews [solo PHYSICIAN])
+    │   ├── Derecha: /comms         (15 · Mission Control & Solar Weather · icono satélite)
+    │   └── Derecha: Sign Out       (cierra sesión → /login)
     │
-    └── Dock Inferior Simétrico (7 ranuras)
+    └── Dock Inferior Simétrico (5 ranuras: 2 · Profile · 2)
         ├── [1] /vision               (08 · Vision & Ocular Exam)
         ├── [2] /sleep                (07 · Sleep Architecture & Quality)
-        ├── [3] /auscultation         (09 · Cardiac & Pulmonary Auscultation)
-        ├── [4] /profile/personal ◀── [SLOT CENTRAL ELEVADO · VISTA PRINCIPAL POST-LOGIN]
+        ├── [3] /profile/personal ◀── [SLOT CENTRAL ELEVADO Y CENTRADO · VISTA PRINCIPAL POST-LOGIN]
         │       ├── Sub-tab: /profile/personal       (04 · Personal Data)
         │       ├── Sub-tab: /profile/psychological  (05 · Psychological)
         │       ├── Sub-tab: /profile/physical       (06 · Physical)
         │       ├── Sub-tab: /profile/streak         (Personal Streak)
         │       └── Botón rol OPERATOR: /crew-management (Crew Administration)
-        ├── [5] /capture/auscultation (Módulo Capture · 4 sub-pestañas)
-        │       ├── Sub-tab: /capture/auscultation   (10 · Auscultation Audio)
-        │       ├── Sub-tab: /capture/physical       (11 · Physical & Labs)
-        │       ├── Sub-tab: /capture/vision         (12 · Vision & Ocular + Modal SANDRA)
-        │       └── Sub-tab: /capture/psych-sleep    (13 · Psych, Motor & Sleep)
-        ├── [6] /guide                (14 · Medical Guide & Kit Locator)
-        └── [7] /comms                (15 · Mission Control & Solar Weather)
+        ├── [4] /auscultation         (09 · Cardiac & Pulmonary Auscultation)
+        └── [5] /guide                (14 · Medical Guide & Kit Locator)
 ```
 
 ---
@@ -49,9 +50,9 @@ En `layouts/default.vue` y `middleware/auth.global.ts` existen **2 niveles de na
 
 | Componente | Ubicación | Elementos / Controles Interactivos / Indicadores |
 | :--- | :--- | :--- |
-| **`ShellTopTelemetryBar`** (`TopTelemetryBar.vue`) | Barra superior fija (`56px`, todas las vistas) | • Logo (`logo.svg`) + `SpaceScan` + `mission_code`<br>• Título y subtítulo dinámico de la vista activa (`usePageHeader`)<br>• **`MISSION CLOCK`**: reloj UTC continuo sincronizado con servidor<br>• **Botón / Link `Notifications (N)`** *(solo autenticado)* → navega a `/notifications`; muestra punto rojo si `unread > 0`<br>• **Píldora de estado global** *(condicional por vista)*: texto y tono (`ok` / `critical` / `neutral`) |
+| **`ShellTopTelemetryBar`** (`TopTelemetryBar.vue`) | Barra superior fija (`56px`, todas las vistas) | • Logo (`logo.svg`) + `SpaceScan` + `mission_code`<br>• Título y subtítulo dinámico de la vista activa (`usePageHeader`)<br>• **Botón central `Capture`** *(solo autenticado)* → `/capture/auscultation`<br>• **`MISSION CLOCK`**: reloj UTC continuo sincronizado con servidor<br>• **Botón `Notifications`** *(solo autenticado)* → alterna `/notifications`; badge rojo con conteo si `unread > 0`<br>• **Botón `Comms`** *(solo autenticado, icono `satellite`)* → `/comms`<br>• **Botón `Sign Out`** *(solo autenticado)* → cierra sesión y navega a `/login`<br>• **Píldora de estado global** *(solo zona pública cuando aplica)*: texto y tono (`ok` / `critical` / `neutral`) |
 | **`ShellPublicHierarchyBar`** (`PublicHierarchyBar.vue`) | Dock inferior público (`72px`, sin sesión o en rutas públicas) | 3 botones/links de navegación:<br>1. `Sign In` (`/login`)<br>2. `Crew Overview` (`/crew-overview`)<br>3. `Crew Streaks` (`/crew-streaks`) |
-| **`ShellBottomCockpitDock`** (`BottomCockpitDock.vue`) | Dock inferior autenticado (`72px`, tras PIN) | • **Izquierda:** Tarjeta de sesión activa (`{crew.code} · {crew.short_name}`)<br>• **Centro trapezoidal (7 links):** `Vision` (`/vision`), `Sleep` (`/sleep`), `Auscultation` (`/auscultation`), **`Profile`** (`/profile/personal`, slot central elevado), `Capture` (`/capture/auscultation`), `Guide` (`/guide`), `Comms` (`/comms`)<br>• **Derecha:** Botón **`Sign Out`** (cierra sesión y navega a `/login`) |
+| **`ShellBottomCockpitDock`** (`BottomCockpitDock.vue`) | Dock inferior autenticado (`72px`, tras PIN) | **Trapecio simétrico de 5 ranuras (`2 · Profile · 2`):**<br>• Izquierda: `Vision` (`/vision`), `Sleep` (`/sleep`)<br>• **Centro exacto (elevado, solo icono `astronaut`):** **`Profile`** (`/profile/personal`)<br>• Derecha: `Auscultation` (`/auscultation`), `Guide` (`/guide`) |
 | **`UiParamHelp`** (`ParamHelp.vue`) | Botón **`?`** junto a títulos y parámetros | Hover/clic abre popover (`Teleport` a `body`) con: *What it measures*, *How to read it*, *Mission impact*, *Normal range* (diferenciado por sexo si aplica) y *Your baseline* (si está autenticado). |
 | **`UiInteractiveChartFrame`** (`InteractiveChartFrame.vue`) | Contenedor de todas las gráficas | • **Botones de periodo** (cuando aplica: ej. `7D`/`14D`/`30D`/`ALL` o `24H`/`7D`/`30D`)<br>• **Clic sobre serie** → fija punto clínico (pin con valor, fecha UTC, etapa y `Δ` vs referencia)<br>• **Botón `×`** en cada pin → quita el pin<br>• **Botón `Reset Zoom`** → restablece zoom de ECharts al 100% |
 | **`UiAiWatermark`** (`AiWatermark.vue`) | Esquina de hologramas e IA | Etiqueta pasiva `AI Used` (sin interacción). |
@@ -60,7 +61,7 @@ En `layouts/default.vue` y `middleware/auth.global.ts` existen **2 niveles de na
 
 ## 2. Mapeo Detallado de la Vista Inicial (Nivel 1 Público)
 
-> **Nota para priorización:** Al abrir la app (`/`), el sistema redirige a **`/login`**. Desde ahí existen dos botones directos hacia **`/crew-overview`** y **`/crew-streaks`** que funcionan como tableros iniciales públicos sin sesión. Se detallan las 3 pantallas públicas.
+> **Nota para priorización:** Al abrir la app (`/`), el sistema redirige a **`/login`**. Desde el dock inferior público (`PublicHierarchyBar`) se navega directamente hacia **`/crew-overview`** y **`/crew-streaks`** como tableros iniciales públicos sin sesión. Se detallan las 3 pantallas públicas.
 
 ### 2.1 Pantalla Inicial de Entrada: `01 · Sign In` (`/login` — `pages/login.vue`)
 
@@ -69,8 +70,7 @@ En `layouts/default.vue` y `middleware/auth.global.ts` existen **2 niveles de na
 | **Encabezado de vista** | Título `Select Crew Profile` (`TopTelemetryBar` muestra solo marca, código de misión y reloj `MISSION CLOCK`) | Sin botón `Notifications` ni píldora de estado | — |
 | **Selector de Tripulantes** (`radiogroup`) | 4 tarjetas (`profiles` de `/crew/profiles`), cada una muestra:<br>• Código (`ID·01`..`ID·04`)<br>• Píldora de estado (`LOCKED` / `SELECTED` / `OPTIMAL` / `ATTENTION`)<br>• Figura holográfica `UiHoloFigure` (`body`, adaptada por sexo `F`/`M` y tono de estado)<br>• `full_name`<br>• `title_en` (puesto) | **4 botones `role="radio"`** (uno por tripulante): selecciona el perfil, limpia el PIN previo y enfoca el campo PIN. | |
 | **Ventana `Enter PIN · {Nombre}`** (`HudWindow`) | • Tag `4-DIGIT PIN`<br>• 4 cajas visuales de dígitos ocultos (`•`)<br>• Mensaje de error/intentos restantes (`role="alert"`) | • **`<input type="password" inputmode="numeric" maxlength="4">`**: acepta solo 4 dígitos numéricos<br>• **Botón submit `Sign In`** (se habilita cuando hay perfil seleccionado, no bloqueado y 4 dígitos) → autentica y navega a **`/profile/personal`** | |
-| **Accesos Directos Públicos** | Separador `No sign-in required` | • **Botón/Link `Open Crew Overview`** → `/crew-overview`<br>• **Botón/Link `Open Crew Streaks`** → `/crew-streaks` | |
-| **Dock Inferior** | `PublicHierarchyBar` | 3 pestañas: `Sign In`, `Crew Overview`, `Crew Streaks` | — |
+| **Dock Inferior** | `PublicHierarchyBar` | 3 pestañas: `Sign In` (`/login`), `Crew Overview` (`/crew-overview`), `Crew Streaks` (`/crew-streaks`) | — |
 
 ---
 
